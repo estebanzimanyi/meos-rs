@@ -1,7 +1,5 @@
-use std::env;
-use std::ffi::OsString;
 
-const MINIMUM_MEOS_VERSION: &str = "1.1.0";
+const MINIMUM_MEOS_VERSION: &str = "1.4";
 
 /// Detect MEOS config parameters using pkg-config (not available for all MEOS
 /// versions)
@@ -40,29 +38,11 @@ fn main() {
         match pk {
             Ok(meos) => meos.include_paths[0].clone().display().to_string(),
             Err(pkg_config_err) => {
-                if matches!(pkg_config_err, pkg_config::Error::Command { cause, .. } if cause.kind() == std::io::ErrorKind::NotFound)
+                if matches!(pkg_config_err, pkg_config::Error::Command { ref cause, .. } if cause.kind() == std::io::ErrorKind::NotFound)
                 {
                     panic!("Could not find `pkg-config` in your path. Please install it before running meos-sys-bind.");
                 }
-                // As a fallback, since pkg-config was not configured in meos until 1.2, we will try a default path.
-                if cfg!(feature = "v1_1") {
-                    let default_lib_path = String::from("/usr/local/lib/");
-                    let lib_dir_env = env::var_os("MEOS_LIB_DIR")
-                        .map(OsString::into_string)
-                        .transpose()
-                        .ok()
-                        .flatten()
-                        .unwrap_or(default_lib_path);
-
-                    // Tell cargo to look for shared libraries in the specified directory
-                    println!("cargo:rustc-link-search={lib_dir_env}");
-
-                    // Tell cargo to tell rustc to link the system meos shared library.
-                    println!("cargo:rustc-link-lib=dylib=meos");
-                    String::from("/usr/local/include/")
-                } else {
-                    panic!("Could not detect MEOS using pkg-config.");
-                }
+                panic!("Could not detect MEOS {MINIMUM_MEOS_VERSION} using pkg-config: {pkg_config_err}");
             }
         }
     };
@@ -74,23 +54,38 @@ fn main() {
     let _ = include_path;
 }
 
+/// Generate the FFI with bindgen over the installed MEOS headers, as
+/// #generate_bindings always has, keeping only the names of the MEOS-API catalog:
+/// `allowlist.txt`, written with `wrapper.h` by `allowlist.py`, lists one
+/// `function`, `type` or `var` per catalog entry and one `define` per family the
+/// headers guard. Each name is a C identifier anchored at both ends, so bindgen
+/// emits that symbol exactly and the C library declarations the headers include
+/// stay out.
 #[cfg(feature = "bindgen")]
 fn generate_bindings(include_path: std::path::PathBuf) -> Result<(), Box<dyn std::error::Error>> {
-    // The bindgen::Builder is the main entry point
-    // to bindgen, and lets you build up options for
-    // the resulting bindings.
-    let bindings = bindgen::Builder::default()
+    println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=allowlist.txt");
+    let allowlist = std::fs::read_to_string("allowlist.txt")?;
+
+    let mut builder = bindgen::Builder::default()
         .clang_arg(format!("-I{}", include_path.to_string_lossy()))
-        // The input header we would like to generate
-        // bindings for.
-        .header("wrapper.h")
-        // Finish the builder and generate the bindings.
-        .generate()
-        // Unwrap the Result and panic on failure.
-        .expect("Unable to generate bindings");
+        .header("wrapper.h");
+    for line in allowlist.lines() {
+        let Some((kind, name)) = line.split_once(' ') else {
+            continue;
+        };
+        builder = match kind {
+            "define" => builder.clang_arg(format!("-D{name}=1")),
+            "function" => builder.allowlist_function(format!("^{name}$")),
+            "type" => builder.allowlist_type(format!("^{name}$")),
+            "var" => builder.allowlist_var(format!("^{name}$")),
+            _ => builder,
+        };
+    }
+    let bindings = builder.generate().expect("Unable to generate bindings");
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.
-    let out_path = std::path::PathBuf::from(env::var("OUT_DIR").unwrap());
+    let out_path = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
     bindings.write_to_file(out_path.join("bindings.rs"))?;
 
     Ok(())

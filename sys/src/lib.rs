@@ -1,4 +1,4 @@
-//! Low level [MEOS](https://libmeos.org/) C API bindings for MEOS >= 1.1.
+//! Low level [MEOS](https://libmeos.org/) C API bindings for MEOS 1.4.
 //!
 //! It provides C-interface as is. If you want to use a more Rust-friendly crate,
 //! use the [meos](https://github.com/MobilityDB/meos-rs) crate.
@@ -7,25 +7,15 @@
 //!
 //! The build will use system-installed MEOS if available.
 //!
-//! This documentation is generated based on MEOS >= 1.1.
+//! This documentation is generated based on MEOS 1.4.
 
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![allow(clippy::missing_safety_doc)]
 
-#[cfg(all(
-    feature = "v1_1",
-    not(feature = "v1_2"),
-    not(feature = "v1_3"),
-    not(feature = "bindgen")
-))]
-include!("../prebuilt-bindings/meos_1.1.rs");
-
-#[cfg(all(feature = "v1_2", not(feature = "v1_3"), not(feature = "bindgen")))]
-include!("../prebuilt-bindings/meos_1.2.rs");
-
-#[cfg(all(feature = "v1_3", not(feature = "bindgen")))]
-include!("../prebuilt-bindings/meos_1.3.rs");
+#[cfg(not(feature = "bindgen"))]
+include!("../prebuilt-bindings/meos.rs");
 
 #[cfg(feature = "bindgen")]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
