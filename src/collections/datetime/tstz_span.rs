@@ -12,7 +12,7 @@ use chrono::{DateTime, Datelike, TimeDelta, TimeZone, Utc};
 use crate::{
     collections::{base::{Collection, Span, impl_collection}},
     errors::ParseError,
-    utils::{create_interval, from_interval, from_meos_timestamp, to_meos_timestamp},
+    utils::{create_interval, from_interval, from_meos_timestamp, from_owned_interval, to_meos_timestamp},
     BoundingBox,
 };
 
@@ -62,6 +62,8 @@ impl Span for TsTzSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::TsTzSpan;
     /// # use meos::Span;
     /// # use chrono::naive::NaiveDate;
@@ -86,6 +88,8 @@ impl Span for TsTzSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::TsTzSpan;
     /// # use meos::Span;
     /// # use chrono::naive::NaiveDate;
@@ -206,7 +210,13 @@ impl Span for TsTzSpan {
             }
         };
 
-        let modified = unsafe { meos_sys::tstzspan_shift_scale(self.inner(), d, w) };
+        let modified = unsafe {
+            match (delta, width) {
+                (Some(_), None) => meos_sys::tstzspan_shift(self.inner(), d),
+                (None, Some(_)) => meos_sys::tstzspan_scale(self.inner(), w),
+                _ => meos_sys::tstzspan_shift_scale(self.inner(), d, w),
+            }
+        };
         TsTzSpan::from_inner(modified)
     }
     /// Calculates the distance between this `TsTzSpan` and a specific timestamp (`value`).
@@ -232,9 +242,10 @@ impl Span for TsTzSpan {
     /// ```
     fn distance_to_value(&self, value: &Self::Type) -> TimeDelta {
         unsafe {
-            TimeDelta::seconds(
-                meos_sys::distance_span_timestamptz(self.inner(), to_meos_timestamp(value)) as i64, // It returns the number of seconds: https://github.com/MobilityDB/MobilityDB/blob/6b60876817b53bc33967f7df50ab8e1f482b0133/meos/src/general/span_ops.c#L2292
-            )
+            from_owned_interval(meos_sys::distance_span_timestamptz(
+                self.inner(),
+                to_meos_timestamp(value),
+            ))
         }
     }
 
@@ -261,9 +272,10 @@ impl Span for TsTzSpan {
     /// ```
     fn distance_to_span(&self, other: &Self) -> TimeDelta {
         unsafe {
-            TimeDelta::seconds(
-                meos_sys::distance_tstzspan_tstzspan(self.inner(), other.inner()) as i64,
-            )
+            from_owned_interval(meos_sys::distance_tstzspan_tstzspan(
+                self.inner(),
+                other.inner(),
+            ))
         }
     }
 }
@@ -340,6 +352,8 @@ impl cmp::PartialEq for TsTzSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::TsTzSpan;
     /// # use meos::Span;
     /// use chrono::naive::NaiveDate;
@@ -411,6 +425,8 @@ impl BitAnd for TsTzSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::TsTzSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;

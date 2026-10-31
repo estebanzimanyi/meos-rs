@@ -65,6 +65,8 @@ pub trait Span: Collection {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;
@@ -86,6 +88,8 @@ pub trait Span: Collection {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;

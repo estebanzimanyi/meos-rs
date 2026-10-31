@@ -60,6 +60,8 @@ impl SpanSet for FloatSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -85,6 +87,8 @@ impl SpanSet for FloatSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -111,6 +115,8 @@ impl SpanSet for FloatSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -141,6 +147,8 @@ impl SpanSet for FloatSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use meos::SpanSet;
     /// let span_set: FloatSpanSet = [(2019.0..2023.5).into(), (2029.0..2030.5).into()].iter().collect();
@@ -161,6 +169,8 @@ impl SpanSet for FloatSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use meos::SpanSet;
     /// # use meos::Span;
@@ -170,6 +180,7 @@ impl SpanSet for FloatSpanSet {
     /// let distance = span_set1.distance_to_span_set(&span_set2);
     ///
     /// assert_eq!(distance, 18.5);
+    /// ```
     fn distance_to_span_set(&self, other: &Self) -> f64 {
         unsafe { meos_sys::distance_floatspanset_floatspanset(self.inner(), other.inner()) }
     }
@@ -180,10 +191,12 @@ impl SpanSet for FloatSpanSet {
     /// * `other` - A `FloatSpan` to calculate the distance to.
     ///
     /// ## Returns
-    /// A `TimeDelta` representing the distance in seconds between the span set and the span.
+    /// An `f64` representing the distance between the span set and the span.
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use meos::SpanSet;
     /// # use meos::DateSpan;
@@ -262,6 +275,8 @@ impl BitAnd<FloatSpanSet> for FloatSpanSet {
     /// ## Example
     ///
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -293,6 +308,8 @@ impl BitOr for FloatSpanSet {
     /// ## Example
     ///
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;

@@ -22,6 +22,13 @@ pub(crate) fn from_interval(interval: meos_sys::Interval) -> chrono::TimeDelta {
         + chrono::TimeDelta::days(days + months * 30) // meos assumes 30 days per month
 }
 
+/// Reads an interval MEOS allocated as a `TimeDelta`, then frees it.
+pub(crate) fn from_owned_interval(interval: *mut meos_sys::Interval) -> chrono::TimeDelta {
+    let delta = from_interval(unsafe { interval.read() });
+    unsafe { libc::free(interval.cast()) };
+    delta
+}
+
 pub(crate) fn to_meos_timestamp<Tz: TimeZone>(dt: &DateTime<Tz>) -> i64 {
     dt.timestamp_micros() - MICROSECONDS_UNTIL_2000
 }

@@ -33,7 +33,7 @@ use super::{interpolation::TInterpolation, tbool::TBool};
 
 fn from_ctext(ctext: *mut meos_sys::text) -> String {
     unsafe {
-        let cstr = meos_sys::text2cstring(ctext);
+        let cstr = meos_sys::text_to_cstring(ctext);
         let string = CStr::from_ptr(cstr).to_str().unwrap();
         let result = string.to_owned();
 
@@ -45,7 +45,7 @@ fn from_ctext(ctext: *mut meos_sys::text) -> String {
 
 fn to_ctext(string: &str) -> *mut meos_sys::text {
     let cstr = CString::new(string).unwrap();
-    unsafe { meos_sys::cstring2text(cstr.as_ptr()) }
+    unsafe { meos_sys::cstring_to_text(cstr.as_ptr()) }
 }
 
 macro_rules! impl_debug {

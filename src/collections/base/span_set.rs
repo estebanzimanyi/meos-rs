@@ -83,8 +83,9 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
     }
 
     fn spans(&self) -> Vec<Self::SpanType> {
-        let spans = unsafe { meos_sys::spanset_spanarr(self.inner()) };
-        let size = self.num_spans() as usize;
+        let mut count = 0;
+        let spans = unsafe { meos_sys::spanset_spanarr(self.inner(), &raw mut count) };
+        let size = count as usize;
         unsafe {
             std::slice::from_raw_parts(spans, size)
                 .iter()
