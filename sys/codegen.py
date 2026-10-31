@@ -230,6 +230,9 @@ class Emitter:
         out = []
         for mac in sorted(self.macros, key=lambda x: x["name"]):
             value = mac["value"]
+            if isinstance(value, bool):
+                out.append(f"pub const {mac['name']}: bool = {str(value).lower()};")
+                continue
             ty = "i32" if value < 0 else "u32"
             out.append(f"pub const {mac['name']}: {ty} = {value};")
         return "\n".join(out)

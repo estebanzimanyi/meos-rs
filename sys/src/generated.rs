@@ -26,6 +26,16 @@ pub type error_handler_fn = ::std::option::Option<unsafe extern "C" fn(arg1: ::s
 // --- external opaque types ---
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct JsonPath {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Jsonb {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct PJ {
     _unused: [u8; 0],
 }
@@ -36,7 +46,12 @@ pub struct PJ_CONTEXT {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct gsl_rng {
+pub struct bytea {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct interrupt_handler_fn {
     _unused: [u8; 0],
 }
 #[repr(C)]
@@ -46,11 +61,64 @@ pub struct json_object {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct pc_allocator {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct pc_deallocator {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct pc_message_handler {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct pc_reallocator {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct text {
     _unused: [u8; 0],
 }
 
 // --- enums ---
+pub const errorCode_MEOS_SUCCESS: errorCode = 0;
+pub const errorCode_MEOS_ERR_INTERNAL_ERROR: errorCode = 1;
+pub const errorCode_MEOS_ERR_INTERNAL_TYPE_ERROR: errorCode = 2;
+pub const errorCode_MEOS_ERR_VALUE_OUT_OF_RANGE: errorCode = 3;
+pub const errorCode_MEOS_ERR_DIVISION_BY_ZERO: errorCode = 4;
+pub const errorCode_MEOS_ERR_MEMORY_ALLOC_ERROR: errorCode = 5;
+pub const errorCode_MEOS_ERR_AGGREGATION_ERROR: errorCode = 6;
+pub const errorCode_MEOS_ERR_DIRECTORY_ERROR: errorCode = 7;
+pub const errorCode_MEOS_ERR_FILE_ERROR: errorCode = 8;
+pub const errorCode_MEOS_ERR_OUT_OF_MEMORY: errorCode = 9;
+pub const errorCode_MEOS_ERR_INVALID_ARG: errorCode = 10;
+pub const errorCode_MEOS_ERR_INVALID_ARG_TYPE: errorCode = 11;
+pub const errorCode_MEOS_ERR_INVALID_ARG_VALUE: errorCode = 12;
+pub const errorCode_MEOS_ERR_FEATURE_NOT_SUPPORTED: errorCode = 13;
+pub const errorCode_MEOS_ERR_INDETERMINATE_COLLATION: errorCode = 14;
+pub const errorCode_MEOS_ERR_SYNTAX_ERROR: errorCode = 15;
+pub const errorCode_MEOS_ERR_NULL_RESULT: errorCode = 16;
+pub const errorCode_MEOS_ERR_MFJSON_INPUT: errorCode = 20;
+pub const errorCode_MEOS_ERR_MFJSON_OUTPUT: errorCode = 21;
+pub const errorCode_MEOS_ERR_TEXT_INPUT: errorCode = 22;
+pub const errorCode_MEOS_ERR_TEXT_OUTPUT: errorCode = 23;
+pub const errorCode_MEOS_ERR_WKB_INPUT: errorCode = 24;
+pub const errorCode_MEOS_ERR_WKB_OUTPUT: errorCode = 25;
+pub const errorCode_MEOS_ERR_GEOJSON_INPUT: errorCode = 26;
+pub const errorCode_MEOS_ERR_GEOJSON_OUTPUT: errorCode = 27;
+pub const errorCode_MEOS_ERR_SQL_JSON_ERROR: errorCode = 28;
+pub const errorCode_MEOS_ERR_INVALID_REGULAR_EXPRESSION: errorCode = 29;
+pub type errorCode = ::std::os::raw::c_uint;
+pub const errorLevel_MEOS_INFO: errorLevel = 17;
+pub const errorLevel_MEOS_NOTICE: errorLevel = 18;
+pub const errorLevel_MEOS_WARNING: errorLevel = 19;
+pub const errorLevel_MEOS_ERROR: errorLevel = 21;
+pub type errorLevel = ::std::os::raw::c_uint;
 pub const tempSubtype_ANYTEMPSUBTYPE: tempSubtype = 0;
 pub const tempSubtype_TINSTANT: tempSubtype = 1;
 pub const tempSubtype_TSEQUENCE: tempSubtype = 2;
@@ -61,147 +129,211 @@ pub const interpType_DISCRETE: interpType = 1;
 pub const interpType_STEP: interpType = 2;
 pub const interpType_LINEAR: interpType = 3;
 pub type interpType = ::std::os::raw::c_uint;
-pub const errorCode_MEOS_SUCCESS: errorCode = 0;
-pub const errorCode_MEOS_ERR_INTERNAL_ERROR: errorCode = 1;
-pub const errorCode_MEOS_ERR_INTERNAL_TYPE_ERROR: errorCode = 2;
-pub const errorCode_MEOS_ERR_VALUE_OUT_OF_RANGE: errorCode = 3;
-pub const errorCode_MEOS_ERR_DIVISION_BY_ZERO: errorCode = 4;
-pub const errorCode_MEOS_ERR_MEMORY_ALLOC_ERROR: errorCode = 5;
-pub const errorCode_MEOS_ERR_AGGREGATION_ERROR: errorCode = 6;
-pub const errorCode_MEOS_ERR_DIRECTORY_ERROR: errorCode = 7;
-pub const errorCode_MEOS_ERR_FILE_ERROR: errorCode = 8;
-pub const errorCode_MEOS_ERR_INVALID_ARG: errorCode = 10;
-pub const errorCode_MEOS_ERR_INVALID_ARG_TYPE: errorCode = 11;
-pub const errorCode_MEOS_ERR_INVALID_ARG_VALUE: errorCode = 12;
-pub const errorCode_MEOS_ERR_FEATURE_NOT_SUPPORTED: errorCode = 13;
-pub const errorCode_MEOS_ERR_MFJSON_INPUT: errorCode = 20;
-pub const errorCode_MEOS_ERR_MFJSON_OUTPUT: errorCode = 21;
-pub const errorCode_MEOS_ERR_TEXT_INPUT: errorCode = 22;
-pub const errorCode_MEOS_ERR_TEXT_OUTPUT: errorCode = 23;
-pub const errorCode_MEOS_ERR_WKB_INPUT: errorCode = 24;
-pub const errorCode_MEOS_ERR_WKB_OUTPUT: errorCode = 25;
-pub const errorCode_MEOS_ERR_GEOJSON_INPUT: errorCode = 26;
-pub const errorCode_MEOS_ERR_GEOJSON_OUTPUT: errorCode = 27;
-pub type errorCode = ::std::os::raw::c_uint;
-pub const meosType_T_UNKNOWN: meosType = 0;
-pub const meosType_T_BOOL: meosType = 1;
-pub const meosType_T_DATE: meosType = 2;
-pub const meosType_T_DATEMULTIRANGE: meosType = 3;
-pub const meosType_T_DATERANGE: meosType = 4;
-pub const meosType_T_DATESET: meosType = 5;
-pub const meosType_T_DATESPAN: meosType = 6;
-pub const meosType_T_DATESPANSET: meosType = 7;
-pub const meosType_T_DOUBLE2: meosType = 8;
-pub const meosType_T_DOUBLE3: meosType = 9;
-pub const meosType_T_DOUBLE4: meosType = 10;
-pub const meosType_T_FLOAT8: meosType = 11;
-pub const meosType_T_FLOATSET: meosType = 12;
-pub const meosType_T_FLOATSPAN: meosType = 13;
-pub const meosType_T_FLOATSPANSET: meosType = 14;
-pub const meosType_T_INT4: meosType = 15;
-pub const meosType_T_INT4MULTIRANGE: meosType = 16;
-pub const meosType_T_INT4RANGE: meosType = 17;
-pub const meosType_T_INTSET: meosType = 18;
-pub const meosType_T_INTSPAN: meosType = 19;
-pub const meosType_T_INTSPANSET: meosType = 20;
-pub const meosType_T_INT8: meosType = 21;
-pub const meosType_T_INT8MULTIRANGE: meosType = 52;
-pub const meosType_T_INT8RANGE: meosType = 53;
-pub const meosType_T_BIGINTSET: meosType = 22;
-pub const meosType_T_BIGINTSPAN: meosType = 23;
-pub const meosType_T_BIGINTSPANSET: meosType = 24;
-pub const meosType_T_STBOX: meosType = 25;
-pub const meosType_T_TBOOL: meosType = 26;
-pub const meosType_T_TBOX: meosType = 27;
-pub const meosType_T_TDOUBLE2: meosType = 28;
-pub const meosType_T_TDOUBLE3: meosType = 29;
-pub const meosType_T_TDOUBLE4: meosType = 30;
-pub const meosType_T_TEXT: meosType = 31;
-pub const meosType_T_TEXTSET: meosType = 32;
-pub const meosType_T_TFLOAT: meosType = 33;
-pub const meosType_T_TIMESTAMPTZ: meosType = 34;
-pub const meosType_T_TINT: meosType = 35;
-pub const meosType_T_TSTZMULTIRANGE: meosType = 36;
-pub const meosType_T_TSTZRANGE: meosType = 37;
-pub const meosType_T_TSTZSET: meosType = 38;
-pub const meosType_T_TSTZSPAN: meosType = 39;
-pub const meosType_T_TSTZSPANSET: meosType = 40;
-pub const meosType_T_TTEXT: meosType = 41;
-pub const meosType_T_GEOMETRY: meosType = 42;
-pub const meosType_T_GEOMSET: meosType = 43;
-pub const meosType_T_GEOGRAPHY: meosType = 44;
-pub const meosType_T_GEOGSET: meosType = 45;
-pub const meosType_T_TGEOMPOINT: meosType = 46;
-pub const meosType_T_TGEOGPOINT: meosType = 47;
-pub const meosType_T_NPOINT: meosType = 48;
-pub const meosType_T_NPOINTSET: meosType = 49;
-pub const meosType_T_NSEGMENT: meosType = 50;
-pub const meosType_T_TNPOINT: meosType = 51;
-pub const meosType_T_POSE: meosType = 54;
-pub const meosType_T_POSESET: meosType = 55;
-pub const meosType_T_TPOSE: meosType = 56;
-pub const meosType_T_CBUFFER: meosType = 57;
-pub const meosType_T_CBUFFERSET: meosType = 58;
-pub const meosType_T_TCBUFFER: meosType = 59;
-pub const meosType_T_TGEOMETRY: meosType = 60;
-pub const meosType_T_TGEOGRAPHY: meosType = 61;
-pub const meosType_T_TRGEOMETRY: meosType = 62;
-pub const meosType_NO_MEOS_TYPES: meosType = 63;
-pub type meosType = ::std::os::raw::c_uint;
-pub const meosOper_UNKNOWN_OP: meosOper = 0;
-pub const meosOper_EQ_OP: meosOper = 1;
-pub const meosOper_NE_OP: meosOper = 2;
-pub const meosOper_LT_OP: meosOper = 3;
-pub const meosOper_LE_OP: meosOper = 4;
-pub const meosOper_GT_OP: meosOper = 5;
-pub const meosOper_GE_OP: meosOper = 6;
-pub const meosOper_ADJACENT_OP: meosOper = 7;
-pub const meosOper_UNION_OP: meosOper = 8;
-pub const meosOper_MINUS_OP: meosOper = 9;
-pub const meosOper_INTERSECT_OP: meosOper = 10;
-pub const meosOper_OVERLAPS_OP: meosOper = 11;
-pub const meosOper_CONTAINS_OP: meosOper = 12;
-pub const meosOper_CONTAINED_OP: meosOper = 13;
-pub const meosOper_SAME_OP: meosOper = 14;
-pub const meosOper_LEFT_OP: meosOper = 15;
-pub const meosOper_OVERLEFT_OP: meosOper = 16;
-pub const meosOper_RIGHT_OP: meosOper = 17;
-pub const meosOper_OVERRIGHT_OP: meosOper = 18;
-pub const meosOper_BELOW_OP: meosOper = 19;
-pub const meosOper_OVERBELOW_OP: meosOper = 20;
-pub const meosOper_ABOVE_OP: meosOper = 21;
-pub const meosOper_OVERABOVE_OP: meosOper = 22;
-pub const meosOper_FRONT_OP: meosOper = 23;
-pub const meosOper_OVERFRONT_OP: meosOper = 24;
-pub const meosOper_BACK_OP: meosOper = 25;
-pub const meosOper_OVERBACK_OP: meosOper = 26;
-pub const meosOper_BEFORE_OP: meosOper = 27;
-pub const meosOper_OVERBEFORE_OP: meosOper = 28;
-pub const meosOper_AFTER_OP: meosOper = 29;
-pub const meosOper_OVERAFTER_OP: meosOper = 30;
-pub const meosOper_EVEREQ_OP: meosOper = 31;
-pub const meosOper_EVERNE_OP: meosOper = 32;
-pub const meosOper_EVERLT_OP: meosOper = 33;
-pub const meosOper_EVERLE_OP: meosOper = 34;
-pub const meosOper_EVERGT_OP: meosOper = 35;
-pub const meosOper_EVERGE_OP: meosOper = 36;
-pub const meosOper_ALWAYSEQ_OP: meosOper = 37;
-pub const meosOper_ALWAYSNE_OP: meosOper = 38;
-pub const meosOper_ALWAYSLT_OP: meosOper = 39;
-pub const meosOper_ALWAYSLE_OP: meosOper = 40;
-pub const meosOper_ALWAYSGT_OP: meosOper = 41;
-pub const meosOper_ALWAYSGE_OP: meosOper = 42;
-pub type meosOper = ::std::os::raw::c_uint;
+pub const IndexSearchOp_INDEX_OVERLAPS: IndexSearchOp = 0;
+pub const IndexSearchOp_INDEX_CONTAINS: IndexSearchOp = 1;
+pub const IndexSearchOp_INDEX_CONTAINED_BY: IndexSearchOp = 2;
+pub const IndexSearchOp_INDEX_LEFT: IndexSearchOp = 3;
+pub const IndexSearchOp_INDEX_OVERLEFT: IndexSearchOp = 4;
+pub const IndexSearchOp_INDEX_RIGHT: IndexSearchOp = 5;
+pub const IndexSearchOp_INDEX_OVERRIGHT: IndexSearchOp = 6;
+pub const IndexSearchOp_INDEX_BELOW: IndexSearchOp = 7;
+pub const IndexSearchOp_INDEX_OVERBELOW: IndexSearchOp = 8;
+pub const IndexSearchOp_INDEX_ABOVE: IndexSearchOp = 9;
+pub const IndexSearchOp_INDEX_OVERABOVE: IndexSearchOp = 10;
+pub const IndexSearchOp_INDEX_FRONT: IndexSearchOp = 11;
+pub const IndexSearchOp_INDEX_OVERFRONT: IndexSearchOp = 12;
+pub const IndexSearchOp_INDEX_BACK: IndexSearchOp = 13;
+pub const IndexSearchOp_INDEX_OVERBACK: IndexSearchOp = 14;
+pub const IndexSearchOp_INDEX_BEFORE: IndexSearchOp = 15;
+pub const IndexSearchOp_INDEX_OVERBEFORE: IndexSearchOp = 16;
+pub const IndexSearchOp_INDEX_AFTER: IndexSearchOp = 17;
+pub const IndexSearchOp_INDEX_OVERAFTER: IndexSearchOp = 18;
+pub const IndexSearchOp_INDEX_SAME: IndexSearchOp = 19;
+pub const IndexSearchOp_INDEX_ADJACENT: IndexSearchOp = 20;
+pub type IndexSearchOp = ::std::os::raw::c_uint;
+pub const SPTreeKind_SPTREE_QUADTREE: SPTreeKind = 0;
+pub const SPTreeKind_SPTREE_KDTREE: SPTreeKind = 1;
+pub type SPTreeKind = ::std::os::raw::c_uint;
+pub const MeosType_T_UNKNOWN: MeosType = 0;
+pub const MeosType_T_BOOL: MeosType = 1;
+pub const MeosType_T_DATE: MeosType = 2;
+pub const MeosType_T_DATEMULTIRANGE: MeosType = 3;
+pub const MeosType_T_DATERANGE: MeosType = 4;
+pub const MeosType_T_DATESET: MeosType = 5;
+pub const MeosType_T_DATESPAN: MeosType = 6;
+pub const MeosType_T_DATESPANSET: MeosType = 7;
+pub const MeosType_T_DOUBLE2: MeosType = 8;
+pub const MeosType_T_DOUBLE3: MeosType = 9;
+pub const MeosType_T_DOUBLE4: MeosType = 10;
+pub const MeosType_T_FLOAT8: MeosType = 11;
+pub const MeosType_T_FLOATSET: MeosType = 12;
+pub const MeosType_T_FLOATSPAN: MeosType = 13;
+pub const MeosType_T_FLOATSPANSET: MeosType = 14;
+pub const MeosType_T_INT4: MeosType = 15;
+pub const MeosType_T_INT4MULTIRANGE: MeosType = 16;
+pub const MeosType_T_INT4RANGE: MeosType = 17;
+pub const MeosType_T_INTSET: MeosType = 18;
+pub const MeosType_T_INTSPAN: MeosType = 19;
+pub const MeosType_T_INTSPANSET: MeosType = 20;
+pub const MeosType_T_INT8: MeosType = 21;
+pub const MeosType_T_INT8MULTIRANGE: MeosType = 52;
+pub const MeosType_T_INT8RANGE: MeosType = 53;
+pub const MeosType_T_BIGINTSET: MeosType = 22;
+pub const MeosType_T_BIGINTSPAN: MeosType = 23;
+pub const MeosType_T_BIGINTSPANSET: MeosType = 24;
+pub const MeosType_T_STBOX: MeosType = 25;
+pub const MeosType_T_TBOOL: MeosType = 26;
+pub const MeosType_T_TBOX: MeosType = 27;
+pub const MeosType_T_TDOUBLE2: MeosType = 28;
+pub const MeosType_T_TDOUBLE3: MeosType = 29;
+pub const MeosType_T_TDOUBLE4: MeosType = 30;
+pub const MeosType_T_TEXT: MeosType = 31;
+pub const MeosType_T_TEXTSET: MeosType = 32;
+pub const MeosType_T_TFLOAT: MeosType = 33;
+pub const MeosType_T_TIMESTAMPTZ: MeosType = 34;
+pub const MeosType_T_TINT: MeosType = 35;
+pub const MeosType_T_TSTZMULTIRANGE: MeosType = 36;
+pub const MeosType_T_TSTZRANGE: MeosType = 37;
+pub const MeosType_T_TSTZSET: MeosType = 38;
+pub const MeosType_T_TSTZSPAN: MeosType = 39;
+pub const MeosType_T_TSTZSPANSET: MeosType = 40;
+pub const MeosType_T_TTEXT: MeosType = 41;
+pub const MeosType_T_GEOMETRY: MeosType = 42;
+pub const MeosType_T_GEOMSET: MeosType = 43;
+pub const MeosType_T_GEOGRAPHY: MeosType = 44;
+pub const MeosType_T_GEOGSET: MeosType = 45;
+pub const MeosType_T_TGEOMPOINT: MeosType = 46;
+pub const MeosType_T_TGEOGPOINT: MeosType = 47;
+pub const MeosType_T_NPOINT: MeosType = 48;
+pub const MeosType_T_NPOINTSET: MeosType = 49;
+pub const MeosType_T_NSEGMENT: MeosType = 50;
+pub const MeosType_T_TNPOINT: MeosType = 51;
+pub const MeosType_T_POSE: MeosType = 54;
+pub const MeosType_T_POSESET: MeosType = 55;
+pub const MeosType_T_TPOSE: MeosType = 56;
+pub const MeosType_T_CBUFFER: MeosType = 57;
+pub const MeosType_T_CBUFFERSET: MeosType = 58;
+pub const MeosType_T_TCBUFFER: MeosType = 59;
+pub const MeosType_T_TGEOMETRY: MeosType = 60;
+pub const MeosType_T_TGEOGRAPHY: MeosType = 61;
+pub const MeosType_T_TRGEOMETRY: MeosType = 62;
+pub const MeosType_T_JSONB: MeosType = 63;
+pub const MeosType_T_JSONPATH: MeosType = 64;
+pub const MeosType_T_JSONBSET: MeosType = 65;
+pub const MeosType_T_TJSONB: MeosType = 66;
+pub const MeosType_T_TBIGINT: MeosType = 67;
+pub const MeosType_T_H3INDEX: MeosType = 68;
+pub const MeosType_T_H3INDEXSET: MeosType = 69;
+pub const MeosType_T_TH3INDEX: MeosType = 70;
+pub const MeosType_T_QUADBIN: MeosType = 71;
+pub const MeosType_T_QUADBINSET: MeosType = 72;
+pub const MeosType_T_TQUADBIN: MeosType = 73;
+pub const MeosType_T_PCPOINT: MeosType = 74;
+pub const MeosType_T_PCPOINTSET: MeosType = 75;
+pub const MeosType_T_TPCPOINT: MeosType = 76;
+pub const MeosType_T_PCPATCH: MeosType = 77;
+pub const MeosType_T_PCPATCHSET: MeosType = 78;
+pub const MeosType_T_TPCPATCH: MeosType = 79;
+pub const MeosType_T_TPCBOX: MeosType = 80;
+pub const MeosType_T_RAQUET: MeosType = 81;
+pub const MeosType_T_POSECHAIN: MeosType = 82;
+pub const MeosType_T_POSECHAINSET: MeosType = 83;
+pub const MeosType_T_TPOSECHAIN: MeosType = 84;
+pub const MeosType_T_S2CELL: MeosType = 85;
+pub const MeosType_T_S2CELLSET: MeosType = 86;
+pub const MeosType_T_TS2CELL: MeosType = 87;
+pub const MeosType_NUM_MEOS_TYPES: MeosType = 88;
+pub type MeosType = ::std::os::raw::c_uint;
+pub const MeosOper_UNKNOWN_OP: MeosOper = 0;
+pub const MeosOper_EQ_OP: MeosOper = 1;
+pub const MeosOper_NE_OP: MeosOper = 2;
+pub const MeosOper_LT_OP: MeosOper = 3;
+pub const MeosOper_LE_OP: MeosOper = 4;
+pub const MeosOper_GT_OP: MeosOper = 5;
+pub const MeosOper_GE_OP: MeosOper = 6;
+pub const MeosOper_ADJACENT_OP: MeosOper = 7;
+pub const MeosOper_UNION_OP: MeosOper = 8;
+pub const MeosOper_MINUS_OP: MeosOper = 9;
+pub const MeosOper_INTERSECT_OP: MeosOper = 10;
+pub const MeosOper_OVERLAPS_OP: MeosOper = 11;
+pub const MeosOper_CONTAINS_OP: MeosOper = 12;
+pub const MeosOper_CONTAINED_OP: MeosOper = 13;
+pub const MeosOper_SAME_OP: MeosOper = 14;
+pub const MeosOper_LEFT_OP: MeosOper = 15;
+pub const MeosOper_OVERLEFT_OP: MeosOper = 16;
+pub const MeosOper_RIGHT_OP: MeosOper = 17;
+pub const MeosOper_OVERRIGHT_OP: MeosOper = 18;
+pub const MeosOper_BELOW_OP: MeosOper = 19;
+pub const MeosOper_OVERBELOW_OP: MeosOper = 20;
+pub const MeosOper_ABOVE_OP: MeosOper = 21;
+pub const MeosOper_OVERABOVE_OP: MeosOper = 22;
+pub const MeosOper_FRONT_OP: MeosOper = 23;
+pub const MeosOper_OVERFRONT_OP: MeosOper = 24;
+pub const MeosOper_BACK_OP: MeosOper = 25;
+pub const MeosOper_OVERBACK_OP: MeosOper = 26;
+pub const MeosOper_BEFORE_OP: MeosOper = 27;
+pub const MeosOper_OVERBEFORE_OP: MeosOper = 28;
+pub const MeosOper_AFTER_OP: MeosOper = 29;
+pub const MeosOper_OVERAFTER_OP: MeosOper = 30;
+pub const MeosOper_EVEREQ_OP: MeosOper = 31;
+pub const MeosOper_EVERNE_OP: MeosOper = 32;
+pub const MeosOper_EVERLT_OP: MeosOper = 33;
+pub const MeosOper_EVERLE_OP: MeosOper = 34;
+pub const MeosOper_EVERGT_OP: MeosOper = 35;
+pub const MeosOper_EVERGE_OP: MeosOper = 36;
+pub const MeosOper_ALWAYSEQ_OP: MeosOper = 37;
+pub const MeosOper_ALWAYSNE_OP: MeosOper = 38;
+pub const MeosOper_ALWAYSLT_OP: MeosOper = 39;
+pub const MeosOper_ALWAYSLE_OP: MeosOper = 40;
+pub const MeosOper_ALWAYSGT_OP: MeosOper = 41;
+pub const MeosOper_ALWAYSGE_OP: MeosOper = 42;
+pub const MeosOper_TEMPCONTAINS_OP: MeosOper = 43;
+pub const MeosOper_TEMPCONTAINED_OP: MeosOper = 44;
+pub type MeosOper = ::std::os::raw::c_uint;
 pub const spatialRel_INTERSECTS: spatialRel = 0;
 pub const spatialRel_CONTAINS: spatialRel = 1;
 pub const spatialRel_TOUCHES: spatialRel = 2;
 pub const spatialRel_COVERS: spatialRel = 3;
 pub type spatialRel = ::std::os::raw::c_uint;
-pub const SkipListType_TEMPORAL: SkipListType = 0;
-pub const SkipListType_KEYVALUE: SkipListType = 1;
+pub const SkipListType_SKIPLIST_TEMPORAL: SkipListType = 0;
+pub const SkipListType_SKIPLIST_KEYVALUE: SkipListType = 1;
 pub type SkipListType = ::std::os::raw::c_uint;
+pub const nullHandleType_NULL_INVALID: nullHandleType = 0;
+pub const nullHandleType_NULL_ERROR: nullHandleType = 1;
+pub const nullHandleType_NULL_JSON_NULL: nullHandleType = 2;
+pub const nullHandleType_NULL_DELETE: nullHandleType = 3;
+pub const nullHandleType_NULL_RETURN: nullHandleType = 4;
+pub type nullHandleType = ::std::os::raw::c_uint;
+pub const MeosPixType_MEOS_PT_UINT8: MeosPixType = 0;
+pub const MeosPixType_MEOS_PT_INT16: MeosPixType = 1;
+pub const MeosPixType_MEOS_PT_INT32: MeosPixType = 2;
+pub const MeosPixType_MEOS_PT_FLOAT32: MeosPixType = 3;
+pub const MeosPixType_MEOS_PT_FLOAT64: MeosPixType = 4;
+pub const MeosPixType_MEOS_PT_INT8: MeosPixType = 5;
+pub const MeosPixType_MEOS_PT_UINT16: MeosPixType = 6;
+pub const MeosPixType_MEOS_PT_UINT32: MeosPixType = 7;
+pub const MeosPixType_MEOS_PT_INT64: MeosPixType = 8;
+pub const MeosPixType_MEOS_PT_UINT64: MeosPixType = 9;
+pub const MeosPixType_MEOS_PT_FLOAT16: MeosPixType = 10;
+pub type MeosPixType = ::std::os::raw::c_uint;
+pub const COMPRESSIONS_PC_NONE: COMPRESSIONS = 0;
+pub const COMPRESSIONS_PC_DIMENSIONAL: COMPRESSIONS = 1;
+pub const COMPRESSIONS_PC_LAZPERF: COMPRESSIONS = 2;
+pub type COMPRESSIONS = ::std::os::raw::c_uint;
+pub const ENDIANS_PC_XDR: ENDIANS = 0;
+pub const ENDIANS_PC_NDR: ENDIANS = 1;
+pub type ENDIANS = ::std::os::raw::c_uint;
+pub const PC_FILTERTYPE_PC_GT: PC_FILTERTYPE = 0;
+pub const PC_FILTERTYPE_PC_LT: PC_FILTERTYPE = 1;
+pub const PC_FILTERTYPE_PC_EQUAL: PC_FILTERTYPE = 2;
+pub const PC_FILTERTYPE_PC_BETWEEN: PC_FILTERTYPE = 3;
+pub type PC_FILTERTYPE = ::std::os::raw::c_uint;
 
 // --- #define constants ---
+pub const GET_MAX: bool = false;
+pub const GET_MIN: bool = true;
+pub const INVERT: bool = true;
+pub const INVERT_NO: bool = false;
 pub const LWFLAG_BBOX: u32 = 4;
 pub const LWFLAG_GEODETIC: u32 = 8;
 pub const LWFLAG_M: u32 = 2;
@@ -209,6 +341,7 @@ pub const LWFLAG_READONLY: u32 = 16;
 pub const LWFLAG_SOLID: u32 = 32;
 pub const LWFLAG_VERSBIT2: u32 = 128;
 pub const LWFLAG_Z: u32 = 1;
+pub const MEOS_ARRAY_INITIAL_SIZE: u32 = 16;
 pub const MEOS_FLAGS_INTERP: u32 = 12;
 pub const MEOS_FLAG_BYVAL: u32 = 1;
 pub const MEOS_FLAG_CONTINUOUS: u32 = 2;
@@ -218,6 +351,18 @@ pub const MEOS_FLAG_ORDERED: u32 = 2;
 pub const MEOS_FLAG_T: u32 = 64;
 pub const MEOS_FLAG_X: u32 = 16;
 pub const MEOS_FLAG_Z: u32 = 32;
+pub const NORMALIZE: bool = true;
+pub const NUMERIC_MAX_PRECISION: u32 = 1000;
+pub const NUMERIC_MAX_SCALE: u32 = 1000;
+pub const NUMERIC_MIN_DISPLAY_SCALE: u32 = 0;
+pub const NUMERIC_MIN_SIG_DIGITS: u32 = 16;
+pub const OUT_DEFAULT_DECIMAL_DIGITS: u32 = 15;
+pub const REST_AT: bool = true;
+pub const REST_MINUS: bool = false;
+pub const S2_MAX_LEVEL: u32 = 30;
+pub const S2_MIN_LEVEL: u32 = 0;
+pub const S2_NUM_FACES: u32 = 6;
+pub const S2_TOKEN_MAXLEN: u32 = 16;
 pub const SKIPLIST_MAXLEVEL: u32 = 32;
 pub const WKB_EXTENDED: u32 = 4;
 pub const WKB_HEX: u32 = 32;
@@ -234,16 +379,27 @@ pub const WKT_SFSQL: u32 = 2;
 // --- structs ---
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct varlena {
+    pub vl_len_: [::std::os::raw::c_char; 4usize],
+    pub vl_dat: [::std::os::raw::c_char; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct NumericData {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct pg_prng_state {
+    pub s0: uint64,
+    pub s1: uint64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct Interval {
     pub time: TimeOffset,
     pub day: int32,
     pub month: int32,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct varlena {
-    pub vl_len_: [::std::os::raw::c_char; 4usize],
-    pub vl_dat: [::std::os::raw::c_char; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -302,6 +458,21 @@ pub struct STBox {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct TPCBox {
+    pub period: Span,
+    pub xmin: f64,
+    pub ymin: f64,
+    pub zmin: f64,
+    pub xmax: f64,
+    pub ymax: f64,
+    pub zmax: f64,
+    pub srid: ::std::os::raw::c_int,
+    pub flags: int16,
+    pub padding: [::std::os::raw::c_char; 2usize],
+    pub pcid: ::std::os::raw::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct Temporal {
     pub vl_len_: int32,
     pub temptype: uint8,
@@ -354,7 +525,29 @@ pub struct Match {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct SkipList {
-    _unused: [u8; 0],
+    pub key_size: size_t,
+    pub value_size: size_t,
+    pub capacity: ::std::os::raw::c_int,
+    pub length: ::std::os::raw::c_int,
+    pub next: ::std::os::raw::c_int,
+    pub tail: ::std::os::raw::c_int,
+    pub freed: *mut ::std::os::raw::c_int,
+    pub freecount: ::std::os::raw::c_int,
+    pub freecap: ::std::os::raw::c_int,
+    pub extra: *mut ::std::os::raw::c_void,
+    pub extrasize: size_t,
+    pub comp_fn: *mut ::std::os::raw::c_void,
+    pub merge_fn: *mut ::std::os::raw::c_void,
+    pub elems: *mut SkipListElem,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct MeosArray {
+    pub capacity: size_t,
+    pub count: size_t,
+    pub elem_size: size_t,
+    pub varlength: bool,
+    pub elems: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -363,27 +556,30 @@ pub struct RTree {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct temptype_catalog_struct {
-    pub temptype: meosType,
-    pub basetype: meosType,
+pub struct RTreeNNCursor {
+    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct settype_catalog_struct {
-    pub settype: meosType,
-    pub basetype: meosType,
+pub struct SPTree {
+    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct spantype_catalog_struct {
-    pub spantype: meosType,
-    pub basetype: meosType,
+pub struct SPNNCursor {
+    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct spansettype_catalog_struct {
-    pub spansettype: meosType,
-    pub spantype: meosType,
+pub struct reltype_catalog_struct {
+    pub settype_basetype: MeosType,
+    pub spantype_basetype: MeosType,
+    pub temptype_basetype: MeosType,
+    pub basetype_settype: MeosType,
+    pub basetype_spantype: MeosType,
+    pub spansettype_spantype: MeosType,
+    pub spantype_spansettype: MeosType,
+    pub type_bboxtype: MeosType,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -686,7 +882,11 @@ pub struct LWPROJ {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Cbuffer {
-    _unused: [u8; 0],
+    pub vl_len_: int32,
+    pub srid: int32,
+    pub radius: f64,
+    pub x: f64,
+    pub y: f64,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -711,16 +911,302 @@ pub struct Nsegment {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct Pcpoint {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Pcpatch {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCSCHEMA {
+    pub pcid: ::std::os::raw::c_uint,
+    pub ndims: ::std::os::raw::c_uint,
+    pub size: size_t,
+    pub dims: *mut *mut PCDIMENSION,
+    pub srid: ::std::os::raw::c_uint,
+    pub xdim: *mut PCDIMENSION,
+    pub ydim: *mut PCDIMENSION,
+    pub zdim: *mut PCDIMENSION,
+    pub mdim: *mut PCDIMENSION,
+    pub compression: ::std::os::raw::c_uint,
+    pub namehash: *mut hashtable,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCDimensionSpec {
+    pub name: *const ::std::os::raw::c_char,
+    pub description: *const ::std::os::raw::c_char,
+    pub position: ::std::os::raw::c_int,
+    pub interpretation: *const ::std::os::raw::c_char,
+    pub scale: f64,
+    pub offset: f64,
+    pub active: bool,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct Pose {
     _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct GeoPoseFrame {
+    pub frame_id: ::std::os::raw::c_int,
+    pub authority: *const ::std::os::raw::c_char,
+    pub code: *const ::std::os::raw::c_char,
+    pub name: *const ::std::os::raw::c_char,
+    pub srid: ::std::os::raw::c_int,
+    pub is_geographic: bool,
+    pub description: *const ::std::os::raw::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PoseChain {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Raquet {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Raster {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct GeomVal {
+    pub geom: *mut GSERIALIZED,
+    pub val: f64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Pixel {
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+    pub nodata: bool,
+    pub value: f64,
+    pub geom: *mut GSERIALIZED,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct BandStats {
+    pub count: ::std::os::raw::c_uint,
+    pub sum: f64,
+    pub mean: f64,
+    pub stddev: f64,
+    pub min: f64,
+    pub max: f64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ValueCount {
+    pub value: f64,
+    pub count: ::std::os::raw::c_uint,
+    pub percent: f64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct RasterAlignState {
+    pub grid: *mut Raster,
+    pub aligned: bool,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct RasterUnionState {
+    pub band: ::std::os::raw::c_int,
+    pub uniontype: ::std::os::raw::c_int,
+    pub named: bool,
+    pub numbands: ::std::os::raw::c_int,
+    pub rasters: *mut *mut Raster,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct RasterStatsState {
+    pub band: ::std::os::raw::c_int,
+    pub exclude_nodata: bool,
+    pub count: uint64,
+    pub sum: f64,
+    pub min: f64,
+    pub max: f64,
+    pub mean: f64,
+    pub q: f64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct TimeTzADT {
+    pub time: TimeADT,
+    pub zone: int32,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct entry {
+    pub k: *mut ::std::os::raw::c_void,
+    pub v: *mut ::std::os::raw::c_void,
+    pub h: ::std::os::raw::c_uint,
+    pub next: *mut entry,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct hashtable {
+    pub tablelength: ::std::os::raw::c_uint,
+    pub table: *mut *mut entry,
+    pub entrycount: ::std::os::raw::c_uint,
+    pub loadlimit: ::std::os::raw::c_uint,
+    pub primeindex: ::std::os::raw::c_uint,
+    pub hashfn: *mut ::std::os::raw::c_void,
+    pub eqfn: *mut ::std::os::raw::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCDIMENSION {
+    pub name: *mut ::std::os::raw::c_char,
+    pub description: *mut ::std::os::raw::c_char,
+    pub position: ::std::os::raw::c_uint,
+    pub size: ::std::os::raw::c_uint,
+    pub byteoffset: ::std::os::raw::c_uint,
+    pub interpretation: ::std::os::raw::c_uint,
+    pub scale: f64,
+    pub offset: f64,
+    pub active: ::std::os::raw::c_uchar,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCDIMSTAT {
+    pub total_runs: ::std::os::raw::c_uint,
+    pub total_commonbits: ::std::os::raw::c_uint,
+    pub recommended_compression: ::std::os::raw::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCDIMSTATS {
+    pub ndims: ::std::os::raw::c_int,
+    pub total_points: ::std::os::raw::c_uint,
+    pub total_patches: ::std::os::raw::c_uint,
+    pub stats: *mut PCDIMSTAT,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPOINT {
+    pub readonly: ::std::os::raw::c_schar,
+    pub schema: *const PCSCHEMA,
+    pub data: *mut ::std::os::raw::c_uchar,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPOINTLIST {
+    pub mem: *mut ::std::os::raw::c_void,
+    pub npoints: ::std::os::raw::c_uint,
+    pub maxpoints: ::std::os::raw::c_uint,
+    pub points: *mut *mut PCPOINT,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCBYTES {
+    pub size: size_t,
+    pub npoints: ::std::os::raw::c_uint,
+    pub interpretation: ::std::os::raw::c_uint,
+    pub compression: ::std::os::raw::c_uint,
+    pub readonly: ::std::os::raw::c_uint,
+    pub bytes: *mut ::std::os::raw::c_uchar,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCBOUNDS {
+    pub xmin: f64,
+    pub xmax: f64,
+    pub ymin: f64,
+    pub ymax: f64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCSTATS {
+    pub min: PCPOINT,
+    pub max: PCPOINT,
+    pub avg: PCPOINT,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPATCH {
+    pub type_: ::std::os::raw::c_int,
+    pub readonly: ::std::os::raw::c_schar,
+    pub schema: *const PCSCHEMA,
+    pub npoints: ::std::os::raw::c_uint,
+    pub bounds: PCBOUNDS,
+    pub stats: *mut PCSTATS,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPATCH_UNCOMPRESSED {
+    pub type_: ::std::os::raw::c_int,
+    pub readonly: ::std::os::raw::c_schar,
+    pub schema: *const PCSCHEMA,
+    pub npoints: ::std::os::raw::c_uint,
+    pub bounds: PCBOUNDS,
+    pub stats: *mut PCSTATS,
+    pub maxpoints: ::std::os::raw::c_uint,
+    pub datasize: size_t,
+    pub data: *mut ::std::os::raw::c_uchar,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPATCH_DIMENSIONAL {
+    pub type_: ::std::os::raw::c_int,
+    pub readonly: ::std::os::raw::c_schar,
+    pub schema: *const PCSCHEMA,
+    pub npoints: ::std::os::raw::c_uint,
+    pub bounds: PCBOUNDS,
+    pub stats: *mut PCSTATS,
+    pub bytes: *mut PCBYTES,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct PCPATCH_LAZPERF {
+    pub type_: ::std::os::raw::c_int,
+    pub readonly: ::std::os::raw::c_schar,
+    pub schema: *const PCSCHEMA,
+    pub npoints: ::std::os::raw::c_uint,
+    pub bounds: PCBOUNDS,
+    pub stats: *mut PCSTATS,
+    pub lazperfsize: size_t,
+    pub lazperf: *mut ::std::os::raw::c_uchar,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct SERIALIZED_POINT {
+    pub size: ::std::os::raw::c_uint,
+    pub pcid: ::std::os::raw::c_uint,
+    pub data: [::std::os::raw::c_uchar; 1usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct SERIALIZED_PATCH {
+    pub size: ::std::os::raw::c_uint,
+    pub pcid: ::std::os::raw::c_uint,
+    pub compression: ::std::os::raw::c_uint,
+    pub npoints: ::std::os::raw::c_uint,
+    pub bounds: PCBOUNDS,
+    pub data: [::std::os::raw::c_uchar; 1usize],
 }
 
 // --- functions ---
 extern "C" {
+    pub fn bool_in(str_: *const ::std::os::raw::c_char) -> bool;
+}
+extern "C" {
+    pub fn bool_out(b: bool) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn float8_out(num: f64, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
     pub fn date_in(str_: *const ::std::os::raw::c_char) -> DateADT;
 }
 extern "C" {
-    pub fn date_out(d: DateADT) -> *mut ::std::os::raw::c_char;
+    pub fn date_out(date: DateADT) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn interval_cmp(interv1: *const Interval, interv2: *const Interval) -> ::std::os::raw::c_int;
@@ -735,19 +1221,94 @@ extern "C" {
     pub fn time_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimeADT;
 }
 extern "C" {
-    pub fn time_out(t: TimeADT) -> *mut ::std::os::raw::c_char;
+    pub fn time_out(time: TimeADT) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn timestamp_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> Timestamp;
 }
 extern "C" {
-    pub fn timestamp_out(t: Timestamp) -> *mut ::std::os::raw::c_char;
+    pub fn timestamp_out(ts: Timestamp) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn timestamptz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimestampTz;
 }
 extern "C" {
-    pub fn timestamptz_out(t: TimestampTz) -> *mut ::std::os::raw::c_char;
+    pub fn timestamptz_out(tstz: TimestampTz) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn cstring_to_text(str_: *const ::std::os::raw::c_char) -> *mut text;
+}
+extern "C" {
+    pub fn text_to_cstring(txt: *const text) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn text_in(str_: *const ::std::os::raw::c_char) -> *mut text;
+}
+extern "C" {
+    pub fn text_out(txt: *const text) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn text_cmp(txt1: *const text, txt2: *const text, collid: Oid) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn text_copy(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_initcap(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_lower(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_upper(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn textcat_text_text(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn meos_error(errlevel: ::std::os::raw::c_int, errcode: ::std::os::raw::c_int, format: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn meos_errno() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_errno_set(err: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_errno_restore(err: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_errno_reset() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_array_create(elem_size: ::std::os::raw::c_int) -> *mut MeosArray;
+}
+extern "C" {
+    pub fn meos_array_add(array: *mut MeosArray, value: *mut ::std::os::raw::c_void);
+}
+extern "C" {
+    pub fn meos_array_get(array: *const MeosArray, n: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn meos_array_count(array: *const MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_array_reset(array: *mut MeosArray);
+}
+extern "C" {
+    pub fn meos_array_reset_free(array: *mut MeosArray);
+}
+extern "C" {
+    pub fn meos_array_destroy(array: *mut MeosArray);
+}
+extern "C" {
+    pub fn meos_array_destroy_free(array: *mut MeosArray);
+}
+extern "C" {
+    pub fn index_result_create() -> *mut MeosArray;
+}
+extern "C" {
+    pub fn index_result_id(result: *const MeosArray, n: ::std::os::raw::c_int, id: *mut ::std::os::raw::c_long) -> bool;
 }
 extern "C" {
     pub fn rtree_create_intspan() -> *mut RTree;
@@ -774,37 +1335,142 @@ extern "C" {
     pub fn rtree_free(rtree: *mut RTree);
 }
 extern "C" {
-    pub fn rtree_insert(rtree: *mut RTree, box_: *mut ::std::os::raw::c_void, id: ::std::os::raw::c_long);
+    pub fn rtree_num_entries(rtree: *const RTree) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn rtree_search(rtree: *const RTree, query: *const ::std::os::raw::c_void, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
+    pub fn rtree_mem_size(rtree: *const RTree) -> ::std::os::raw::c_long;
 }
 extern "C" {
-    pub fn meos_error(errlevel: ::std::os::raw::c_int, errcode: ::std::os::raw::c_int, format: *const ::std::os::raw::c_char);
+    pub fn rtree_height(rtree: *const RTree) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn meos_errno() -> ::std::os::raw::c_int;
+    pub fn rtree_insert(rtree: *mut RTree, box_: *mut ::std::os::raw::c_void, id: ::std::os::raw::c_long) -> bool;
 }
 extern "C" {
-    pub fn meos_errno_set(err: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn rtree_load(rtree: *mut RTree, boxes: *const ::std::os::raw::c_void, ids: *const ::std::os::raw::c_long, count: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
-    pub fn meos_errno_restore(err: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn rtree_insert_temporal(rtree: *mut RTree, temp: *const Temporal, id: ::std::os::raw::c_long) -> bool;
 }
 extern "C" {
-    pub fn meos_errno_reset() -> ::std::os::raw::c_int;
+    pub fn rtree_insert_temporal_split(rtree: *mut RTree, temp: *const Temporal, id: ::std::os::raw::c_long, maxboxes: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
-    pub fn meos_initialize_timezone(name: *const ::std::os::raw::c_char);
+    pub fn rtree_search(rtree: *const RTree, op: IndexSearchOp, query: *const ::std::os::raw::c_void, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn rtree_join(rtree1: *const RTree, rtree2: *const RTree, op: IndexSearchOp, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn rtree_search_temporal(rtree: *const RTree, op: IndexSearchOp, temp: *const Temporal, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn rtree_search_temporal_dedup(rtree: *const RTree, op: IndexSearchOp, temp: *const Temporal, maxboxes: ::std::os::raw::c_int, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn rtree_nn_cursor_open(rtree: *const RTree, query: *const ::std::os::raw::c_void) -> *mut RTreeNNCursor;
+}
+extern "C" {
+    pub fn rtree_nn_cursor_next(cursor: *mut RTreeNNCursor, id_out: *mut ::std::os::raw::c_long, dist_out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn rtree_nn_cursor_close(cursor: *mut RTreeNNCursor);
+}
+extern "C" {
+    pub fn sptree_create_intspan(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_bigintspan(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_floatspan(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_datespan(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_tstzspan(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_tbox(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_create_stbox(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn sptree_free(sptree: *mut SPTree);
+}
+extern "C" {
+    pub fn sptree_num_entries(sptree: *const SPTree) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_mem_size(sptree: *const SPTree) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn sptree_height(sptree: *const SPTree) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_insert(sptree: *mut SPTree, box_: *mut ::std::os::raw::c_void, id: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn sptree_load(sptree: *mut SPTree, boxes: *const ::std::os::raw::c_void, ids: *const ::std::os::raw::c_long, count: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn sptree_insert_temporal(sptree: *mut SPTree, temp: *const Temporal, id: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn sptree_insert_temporal_split(sptree: *mut SPTree, temp: *const Temporal, id: ::std::os::raw::c_long, maxboxes: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn sptree_search(sptree: *const SPTree, op: IndexSearchOp, query: *const ::std::os::raw::c_void, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_join(sptree1: *const SPTree, sptree2: *const SPTree, op: IndexSearchOp, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_search_temporal(sptree: *const SPTree, op: IndexSearchOp, temp: *const Temporal, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_search_temporal_dedup(sptree: *const SPTree, op: IndexSearchOp, temp: *const Temporal, maxboxes: ::std::os::raw::c_int, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_nn_cursor_open(sptree: *const SPTree, query: *const ::std::os::raw::c_void) -> *mut SPNNCursor;
+}
+extern "C" {
+    pub fn sptree_nn_cursor_next(cursor: *mut SPNNCursor, id_out: *mut ::std::os::raw::c_long, dist_out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn sptree_nn_cursor_close(cursor: *mut SPNNCursor);
 }
 extern "C" {
     pub fn meos_initialize_error_handler(err_handler: error_handler_fn);
 }
 extern "C" {
+    pub fn meos_initialize_interrupt_handler(handler: interrupt_handler_fn);
+}
+extern "C" {
+    pub fn meos_initialize_allocator(malloc_fn: *mut ::std::os::raw::c_void, realloc_fn: *mut ::std::os::raw::c_void, free_fn: *mut ::std::os::raw::c_void);
+}
+extern "C" {
+    pub fn meos_initialize_noexit_error_handler();
+}
+extern "C" {
+    pub fn meos_initialize_timezone(name: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn meos_initialize_collation();
+}
+extern "C" {
     pub fn meos_finalize_timezone();
 }
 extern "C" {
+    pub fn meos_finalize_collation();
+}
+extern "C" {
     pub fn meos_finalize_projsrs();
+}
+extern "C" {
+    pub fn meos_finalize_relate();
 }
 extern "C" {
     pub fn meos_finalize_ways();
@@ -825,136 +1491,25 @@ extern "C" {
     pub fn meos_set_spatial_ref_sys_csv(path: *const ::std::os::raw::c_char);
 }
 extern "C" {
+    pub fn meos_set_ways_csv(path: *const ::std::os::raw::c_char);
+}
+extern "C" {
     pub fn meos_initialize();
 }
 extern "C" {
     pub fn meos_finalize();
 }
 extern "C" {
-    pub fn add_date_int(d: DateADT, days: int32) -> DateADT;
+    pub fn meos_version() -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn add_interval_interval(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+    pub fn meos_full_version() -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn add_timestamptz_interval(t: TimestampTz, interv: *const Interval) -> TimestampTz;
+    pub fn mobilitydb_version() -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn bool_in(str_: *const ::std::os::raw::c_char) -> bool;
-}
-extern "C" {
-    pub fn bool_out(b: bool) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn cstring2text(str_: *const ::std::os::raw::c_char) -> *mut text;
-}
-extern "C" {
-    pub fn date_to_timestamp(dateVal: DateADT) -> Timestamp;
-}
-extern "C" {
-    pub fn date_to_timestamptz(d: DateADT) -> TimestampTz;
-}
-extern "C" {
-    pub fn float_exp(d: f64) -> f64;
-}
-extern "C" {
-    pub fn float_ln(d: f64) -> f64;
-}
-extern "C" {
-    pub fn float_log10(d: f64) -> f64;
-}
-extern "C" {
-    pub fn float8_out(d: f64, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn float_round(d: f64, maxdd: ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn int32_cmp(l: int32, r: int32) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn int64_cmp(l: ::std::os::raw::c_long, r: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn interval_make(years: int32, months: int32, weeks: int32, days: int32, hours: int32, mins: int32, secs: f64) -> *mut Interval;
-}
-extern "C" {
-    pub fn minus_date_date(d1: DateADT, d2: DateADT) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn minus_date_int(d: DateADT, days: int32) -> DateADT;
-}
-extern "C" {
-    pub fn minus_timestamptz_interval(t: TimestampTz, interv: *const Interval) -> TimestampTz;
-}
-extern "C" {
-    pub fn minus_timestamptz_timestamptz(t1: TimestampTz, t2: TimestampTz) -> *mut Interval;
-}
-extern "C" {
-    pub fn mul_interval_double(interv: *const Interval, factor: f64) -> *mut Interval;
-}
-extern "C" {
-    pub fn pg_date_in(str_: *const ::std::os::raw::c_char) -> DateADT;
-}
-extern "C" {
-    pub fn pg_date_out(d: DateADT) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn pg_interval_cmp(interv1: *const Interval, interv2: *const Interval) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pg_interval_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut Interval;
-}
-extern "C" {
-    pub fn pg_interval_out(interv: *const Interval) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn pg_timestamp_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> Timestamp;
-}
-extern "C" {
-    pub fn pg_timestamp_out(t: Timestamp) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn pg_timestamptz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimestampTz;
-}
-extern "C" {
-    pub fn pg_timestamptz_out(t: TimestampTz) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn text2cstring(txt: *const text) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn text_cmp(txt1: *const text, txt2: *const text) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn text_copy(txt: *const text) -> *mut text;
-}
-extern "C" {
-    pub fn text_in(str_: *const ::std::os::raw::c_char) -> *mut text;
-}
-extern "C" {
-    pub fn text_initcap(txt: *const text) -> *mut text;
-}
-extern "C" {
-    pub fn text_lower(txt: *const text) -> *mut text;
-}
-extern "C" {
-    pub fn text_out(txt: *const text) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn text_upper(txt: *const text) -> *mut text;
-}
-extern "C" {
-    pub fn textcat_text_text(txt1: *const text, txt2: *const text) -> *mut text;
-}
-extern "C" {
-    pub fn timestamptz_shift(t: TimestampTz, interv: *const Interval) -> TimestampTz;
-}
-extern "C" {
-    pub fn timestamp_to_date(t: Timestamp) -> DateADT;
-}
-extern "C" {
-    pub fn timestamptz_to_date(t: TimestampTz) -> DateADT;
+    pub fn mobilitydb_full_version() -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn bigintset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
@@ -1146,10 +1701,10 @@ extern "C" {
     pub fn bigint_to_set(i: ::std::os::raw::c_long) -> *mut Set;
 }
 extern "C" {
-    pub fn bigint_to_span(i: ::std::os::raw::c_int) -> *mut Span;
+    pub fn bigint_to_span(i: ::std::os::raw::c_long) -> *mut Span;
 }
 extern "C" {
-    pub fn bigint_to_spanset(i: ::std::os::raw::c_int) -> *mut SpanSet;
+    pub fn bigint_to_spanset(i: ::std::os::raw::c_long) -> *mut SpanSet;
 }
 extern "C" {
     pub fn date_to_set(d: DateADT) -> *mut Set;
@@ -1185,6 +1740,9 @@ extern "C" {
     pub fn floatspan_to_intspan(s: *const Span) -> *mut Span;
 }
 extern "C" {
+    pub fn floatspan_to_bigintspan(s: *const Span) -> *mut Span;
+}
+extern "C" {
     pub fn floatspanset_to_intspanset(ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
@@ -1201,6 +1759,15 @@ extern "C" {
 }
 extern "C" {
     pub fn intspan_to_floatspan(s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intspan_to_bigintspan(s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn bigintspan_to_intspan(s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn bigintspan_to_floatspan(s: *const Span) -> *mut Span;
 }
 extern "C" {
     pub fn intspanset_to_floatspanset(ss: *const SpanSet) -> *mut SpanSet;
@@ -1245,7 +1812,7 @@ extern "C" {
     pub fn bigintset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_long) -> bool;
 }
 extern "C" {
-    pub fn bigintset_values(s: *const Set) -> *mut ::std::os::raw::c_long;
+    pub fn bigintset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_long;
 }
 extern "C" {
     pub fn bigintspan_lower(s: *const Span) -> ::std::os::raw::c_long;
@@ -1275,7 +1842,7 @@ extern "C" {
     pub fn dateset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut DateADT) -> bool;
 }
 extern "C" {
-    pub fn dateset_values(s: *const Set) -> *mut DateADT;
+    pub fn dateset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut DateADT;
 }
 extern "C" {
     pub fn datespan_duration(s: *const Span) -> *mut Interval;
@@ -1299,10 +1866,16 @@ extern "C" {
     pub fn datespanset_end_date(ss: *const SpanSet) -> DateADT;
 }
 extern "C" {
+    pub fn datespanset_lower(ss: *const SpanSet) -> DateADT;
+}
+extern "C" {
     pub fn datespanset_num_dates(ss: *const SpanSet) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn datespanset_start_date(ss: *const SpanSet) -> DateADT;
+}
+extern "C" {
+    pub fn datespanset_upper(ss: *const SpanSet) -> DateADT;
 }
 extern "C" {
     pub fn floatset_end_value(s: *const Set) -> f64;
@@ -1314,7 +1887,7 @@ extern "C" {
     pub fn floatset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut f64) -> bool;
 }
 extern "C" {
-    pub fn floatset_values(s: *const Set) -> *mut f64;
+    pub fn floatset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut f64;
 }
 extern "C" {
     pub fn floatspan_lower(s: *const Span) -> f64;
@@ -1344,7 +1917,7 @@ extern "C" {
     pub fn intset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
-    pub fn intset_values(s: *const Set) -> *mut ::std::os::raw::c_int;
+    pub fn intset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn intspan_lower(s: *const Span) -> ::std::os::raw::c_int;
@@ -1369,6 +1942,9 @@ extern "C" {
 }
 extern "C" {
     pub fn set_hash_extended(s: *const Set, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn set_mem_size(s: *const Set) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn set_num_values(s: *const Set) -> ::std::os::raw::c_int;
@@ -1398,6 +1974,9 @@ extern "C" {
     pub fn spanset_lower_inc(ss: *const SpanSet) -> bool;
 }
 extern "C" {
+    pub fn spanset_mem_size(ss: *const SpanSet) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn spanset_num_spans(ss: *const SpanSet) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -1407,7 +1986,7 @@ extern "C" {
     pub fn spanset_span_n(ss: *const SpanSet, i: ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn spanset_spanarr(ss: *const SpanSet) -> *mut *mut Span;
+    pub fn spanset_spanarr(ss: *const SpanSet, count: *mut ::std::os::raw::c_int) -> *mut *mut Span;
 }
 extern "C" {
     pub fn spanset_start_span(ss: *const SpanSet) -> *mut Span;
@@ -1425,7 +2004,7 @@ extern "C" {
     pub fn textset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut text) -> bool;
 }
 extern "C" {
-    pub fn textset_values(s: *const Set) -> *mut *mut text;
+    pub fn textset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
 }
 extern "C" {
     pub fn tstzset_end_value(s: *const Set) -> TimestampTz;
@@ -1437,7 +2016,7 @@ extern "C" {
     pub fn tstzset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut TimestampTz) -> bool;
 }
 extern "C" {
-    pub fn tstzset_values(s: *const Set) -> *mut TimestampTz;
+    pub fn tstzset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut TimestampTz;
 }
 extern "C" {
     pub fn tstzspan_duration(s: *const Span) -> *mut Interval;
@@ -1575,16 +2154,34 @@ extern "C" {
     pub fn timestamptz_tprecision(t: TimestampTz, duration: *const Interval, torigin: TimestampTz) -> TimestampTz;
 }
 extern "C" {
+    pub fn tstzset_scale(s: *const Set, duration: *const Interval) -> *mut Set;
+}
+extern "C" {
+    pub fn tstzset_shift(s: *const Set, shift: *const Interval) -> *mut Set;
+}
+extern "C" {
     pub fn tstzset_shift_scale(s: *const Set, shift: *const Interval, duration: *const Interval) -> *mut Set;
 }
 extern "C" {
     pub fn tstzset_tprecision(s: *const Set, duration: *const Interval, torigin: TimestampTz) -> *mut Set;
 }
 extern "C" {
+    pub fn tstzspan_scale(s: *const Span, duration: *const Interval) -> *mut Span;
+}
+extern "C" {
+    pub fn tstzspan_shift(s: *const Span, shift: *const Interval) -> *mut Span;
+}
+extern "C" {
     pub fn tstzspan_shift_scale(s: *const Span, shift: *const Interval, duration: *const Interval) -> *mut Span;
 }
 extern "C" {
     pub fn tstzspan_tprecision(s: *const Span, duration: *const Interval, torigin: TimestampTz) -> *mut Span;
+}
+extern "C" {
+    pub fn tstzspanset_scale(ss: *const SpanSet, duration: *const Interval) -> *mut SpanSet;
+}
+extern "C" {
+    pub fn tstzspanset_shift(ss: *const SpanSet, shift: *const Interval) -> *mut SpanSet;
 }
 extern "C" {
     pub fn tstzspanset_shift_scale(ss: *const SpanSet, shift: *const Interval, duration: *const Interval) -> *mut SpanSet;
@@ -1614,6 +2211,9 @@ extern "C" {
     pub fn set_ne(s1: *const Set, s2: *const Set) -> bool;
 }
 extern "C" {
+    pub fn set_sortkey(s: *const Set, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn span_cmp(s1: *const Span, s2: *const Span) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -1633,6 +2233,9 @@ extern "C" {
 }
 extern "C" {
     pub fn span_ne(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_sortkey(s: *const Span, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
     pub fn spanset_cmp(ss1: *const SpanSet, ss2: *const SpanSet) -> ::std::os::raw::c_int;
@@ -1656,7 +2259,10 @@ extern "C" {
     pub fn spanset_ne(ss1: *const SpanSet, ss2: *const SpanSet) -> bool;
 }
 extern "C" {
-    pub fn set_spans(s: *const Set) -> *mut Span;
+    pub fn spanset_sortkey(ss: *const SpanSet, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn set_spans(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn set_split_each_n_spans(s: *const Set, elems_per_span: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
@@ -1665,7 +2271,7 @@ extern "C" {
     pub fn set_split_n_spans(s: *const Set, span_count: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn spanset_spans(ss: *const SpanSet) -> *mut Span;
+    pub fn spanset_spans(ss: *const SpanSet, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn spanset_split_each_n_spans(ss: *const SpanSet, elems_per_span: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
@@ -1693,6 +2299,36 @@ extern "C" {
 }
 extern "C" {
     pub fn adjacent_span_timestamptz(s: *const Span, t: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn adjacent_bigint_span(i: ::std::os::raw::c_long, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_bigint_spanset(i: ::std::os::raw::c_long, ss: *const SpanSet) -> bool;
+}
+extern "C" {
+    pub fn adjacent_date_span(d: DateADT, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_date_spanset(d: DateADT, ss: *const SpanSet) -> bool;
+}
+extern "C" {
+    pub fn adjacent_float_span(d: f64, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_float_spanset(d: f64, ss: *const SpanSet) -> bool;
+}
+extern "C" {
+    pub fn adjacent_int_span(i: ::std::os::raw::c_int, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_int_spanset(i: ::std::os::raw::c_int, ss: *const SpanSet) -> bool;
+}
+extern "C" {
+    pub fn adjacent_timestamptz_span(t: TimestampTz, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_timestamptz_spanset(t: TimestampTz, ss: *const SpanSet) -> bool;
 }
 extern "C" {
     pub fn adjacent_spanset_bigint(ss: *const SpanSet, i: ::std::os::raw::c_long) -> bool;
@@ -1855,6 +2491,9 @@ extern "C" {
 }
 extern "C" {
     pub fn overlaps_spanset_spanset(ss1: *const SpanSet, ss2: *const SpanSet) -> bool;
+}
+extern "C" {
+    pub fn same_span_span(s1: *const Span, s2: *const Span) -> bool;
 }
 extern "C" {
     pub fn after_date_set(d: DateADT, s: *const Set) -> bool;
@@ -2304,13 +2943,37 @@ extern "C" {
     pub fn intersection_bigint_set(i: ::std::os::raw::c_long, s: *const Set) -> *mut Set;
 }
 extern "C" {
+    pub fn intersection_bigint_span(i: ::std::os::raw::c_long, s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intersection_bigint_spanset(i: ::std::os::raw::c_long, ss: *const SpanSet) -> *mut SpanSet;
+}
+extern "C" {
     pub fn intersection_date_set(d: DateADT, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_date_span(d: DateADT, s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intersection_date_spanset(d: DateADT, ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
     pub fn intersection_float_set(d: f64, s: *const Set) -> *mut Set;
 }
 extern "C" {
+    pub fn intersection_float_span(d: f64, s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intersection_float_spanset(d: f64, ss: *const SpanSet) -> *mut SpanSet;
+}
+extern "C" {
     pub fn intersection_int_set(i: ::std::os::raw::c_int, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_int_span(i: ::std::os::raw::c_int, s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intersection_int_spanset(i: ::std::os::raw::c_int, ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
     pub fn intersection_set_bigint(s: *const Set, i: ::std::os::raw::c_long) -> *mut Set;
@@ -2380,6 +3043,12 @@ extern "C" {
 }
 extern "C" {
     pub fn intersection_timestamptz_set(t: TimestampTz, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_timestamptz_span(t: TimestampTz, s: *const Span) -> *mut Span;
+}
+extern "C" {
+    pub fn intersection_timestamptz_spanset(t: TimestampTz, ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
     pub fn minus_bigint_set(i: ::std::os::raw::c_long, s: *const Set) -> *mut Set;
@@ -2496,7 +3165,7 @@ extern "C" {
     pub fn union_bigint_set(i: ::std::os::raw::c_long, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn union_bigint_span(s: *const Span, i: ::std::os::raw::c_long) -> *mut SpanSet;
+    pub fn union_bigint_span(i: ::std::os::raw::c_long, s: *const Span) -> *mut SpanSet;
 }
 extern "C" {
     pub fn union_bigint_spanset(i: ::std::os::raw::c_long, ss: *mut SpanSet) -> *mut SpanSet;
@@ -2505,7 +3174,7 @@ extern "C" {
     pub fn union_date_set(d: DateADT, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn union_date_span(s: *const Span, d: DateADT) -> *mut SpanSet;
+    pub fn union_date_span(d: DateADT, s: *const Span) -> *mut SpanSet;
 }
 extern "C" {
     pub fn union_date_spanset(d: DateADT, ss: *mut SpanSet) -> *mut SpanSet;
@@ -2514,7 +3183,7 @@ extern "C" {
     pub fn union_float_set(d: f64, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn union_float_span(s: *const Span, d: f64) -> *mut SpanSet;
+    pub fn union_float_span(d: f64, s: *const Span) -> *mut SpanSet;
 }
 extern "C" {
     pub fn union_float_spanset(d: f64, ss: *mut SpanSet) -> *mut SpanSet;
@@ -2664,7 +3333,7 @@ extern "C" {
     pub fn distance_set_int(s: *const Set, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn distance_set_timestamptz(s: *const Set, t: TimestampTz) -> f64;
+    pub fn distance_set_timestamptz(s: *const Set, t: TimestampTz) -> *mut Interval;
 }
 extern "C" {
     pub fn distance_span_bigint(s: *const Span, i: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
@@ -2679,7 +3348,7 @@ extern "C" {
     pub fn distance_span_int(s: *const Span, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn distance_span_timestamptz(s: *const Span, t: TimestampTz) -> f64;
+    pub fn distance_span_timestamptz(s: *const Span, t: TimestampTz) -> *mut Interval;
 }
 extern "C" {
     pub fn distance_spanset_bigint(ss: *const SpanSet, i: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
@@ -2694,19 +3363,19 @@ extern "C" {
     pub fn distance_spanset_int(ss: *const SpanSet, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn distance_spanset_timestamptz(ss: *const SpanSet, t: TimestampTz) -> f64;
+    pub fn distance_spanset_timestamptz(ss: *const SpanSet, t: TimestampTz) -> *mut Interval;
 }
 extern "C" {
-    pub fn distance_tstzset_tstzset(s1: *const Set, s2: *const Set) -> f64;
+    pub fn distance_tstzset_tstzset(s1: *const Set, s2: *const Set) -> *mut Interval;
 }
 extern "C" {
-    pub fn distance_tstzspan_tstzspan(s1: *const Span, s2: *const Span) -> f64;
+    pub fn distance_tstzspan_tstzspan(s1: *const Span, s2: *const Span) -> *mut Interval;
 }
 extern "C" {
-    pub fn distance_tstzspanset_tstzspan(ss: *const SpanSet, s: *const Span) -> f64;
+    pub fn distance_tstzspanset_tstzspan(ss: *const SpanSet, s: *const Span) -> *mut Interval;
 }
 extern "C" {
-    pub fn distance_tstzspanset_tstzspanset(ss1: *const SpanSet, ss2: *const SpanSet) -> f64;
+    pub fn distance_tstzspanset_tstzspanset(ss1: *const SpanSet, ss2: *const SpanSet) -> *mut Interval;
 }
 extern "C" {
     pub fn bigint_extent_transfn(state: *mut Span, i: ::std::os::raw::c_long) -> *mut Span;
@@ -2736,10 +3405,19 @@ extern "C" {
     pub fn set_extent_transfn(state: *mut Span, s: *const Set) -> *mut Span;
 }
 extern "C" {
+    pub fn set_union_combinefn(state1: *mut Set, state2: *mut Set) -> *mut Set;
+}
+extern "C" {
     pub fn set_union_finalfn(state: *mut Set) -> *mut Set;
 }
 extern "C" {
     pub fn set_union_transfn(state: *mut Set, s: *mut Set) -> *mut Set;
+}
+extern "C" {
+    pub fn setstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut Set;
+}
+extern "C" {
+    pub fn setstate_serialize(state: *const Set, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
     pub fn span_extent_transfn(state: *mut Span, s: *const Span) -> *mut Span;
@@ -2751,10 +3429,19 @@ extern "C" {
     pub fn spanset_extent_transfn(state: *mut Span, ss: *const SpanSet) -> *mut Span;
 }
 extern "C" {
+    pub fn spanset_union_combinefn(state1: *mut SpanSet, state2: *const SpanSet) -> *mut SpanSet;
+}
+extern "C" {
     pub fn spanset_union_finalfn(state: *mut SpanSet) -> *mut SpanSet;
 }
 extern "C" {
     pub fn spanset_union_transfn(state: *mut SpanSet, ss: *const SpanSet) -> *mut SpanSet;
+}
+extern "C" {
+    pub fn spansetstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut SpanSet;
+}
+extern "C" {
+    pub fn spansetstate_serialize(state: *const SpanSet, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
     pub fn text_union_transfn(state: *mut Set, txt: *const text) -> *mut Set;
@@ -2769,49 +3456,64 @@ extern "C" {
     pub fn bigint_get_bin(value: ::std::os::raw::c_long, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
 }
 extern "C" {
-    pub fn bigintspan_bins(s: *const Span, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn bigintspan_bins(s: *const Span, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn bigintspanset_bins(ss: *const SpanSet, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn bigintspan_get_bin(value: ::std::os::raw::c_long, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long) -> *mut Span;
+}
+extern "C" {
+    pub fn bigintspanset_bins(ss: *const SpanSet, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn date_get_bin(d: DateADT, duration: *const Interval, torigin: DateADT) -> DateADT;
 }
 extern "C" {
-    pub fn datespan_bins(s: *const Span, duration: *const Interval, torigin: DateADT, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn datespan_bins(s: *const Span, duration: *const Interval, torigin: DateADT, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn datespanset_bins(ss: *const SpanSet, duration: *const Interval, torigin: DateADT, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn datespan_get_bin(d: DateADT, duration: *const Interval, torigin: DateADT) -> *mut Span;
+}
+extern "C" {
+    pub fn datespanset_bins(ss: *const SpanSet, duration: *const Interval, torigin: DateADT, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn float_get_bin(value: f64, vsize: f64, vorigin: f64) -> f64;
 }
 extern "C" {
-    pub fn floatspan_bins(s: *const Span, vsize: f64, vorigin: f64, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn floatspan_bins(s: *const Span, vsize: f64, vorigin: f64, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn floatspanset_bins(ss: *const SpanSet, vsize: f64, vorigin: f64, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn floatspan_get_bin(value: f64, vsize: f64, vorigin: f64) -> *mut Span;
+}
+extern "C" {
+    pub fn floatspanset_bins(ss: *const SpanSet, vsize: f64, vorigin: f64, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn int_get_bin(value: ::std::os::raw::c_int, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn intspan_bins(s: *const Span, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn intspan_bins(s: *const Span, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn intspanset_bins(ss: *const SpanSet, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn intspan_get_bin(value: ::std::os::raw::c_int, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int) -> *mut Span;
+}
+extern "C" {
+    pub fn intspanset_bins(ss: *const SpanSet, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
     pub fn timestamptz_get_bin(t: TimestampTz, duration: *const Interval, torigin: TimestampTz) -> TimestampTz;
 }
 extern "C" {
-    pub fn tstzspan_bins(s: *const Span, duration: *const Interval, origin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tstzspan_bins(s: *const Span, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn tstzspanset_bins(ss: *const SpanSet, duration: *const Interval, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tstzspan_get_bin(t: TimestampTz, duration: *const Interval, torigin: TimestampTz) -> *mut Span;
 }
 extern "C" {
-    pub fn tbox_as_hexwkb(box_: *const TBox, variant: ::std::os::raw::c_uchar, size: *mut size_t) -> *mut ::std::os::raw::c_char;
+    pub fn tstzspanset_bins(ss: *const SpanSet, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
+}
+extern "C" {
+    pub fn tbox_as_hexwkb(box_: *const TBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn tbox_as_wkb(box_: *const TBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
@@ -2838,7 +3540,13 @@ extern "C" {
     pub fn int_timestamptz_to_tbox(i: ::std::os::raw::c_int, t: TimestampTz) -> *mut TBox;
 }
 extern "C" {
+    pub fn bigint_timestamptz_to_tbox(i: ::std::os::raw::c_long, t: TimestampTz) -> *mut TBox;
+}
+extern "C" {
     pub fn int_tstzspan_to_tbox(i: ::std::os::raw::c_int, s: *const Span) -> *mut TBox;
+}
+extern "C" {
+    pub fn bigint_tstzspan_to_tbox(i: ::std::os::raw::c_long, s: *const Span) -> *mut TBox;
 }
 extern "C" {
     pub fn numspan_tstzspan_to_tbox(span: *const Span, s: *const Span) -> *mut TBox;
@@ -2859,6 +3567,9 @@ extern "C" {
     pub fn int_to_tbox(i: ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
+    pub fn bigint_to_tbox(i: ::std::os::raw::c_long) -> *mut TBox;
+}
+extern "C" {
     pub fn set_to_tbox(s: *const Set) -> *mut TBox;
 }
 extern "C" {
@@ -2869,6 +3580,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tbox_to_intspan(box_: *const TBox) -> *mut Span;
+}
+extern "C" {
+    pub fn tbox_to_bigintspan(box_: *const TBox) -> *mut Span;
 }
 extern "C" {
     pub fn tbox_to_floatspan(box_: *const TBox) -> *mut Span;
@@ -2925,7 +3639,19 @@ extern "C" {
     pub fn tboxint_xmax(box_: *const TBox, result: *mut ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
+    pub fn tboxbigint_xmax(box_: *const TBox, result: *mut ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
     pub fn tboxint_xmin(box_: *const TBox, result: *mut ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn tboxbigint_xmin(box_: *const TBox, result: *mut ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn tfloatbox_expand(box_: *const TBox, d: f64) -> *mut TBox;
+}
+extern "C" {
+    pub fn tintbox_expand(box_: *const TBox, i: ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
     pub fn tbox_expand_time(box_: *const TBox, interv: *const Interval) -> *mut TBox;
@@ -2934,19 +3660,25 @@ extern "C" {
     pub fn tbox_round(box_: *const TBox, maxdd: ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tbox_shift_scale_time(box_: *const TBox, shift: *const Interval, duration: *const Interval) -> *mut TBox;
-}
-extern "C" {
-    pub fn tfloatbox_expand(box_: *const TBox, d: f64) -> *mut TBox;
-}
-extern "C" {
     pub fn tfloatbox_shift_scale(box_: *const TBox, shift: f64, width: f64, hasshift: bool, haswidth: bool) -> *mut TBox;
 }
 extern "C" {
-    pub fn tintbox_expand(box_: *const TBox, i: ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tintbox_shift_scale(box_: *const TBox, shift: ::std::os::raw::c_int, width: ::std::os::raw::c_int, hasshift: bool, haswidth: bool) -> *mut TBox;
 }
 extern "C" {
-    pub fn tintbox_shift_scale(box_: *const TBox, shift: ::std::os::raw::c_int, width: ::std::os::raw::c_int, hasshift: bool, haswidth: bool) -> *mut TBox;
+    pub fn tbox_scale_time(box_: *const TBox, duration: *const Interval) -> *mut TBox;
+}
+extern "C" {
+    pub fn tbox_shift_scale_time(box_: *const TBox, shift: *const Interval, duration: *const Interval) -> *mut TBox;
+}
+extern "C" {
+    pub fn tbox_shift_time(box_: *const TBox, shift: *const Interval) -> *mut TBox;
+}
+extern "C" {
+    pub fn tbigintbox_expand(box_: *const TBox, i: ::std::os::raw::c_long) -> *mut TBox;
+}
+extern "C" {
+    pub fn tbigintbox_shift_scale(box_: *const TBox, shift: ::std::os::raw::c_long, width: ::std::os::raw::c_long, hasshift: bool, haswidth: bool) -> *mut TBox;
 }
 extern "C" {
     pub fn union_tbox_tbox(box1: *const TBox, box2: *const TBox, strict: bool) -> *mut TBox;
@@ -2994,6 +3726,114 @@ extern "C" {
     pub fn right_tbox_tbox(box1: *const TBox, box2: *const TBox) -> bool;
 }
 extern "C" {
+    pub fn adjacent_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn contained_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn contained_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn contained_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn contained_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn contains_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn contains_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn contains_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn contains_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overlaps_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn same_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn same_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn same_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn same_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn after_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn after_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn before_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn before_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn left_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn left_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overafter_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overafter_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tbox_tstzspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tstzspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overleft_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overleft_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn overright_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn overright_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
+    pub fn right_numspan_tbox(s: *const Span, box_: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn right_tbox_numspan(box_: *const TBox, s: *const Span) -> bool;
+}
+extern "C" {
     pub fn tbox_cmp(box1: *const TBox, box2: *const TBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3015,6 +3855,9 @@ extern "C" {
     pub fn tbox_ne(box1: *const TBox, box2: *const TBox) -> bool;
 }
 extern "C" {
+    pub fn tbox_sortkey(box_: *const TBox, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn tbool_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
@@ -3027,10 +3870,16 @@ extern "C" {
     pub fn temporal_as_hexwkb(temp: *const Temporal, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn temporal_as_mfjson(temp: *const Temporal, with_bbox: bool, flags: ::std::os::raw::c_int, precision: ::std::os::raw::c_int, srs: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
+    pub fn temporal_as_mfjson(temp: *const Temporal, option: ::std::os::raw::c_int, flags: ::std::os::raw::c_int, precision: ::std::os::raw::c_int, srs: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn temporal_as_wkb(temp: *const Temporal, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn wkb_variant_from_endian(endian: *const ::std::os::raw::c_char) -> ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn interptype_from_string(str_: *const ::std::os::raw::c_char) -> interpType;
 }
 extern "C" {
     pub fn temporal_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -3051,10 +3900,19 @@ extern "C" {
     pub fn tint_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tbigint_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
     pub fn tint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tbigint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
     pub fn tint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tbigint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn ttext_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -3102,16 +3960,31 @@ extern "C" {
     pub fn tint_from_base_temp(i: ::std::os::raw::c_int, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tbigint_from_base_temp(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
     pub fn tintinst_make(i: ::std::os::raw::c_int, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tbigintinst_make(i: ::std::os::raw::c_long, t: TimestampTz) -> *mut TInstant;
 }
 extern "C" {
     pub fn tintseq_from_base_tstzset(i: ::std::os::raw::c_int, s: *const Set) -> *mut TSequence;
 }
 extern "C" {
+    pub fn tbigintseq_from_base_tstzset(i: ::std::os::raw::c_long, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
     pub fn tintseq_from_base_tstzspan(i: ::std::os::raw::c_int, s: *const Span) -> *mut TSequence;
 }
 extern "C" {
+    pub fn tbigintseq_from_base_tstzspan(i: ::std::os::raw::c_long, s: *const Span) -> *mut TSequence;
+}
+extern "C" {
     pub fn tintseqset_from_base_tstzspanset(i: ::std::os::raw::c_int, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tbigintseqset_from_base_tstzspanset(i: ::std::os::raw::c_long, ss: *const SpanSet) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tsequence_make(instants: *mut *mut TInstant, count: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool, interp: interpType, normalize: bool) -> *mut TSequence;
@@ -3147,7 +4020,19 @@ extern "C" {
     pub fn tfloat_to_tint(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tfloat_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
     pub fn tint_to_tfloat(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tint_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tbigint_to_tint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tbigint_to_tfloat(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tnumber_to_span(temp: *const Temporal) -> *mut Span;
@@ -3162,6 +4047,9 @@ extern "C" {
     pub fn tbool_start_value(temp: *const Temporal) -> bool;
 }
 extern "C" {
+    pub fn tbool_value(temp: *const Temporal) -> bool;
+}
+extern "C" {
     pub fn tbool_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut bool) -> bool;
 }
 extern "C" {
@@ -3169,6 +4057,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tbool_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn tbool_unnest(temp: *const Temporal, values: *mut *mut bool, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
 }
 extern "C" {
     pub fn temporal_duration(temp: *const Temporal, boundspan: bool) -> *mut Interval;
@@ -3186,6 +4077,9 @@ extern "C" {
     pub fn temporal_hash(temp: *const Temporal) -> ::std::os::raw::c_uint;
 }
 extern "C" {
+    pub fn temporal_hash_extended(temp: *const Temporal, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
     pub fn temporal_instant_n(temp: *const Temporal, n: ::std::os::raw::c_int) -> *mut TInstant;
 }
 extern "C" {
@@ -3199,6 +4093,9 @@ extern "C" {
 }
 extern "C" {
     pub fn temporal_max_instant(temp: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn temporal_mem_size(temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn temporal_min_instant(temp: *const Temporal) -> *mut TInstant;
@@ -3240,6 +4137,9 @@ extern "C" {
     pub fn temporal_subtype(temp: *const Temporal) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn temporal_basetype_name(temp: *const Temporal) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
     pub fn temporal_time(temp: *const Temporal) -> *mut SpanSet;
 }
 extern "C" {
@@ -3252,7 +4152,7 @@ extern "C" {
     pub fn temporal_upper_inc(temp: *const Temporal) -> bool;
 }
 extern "C" {
-    pub fn tfloat_avg_value(temp: *const Temporal) -> f64;
+    pub fn temporal_valueset(temp: *const Temporal) -> *mut Set;
 }
 extern "C" {
     pub fn tfloat_end_value(temp: *const Temporal) -> f64;
@@ -3267,6 +4167,9 @@ extern "C" {
     pub fn tfloat_start_value(temp: *const Temporal) -> f64;
 }
 extern "C" {
+    pub fn tfloat_value(temp: *const Temporal) -> f64;
+}
+extern "C" {
     pub fn tfloat_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut f64) -> bool;
 }
 extern "C" {
@@ -3276,16 +4179,43 @@ extern "C" {
     pub fn tfloat_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut f64;
 }
 extern "C" {
+    pub fn tfloat_unnest(temp: *const Temporal, values: *mut *mut f64, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tinstant_timestamptz(inst: *const TInstant) -> TimestampTz;
+}
+extern "C" {
     pub fn tint_end_value(temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tbigint_end_value(temp: *const Temporal) -> ::std::os::raw::c_long;
 }
 extern "C" {
     pub fn tint_max_value(temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn tbigint_max_value(temp: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
     pub fn tint_min_value(temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn tbigint_min_value(temp: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
     pub fn tint_start_value(temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tbigint_start_value(temp: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn tint_value(temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tbigint_value(temp: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn tbigint_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut ::std::os::raw::c_long) -> bool;
 }
 extern "C" {
     pub fn tint_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut ::std::os::raw::c_int) -> bool;
@@ -3294,7 +4224,19 @@ extern "C" {
     pub fn tint_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
+    pub fn tbigint_value_n(temp: *const Temporal, n: ::std::os::raw::c_long, result: *mut ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
     pub fn tint_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tint_unnest(temp: *const Temporal, values: *mut *mut ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tbigint_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn tbigint_unnest(temp: *const Temporal, values: *mut *mut ::std::os::raw::c_long, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
 }
 extern "C" {
     pub fn tnumber_avg_value(temp: *const Temporal) -> f64;
@@ -3321,6 +4263,9 @@ extern "C" {
     pub fn ttext_start_value(temp: *const Temporal) -> *mut text;
 }
 extern "C" {
+    pub fn ttext_value(temp: *const Temporal) -> *mut text;
+}
+extern "C" {
     pub fn ttext_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut text) -> bool;
 }
 extern "C" {
@@ -3330,10 +4275,16 @@ extern "C" {
     pub fn ttext_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
 }
 extern "C" {
+    pub fn ttext_unnest(temp: *const Temporal, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
     pub fn float_degrees(value: f64, normalize: bool) -> f64;
 }
 extern "C" {
-    pub fn temparr_round(temp: *mut *mut Temporal, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn float_round(d: f64, maxdd: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn temparr_round(temparr: *mut *const Temporal, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
     pub fn temporal_round(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut Temporal;
@@ -3351,13 +4302,13 @@ extern "C" {
     pub fn temporal_shift_time(temp: *const Temporal, shift: *const Interval) -> *mut Temporal;
 }
 extern "C" {
-    pub fn temporal_to_tinstant(temp: *const Temporal) -> *mut TInstant;
+    pub fn temporal_as_tinstant(temp: *const Temporal) -> *mut TInstant;
 }
 extern "C" {
-    pub fn temporal_to_tsequence(temp: *const Temporal, interp: interpType) -> *mut TSequence;
+    pub fn temporal_as_tsequence(temp: *const Temporal, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
-    pub fn temporal_to_tsequenceset(temp: *const Temporal, interp: interpType) -> *mut TSequenceSet;
+    pub fn temporal_as_tsequenceset(temp: *const Temporal, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tfloat_ceil(temp: *const Temporal) -> *mut Temporal;
@@ -3384,10 +4335,19 @@ extern "C" {
     pub fn tint_scale_value(temp: *const Temporal, width: ::std::os::raw::c_int) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tbigint_scale_value(temp: *const Temporal, width: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tint_shift_scale_value(temp: *const Temporal, shift: ::std::os::raw::c_int, width: ::std::os::raw::c_int) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tbigint_shift_scale_value(temp: *const Temporal, shift: ::std::os::raw::c_long, width: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tint_shift_value(temp: *const Temporal, shift: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tbigint_shift_value(temp: *const Temporal, shift: ::std::os::raw::c_long) -> *mut Temporal;
 }
 extern "C" {
     pub fn temporal_append_tinstant(temp: *mut Temporal, inst: *const TInstant, interp: interpType, maxdist: f64, maxt: *const Interval, expand: bool) -> *mut Temporal;
@@ -3418,6 +4378,12 @@ extern "C" {
 }
 extern "C" {
     pub fn temporal_update(temp1: *const Temporal, temp2: *const Temporal, connect: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tbigint_at_value(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tbigint_minus_value(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
 }
 extern "C" {
     pub fn tbool_at_value(temp: *const Temporal, b: bool) -> *mut Temporal;
@@ -3531,6 +4497,9 @@ extern "C" {
     pub fn temporal_ne(temp1: *const Temporal, temp2: *const Temporal) -> bool;
 }
 extern "C" {
+    pub fn temporal_sortkey(temp: *const Temporal, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn always_eq_bool_tbool(b: bool, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3555,6 +4524,12 @@ extern "C" {
     pub fn always_eq_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn always_eq_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn always_eq_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3574,6 +4549,12 @@ extern "C" {
 }
 extern "C" {
     pub fn always_ge_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ge_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ge_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn always_ge_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
@@ -3597,6 +4578,12 @@ extern "C" {
     pub fn always_gt_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn always_gt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_gt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn always_gt_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3618,6 +4605,12 @@ extern "C" {
     pub fn always_le_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn always_le_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_le_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn always_le_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3637,6 +4630,12 @@ extern "C" {
 }
 extern "C" {
     pub fn always_lt_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_lt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_lt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn always_lt_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
@@ -3666,6 +4665,12 @@ extern "C" {
     pub fn always_ne_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn always_ne_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn always_ne_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3693,6 +4698,12 @@ extern "C" {
     pub fn ever_eq_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn ever_eq_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ever_eq_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3712,6 +4723,12 @@ extern "C" {
 }
 extern "C" {
     pub fn ever_ge_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ge_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ge_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn ever_ge_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
@@ -3735,6 +4752,12 @@ extern "C" {
     pub fn ever_gt_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn ever_gt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_gt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ever_gt_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3756,6 +4779,12 @@ extern "C" {
     pub fn ever_le_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn ever_le_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_le_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ever_le_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3775,6 +4804,12 @@ extern "C" {
 }
 extern "C" {
     pub fn ever_lt_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_lt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_lt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn ever_lt_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
@@ -3804,7 +4839,16 @@ extern "C" {
     pub fn ever_ne_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn ever_ne_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ever_ne_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn teq_bool_tbool(b: bool, temp: *const Temporal) -> *mut Temporal;
@@ -3814,6 +4858,9 @@ extern "C" {
 }
 extern "C" {
     pub fn teq_int_tint(i: ::std::os::raw::c_int, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
 }
 extern "C" {
     pub fn teq_tbool_bool(temp: *const Temporal, b: bool) -> *mut Temporal;
@@ -3834,6 +4881,9 @@ extern "C" {
     pub fn teq_ttext_text(temp: *const Temporal, txt: *const text) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tge_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
     pub fn tge_float_tfloat(d: f64, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
@@ -3846,6 +4896,9 @@ extern "C" {
     pub fn tge_text_ttext(txt: *const text, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tge_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tge_tfloat_float(temp: *const Temporal, d: f64) -> *mut Temporal;
 }
 extern "C" {
@@ -3853,6 +4906,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tge_ttext_text(temp: *const Temporal, txt: *const text) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tgt_float_tfloat(d: f64, temp: *const Temporal) -> *mut Temporal;
@@ -3867,6 +4923,9 @@ extern "C" {
     pub fn tgt_text_ttext(txt: *const text, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tgt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tgt_tfloat_float(temp: *const Temporal, d: f64) -> *mut Temporal;
 }
 extern "C" {
@@ -3874,6 +4933,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tgt_ttext_text(temp: *const Temporal, txt: *const text) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tle_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tle_float_tfloat(d: f64, temp: *const Temporal) -> *mut Temporal;
@@ -3888,6 +4950,9 @@ extern "C" {
     pub fn tle_text_ttext(txt: *const text, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tle_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tle_tfloat_float(temp: *const Temporal, d: f64) -> *mut Temporal;
 }
 extern "C" {
@@ -3895,6 +4960,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tle_ttext_text(temp: *const Temporal, txt: *const text) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tlt_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tlt_float_tfloat(d: f64, temp: *const Temporal) -> *mut Temporal;
@@ -3909,6 +4977,9 @@ extern "C" {
     pub fn tlt_text_ttext(txt: *const text, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tlt_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn tlt_tfloat_float(temp: *const Temporal, d: f64) -> *mut Temporal;
 }
 extern "C" {
@@ -3918,6 +4989,9 @@ extern "C" {
     pub fn tlt_ttext_text(temp: *const Temporal, txt: *const text) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tne_bigint_tbigint(i: ::std::os::raw::c_long, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
     pub fn tne_bool_tbool(b: bool, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
@@ -3925,6 +4999,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tne_int_tint(i: ::std::os::raw::c_int, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
 }
 extern "C" {
     pub fn tne_tbool_bool(temp: *const Temporal, b: bool) -> *mut Temporal;
@@ -4042,6 +5119,9 @@ extern "C" {
 }
 extern "C" {
     pub fn overlaps_temporal_temporal(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn temporal_time_overlaps(temp1: *const Temporal, temp2: *const Temporal) -> bool;
 }
 extern "C" {
     pub fn overlaps_temporal_tstzspan(temp: *const Temporal, s: *const Span) -> bool;
@@ -4251,6 +5331,12 @@ extern "C" {
     pub fn add_tint_int(tnumber: *const Temporal, i: ::std::os::raw::c_int) -> *mut Temporal;
 }
 extern "C" {
+    pub fn add_bigint_tbigint(i: ::std::os::raw::c_long, tnumber: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn add_tbigint_bigint(tnumber: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn add_tnumber_tnumber(tnumber1: *const Temporal, tnumber2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
@@ -4266,22 +5352,34 @@ extern "C" {
     pub fn div_tint_int(tnumber: *const Temporal, i: ::std::os::raw::c_int) -> *mut Temporal;
 }
 extern "C" {
+    pub fn div_bigint_tbigint(i: ::std::os::raw::c_long, tnumber: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn div_tbigint_bigint(tnumber: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
     pub fn div_tnumber_tnumber(tnumber1: *const Temporal, tnumber2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn mult_float_tfloat(d: f64, tnumber: *const Temporal) -> *mut Temporal;
+    pub fn mul_float_tfloat(d: f64, tnumber: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn mult_int_tint(i: ::std::os::raw::c_int, tnumber: *const Temporal) -> *mut Temporal;
+    pub fn mul_int_tint(i: ::std::os::raw::c_int, tnumber: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn mult_tfloat_float(tnumber: *const Temporal, d: f64) -> *mut Temporal;
+    pub fn mul_tfloat_float(tnumber: *const Temporal, d: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn mult_tint_int(tnumber: *const Temporal, i: ::std::os::raw::c_int) -> *mut Temporal;
+    pub fn mul_tint_int(tnumber: *const Temporal, i: ::std::os::raw::c_int) -> *mut Temporal;
 }
 extern "C" {
-    pub fn mult_tnumber_tnumber(tnumber1: *const Temporal, tnumber2: *const Temporal) -> *mut Temporal;
+    pub fn mul_bigint_tbigint(i: ::std::os::raw::c_long, tnumber: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn mul_tbigint_bigint(tnumber: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
+}
+extern "C" {
+    pub fn mul_tnumber_tnumber(tnumber1: *const Temporal, tnumber2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn sub_float_tfloat(d: f64, tnumber: *const Temporal) -> *mut Temporal;
@@ -4294,6 +5392,12 @@ extern "C" {
 }
 extern "C" {
     pub fn sub_tint_int(tnumber: *const Temporal, i: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn sub_bigint_tbigint(i: ::std::os::raw::c_long, tnumber: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn sub_tbigint_bigint(tnumber: *const Temporal, i: ::std::os::raw::c_long) -> *mut Temporal;
 }
 extern "C" {
     pub fn sub_tnumber_tnumber(tnumber1: *const Temporal, tnumber2: *const Temporal) -> *mut Temporal;
@@ -4309,6 +5413,15 @@ extern "C" {
 }
 extern "C" {
     pub fn tfloat_log10(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tfloat_sin(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tfloat_cos(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tfloat_tan(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tnumber_abs(temp: *const Temporal) -> *mut Temporal;
@@ -4353,13 +5466,25 @@ extern "C" {
     pub fn tdistance_tnumber_tnumber(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn nad_bigintspan_tbox(s: *const Span, box_: *const TBox) -> ::std::os::raw::c_long;
+}
+extern "C" {
     pub fn nad_tboxfloat_tboxfloat(box1: *const TBox, box2: *const TBox) -> f64;
+}
+extern "C" {
+    pub fn nad_floatspan_tbox(s: *const Span, box_: *const TBox) -> f64;
 }
 extern "C" {
     pub fn nad_tboxint_tboxint(box1: *const TBox, box2: *const TBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn nad_intspan_tbox(s: *const Span, box_: *const TBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn nad_tfloat_float(temp: *const Temporal, d: f64) -> f64;
+}
+extern "C" {
+    pub fn nad_tfloat_floatspan(temp: *const Temporal, s: *const Span) -> f64;
 }
 extern "C" {
     pub fn nad_tfloat_tfloat(temp1: *const Temporal, temp2: *const Temporal) -> f64;
@@ -4368,7 +5493,25 @@ extern "C" {
     pub fn nad_tfloat_tbox(temp: *const Temporal, box_: *const TBox) -> f64;
 }
 extern "C" {
+    pub fn nad_tbigint_bigint(temp: *const Temporal, i: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn nad_tbigint_bigintspan(temp: *const Temporal, s: *const Span) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn nad_tbigint_tbox(temp: *const Temporal, box_: *const TBox) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn nad_tbigint_tbigint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn nad_tboxbigint_tboxbigint(box1: *const TBox, box2: *const TBox) -> ::std::os::raw::c_long;
+}
+extern "C" {
     pub fn nad_tint_int(temp: *const Temporal, i: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn nad_tint_intspan(temp: *const Temporal, s: *const Span) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn nad_tint_tbox(temp: *const Temporal, box_: *const TBox) -> ::std::os::raw::c_int;
@@ -4377,19 +5520,73 @@ extern "C" {
     pub fn nad_tint_tint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn taggstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut SkipList;
+}
+extern "C" {
+    pub fn taggstate_serialize(state: *mut SkipList, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn tbigint_tmax_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbigint_tmin_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbigint_tsum_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbigint_wmax_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbigint_wmin_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbigint_wsum_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
+}
+extern "C" {
     pub fn tbool_tand_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tbool_tand_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
 }
 extern "C" {
     pub fn tbool_tor_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
 }
 extern "C" {
-    pub fn temporal_extent_transfn(s: *mut Span, temp: *const Temporal) -> *mut Span;
+    pub fn tbool_tor_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_app_tinst_transfn(state: *mut Temporal, inst: *const TInstant, interp: interpType, maxdist: f64, maxt: *const Interval) -> *mut Temporal;
+}
+extern "C" {
+    pub fn temporal_app_tseq_transfn(state: *mut Temporal, seq: *const TSequence) -> *mut Temporal;
+}
+extern "C" {
+    pub fn temporal_append_finalfn(state: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn temporal_extent_transfn(state: *mut Span, temp: *const Temporal) -> *mut Span;
 }
 extern "C" {
     pub fn temporal_tagg_finalfn(state: *mut SkipList) -> *mut Temporal;
 }
 extern "C" {
     pub fn temporal_tcount_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_tcount_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_tmax_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_tmin_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_wcount_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_to_taggstate(temp: *const Temporal) -> *mut SkipList;
 }
 extern "C" {
     pub fn tfloat_tmax_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
@@ -4431,13 +5628,22 @@ extern "C" {
     pub fn tint_wsum_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
 }
 extern "C" {
-    pub fn tnumber_extent_transfn(box_: *mut TBox, temp: *const Temporal) -> *mut TBox;
+    pub fn tbox_extent_transfn(state: *mut TBox, box_: *const TBox) -> *mut TBox;
+}
+extern "C" {
+    pub fn tnumber_extent_transfn(state: *mut TBox, temp: *const Temporal) -> *mut TBox;
 }
 extern "C" {
     pub fn tnumber_tavg_finalfn(state: *mut SkipList) -> *mut Temporal;
 }
 extern "C" {
     pub fn tnumber_tavg_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tnumber_tavg_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tnumber_tsum_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
 }
 extern "C" {
     pub fn tnumber_wavg_transfn(state: *mut SkipList, temp: *const Temporal, interv: *const Interval) -> *mut SkipList;
@@ -4452,16 +5658,22 @@ extern "C" {
     pub fn tstzspanset_tcount_transfn(state: *mut SkipList, ss: *const SpanSet) -> *mut SkipList;
 }
 extern "C" {
+    pub fn temporal_merge_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn temporal_merge_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
+}
+extern "C" {
     pub fn ttext_tmax_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
 }
 extern "C" {
     pub fn ttext_tmin_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
 }
 extern "C" {
-    pub fn temporal_simplify_dp(temp: *const Temporal, eps_dist: f64, synchronized: bool) -> *mut Temporal;
+    pub fn temporal_simplify_dp(temp: *const Temporal, dist: f64, synchronized: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn temporal_simplify_max_dist(temp: *const Temporal, eps_dist: f64, synchronized: bool) -> *mut Temporal;
+    pub fn temporal_simplify_max_dist(temp: *const Temporal, dist: f64, synchronized: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn temporal_simplify_min_dist(temp: *const Temporal, dist: f64) -> *mut Temporal;
@@ -4470,85 +5682,133 @@ extern "C" {
     pub fn temporal_simplify_min_tdelta(temp: *const Temporal, mint: *const Interval) -> *mut Temporal;
 }
 extern "C" {
-    pub fn temporal_tprecision(temp: *const Temporal, duration: *const Interval, origin: TimestampTz) -> *mut Temporal;
+    pub fn temporal_tprecision(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz) -> *mut Temporal;
 }
 extern "C" {
-    pub fn temporal_tsample(temp: *const Temporal, duration: *const Interval, origin: TimestampTz, interp: interpType) -> *mut Temporal;
+    pub fn temporal_tsample(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, interp: interpType) -> *mut Temporal;
 }
 extern "C" {
-    pub fn temporal_dyntimewarp_distance(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn temporal_dyntimewarp_distance(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn temporal_dyntimewarp_path(temp1: *const Temporal, temp2: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut Match;
+    pub fn temporal_dyntimewarp_path(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool, count: *mut ::std::os::raw::c_int) -> *mut Match;
 }
 extern "C" {
-    pub fn temporal_frechet_distance(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn temporal_frechet_distance(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn temporal_frechet_path(temp1: *const Temporal, temp2: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut Match;
+    pub fn temporal_frechet_path(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool, count: *mut ::std::os::raw::c_int) -> *mut Match;
 }
 extern "C" {
-    pub fn temporal_hausdorff_distance(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn temporal_hausdorff_distance(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn temporal_time_bins(temp: *const Temporal, duration: *const Interval, origin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn temporal_average_hausdorff_distance(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn temporal_time_split(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn temporal_lcss_distance(temp1: *const Temporal, temp2: *const Temporal, epsilon: f64, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn tfloat_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn temporal_ext_kalman_filter(temp: *const Temporal, gate: f64, q: f64, variance: f64, to_drop: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tfloat_value_bins(temp: *const Temporal, vsize: f64, vorigin: f64, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn temporal_time_bins(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn tfloat_value_boxes(temp: *const Temporal, vsize: f64, vorigin: f64, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn temporal_time_split(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, border_inc: bool, bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn tfloat_value_split(temp: *const Temporal, size: f64, origin: f64, bins: *mut *mut f64, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn tbigint_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tfloat_value_time_boxes(temp: *const Temporal, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigint_value_bins(temp: *const Temporal, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn tfloat_value_time_split(temp: *const Temporal, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, value_bins: *mut *mut f64, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn tbigint_value_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tfloatbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigint_value_split(temp: *const Temporal, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, bins: *mut *mut ::std::os::raw::c_long, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn tfloatbox_value_tiles(box_: *const TBox, vsize: f64, vorigin: f64, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigint_value_time_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_long, duration: *const Interval, vorigin: ::std::os::raw::c_long, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tfloatbox_value_time_tiles(box_: *const TBox, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigint_value_time_split(temp: *const Temporal, vsize: ::std::os::raw::c_long, duration: *const Interval, vorigin: ::std::os::raw::c_long, torigin: TimestampTz, border_inc: bool, value_bins: *mut *mut ::std::os::raw::c_long, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn tint_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigintbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tint_value_bins(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tbigintbox_value_tiles(box_: *const TBox, vsize: ::std::os::raw::c_long, vorigin: ::std::os::raw::c_long, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tint_value_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbigintbox_value_time_tiles(box_: *const TBox, vsize: ::std::os::raw::c_long, duration: *const Interval, vorigin: ::std::os::raw::c_long, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tint_value_split(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, bins: *mut *mut ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn tbox_get_time_tile(t: TimestampTz, duration: *const Interval, torigin: TimestampTz) -> *mut TBox;
 }
 extern "C" {
-    pub fn tint_value_time_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_int, duration: *const Interval, vorigin: ::std::os::raw::c_int, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbox_get_value_tile(value: f64, vsize: f64, vorigin: f64) -> *mut TBox;
 }
 extern "C" {
-    pub fn tint_value_time_split(temp: *const Temporal, size: ::std::os::raw::c_int, duration: *const Interval, vorigin: ::std::os::raw::c_int, torigin: TimestampTz, value_bins: *mut *mut ::std::os::raw::c_int, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn tbox_get_value_time_tile(value: f64, t: TimestampTz, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz) -> *mut TBox;
 }
 extern "C" {
-    pub fn tintbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tintbox_value_tiles(box_: *const TBox, xsize: ::std::os::raw::c_int, xorigin: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tfloat_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tintbox_value_time_tiles(box_: *const TBox, xsize: ::std::os::raw::c_int, duration: *const Interval, xorigin: ::std::os::raw::c_int, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tfloat_value_bins(temp: *const Temporal, vsize: f64, vorigin: f64, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
+}
+extern "C" {
+    pub fn tfloat_value_boxes(temp: *const Temporal, vsize: f64, vorigin: f64, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tfloat_value_split(temp: *const Temporal, vsize: f64, vorigin: f64, border_inc: bool, bins: *mut *mut f64, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tfloat_value_time_boxes(temp: *const Temporal, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tfloat_value_time_split(temp: *const Temporal, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, border_inc: bool, value_bins: *mut *mut f64, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tfloatbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tfloatbox_value_tiles(box_: *const TBox, vsize: f64, vorigin: f64, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tfloatbox_value_time_tiles(box_: *const TBox, vsize: f64, duration: *const Interval, vorigin: f64, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tint_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tint_value_bins(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
+}
+extern "C" {
+    pub fn tint_value_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tint_value_split(temp: *const Temporal, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, bins: *mut *mut ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tint_value_time_boxes(temp: *const Temporal, vsize: ::std::os::raw::c_int, duration: *const Interval, vorigin: ::std::os::raw::c_int, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tint_value_time_split(temp: *const Temporal, vsize: ::std::os::raw::c_int, duration: *const Interval, vorigin: ::std::os::raw::c_int, torigin: TimestampTz, border_inc: bool, value_bins: *mut *mut ::std::os::raw::c_int, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tintbox_time_tiles(box_: *const TBox, duration: *const Interval, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tintbox_value_tiles(box_: *const TBox, vsize: ::std::os::raw::c_int, vorigin: ::std::os::raw::c_int, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+}
+extern "C" {
+    pub fn tintbox_value_time_tiles(box_: *const TBox, vsize: ::std::os::raw::c_int, duration: *const Interval, vorigin: ::std::os::raw::c_int, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
     pub fn temptype_subtype(subtype: tempSubtype) -> bool;
@@ -4563,217 +5823,268 @@ extern "C" {
     pub fn tempsubtype_from_string(str_: *const ::std::os::raw::c_char, subtype: *mut int16) -> bool;
 }
 extern "C" {
-    pub fn meosoper_name(oper: meosOper) -> *const ::std::os::raw::c_char;
+    pub fn meosoper_name(oper: MeosOper) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn meosoper_from_string(name: *const ::std::os::raw::c_char) -> meosOper;
+    pub fn meosoper_from_string(name: *const ::std::os::raw::c_char) -> MeosOper;
 }
 extern "C" {
     pub fn interptype_name(interp: interpType) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn interptype_from_string(interp_str: *const ::std::os::raw::c_char) -> interpType;
+    pub fn meos_typeof_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> MeosType;
 }
 extern "C" {
-    pub fn meostype_name(type_: meosType) -> *const ::std::os::raw::c_char;
+    pub fn meostype_name(type_: MeosType) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn temptype_basetype(type_: meosType) -> meosType;
+    pub fn meostype_from_string(name: *const ::std::os::raw::c_char) -> MeosType;
 }
 extern "C" {
-    pub fn settype_basetype(type_: meosType) -> meosType;
+    pub fn temptype_basetype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn spantype_basetype(type_: meosType) -> meosType;
+    pub fn settype_basetype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn spantype_spansettype(type_: meosType) -> meosType;
+    pub fn spantype_basetype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn spansettype_spantype(type_: meosType) -> meosType;
+    pub fn spantype_spansettype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn basetype_spantype(type_: meosType) -> meosType;
+    pub fn spansettype_spantype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn basetype_settype(type_: meosType) -> meosType;
+    pub fn basetype_spantype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn tnumber_basetype(type_: meosType) -> bool;
+    pub fn basetype_settype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn geo_basetype(type_: meosType) -> bool;
+    pub fn tnumber_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn meos_basetype(type_: meosType) -> bool;
+    pub fn geo_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn alphanum_basetype(type_: meosType) -> bool;
+    pub fn meos_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn alphanum_temptype(type_: meosType) -> bool;
+    pub fn alphanum_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn time_type(type_: meosType) -> bool;
+    pub fn ensure_alphanum_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn set_basetype(type_: meosType) -> bool;
+    pub fn alphanum_temptype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn set_type(type_: meosType) -> bool;
+    pub fn time_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn numset_type(type_: meosType) -> bool;
+    pub fn set_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_numset_type(type_: meosType) -> bool;
+    pub fn set_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn timeset_type(type_: meosType) -> bool;
+    pub fn numset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn set_spantype(type_: meosType) -> bool;
+    pub fn ensure_numset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_set_spantype(type_: meosType) -> bool;
+    pub fn timeset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn alphanumset_type(settype: meosType) -> bool;
+    pub fn set_spantype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn geoset_type(type_: meosType) -> bool;
+    pub fn ensure_set_spantype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_geoset_type(type_: meosType) -> bool;
+    pub fn alphanumset_type(settype: MeosType) -> bool;
 }
 extern "C" {
-    pub fn spatialset_type(type_: meosType) -> bool;
+    pub fn geoset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_spatialset_type(type_: meosType) -> bool;
+    pub fn ensure_geoset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn span_basetype(type_: meosType) -> bool;
+    pub fn spatialset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn span_canon_basetype(type_: meosType) -> bool;
+    pub fn ensure_spatialset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn span_type(type_: meosType) -> bool;
+    pub fn pointcloud_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn type_span_bbox(type_: meosType) -> bool;
+    pub fn pointcloudset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn span_tbox_type(type_: meosType) -> bool;
+    pub fn tpointcloud_temptype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_span_tbox_type(type_: meosType) -> bool;
+    pub fn ensure_tpointcloud_temptype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn numspan_basetype(type_: meosType) -> bool;
+    pub fn span_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn numspan_type(type_: meosType) -> bool;
+    pub fn span_canon_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_numspan_type(type_: meosType) -> bool;
+    pub fn span_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn timespan_basetype(type_: meosType) -> bool;
+    pub fn type_span_bbox(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn timespan_type(type_: meosType) -> bool;
+    pub fn type_bboxtype(type_: MeosType) -> MeosType;
 }
 extern "C" {
-    pub fn spanset_type(type_: meosType) -> bool;
+    pub fn span_tbox_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn timespanset_type(type_: meosType) -> bool;
+    pub fn ensure_span_tbox_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_timespanset_type(type_: meosType) -> bool;
+    pub fn numspan_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn temporal_type(type_: meosType) -> bool;
+    pub fn numspan_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn temporal_basetype(type_: meosType) -> bool;
+    pub fn ensure_numspan_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn temptype_continuous(type_: meosType) -> bool;
+    pub fn timespan_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn basetype_byvalue(type_: meosType) -> bool;
+    pub fn timespan_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn basetype_varlength(type_: meosType) -> bool;
+    pub fn spanset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn basetype_length(type_: meosType) -> int16;
+    pub fn numspanset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn talphanum_type(type_: meosType) -> bool;
+    pub fn ensure_numspanset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn talpha_type(type_: meosType) -> bool;
+    pub fn timespanset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tnumber_type(type_: meosType) -> bool;
+    pub fn ensure_timespanset_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tnumber_type(type_: meosType) -> bool;
+    pub fn temporal_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tnumber_basetype(type_: meosType) -> bool;
+    pub fn temporal_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tnumber_spantype(type_: meosType) -> bool;
+    pub fn temptype_supports_linear(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn spatial_basetype(type_: meosType) -> bool;
+    pub fn basetype_byvalue(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tspatial_type(type_: meosType) -> bool;
+    pub fn basetype_varlength(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tspatial_type(type_: meosType) -> bool;
+    pub fn meostype_length(type_: MeosType) -> int16;
 }
 extern "C" {
-    pub fn tpoint_type(type_: meosType) -> bool;
+    pub fn talphanum_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tpoint_type(type_: meosType) -> bool;
+    pub fn talpha_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tgeo_type(type_: meosType) -> bool;
+    pub fn tnumber_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tgeo_type(type_: meosType) -> bool;
+    pub fn ensure_tnumber_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tgeo_type_all(type_: meosType) -> bool;
+    pub fn torder_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tgeo_type_all(type_: meosType) -> bool;
+    pub fn ensure_torder_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tgeometry_type(type_: meosType) -> bool;
+    pub fn ensure_tnumber_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tgeometry_type(type_: meosType) -> bool;
+    pub fn tnumber_spantype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn tgeodetic_type(type_: meosType) -> bool;
+    pub fn spatial_basetype(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tgeodetic_type(type_: meosType) -> bool;
+    pub fn tspatial_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn ensure_tnumber_tpoint_type(type_: meosType) -> bool;
+    pub fn ensure_tspatial_type(type_: MeosType) -> bool;
 }
 extern "C" {
-    pub fn geo_get_srid(g: *const GSERIALIZED) -> int32;
+    pub fn tpoint_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tpoint_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn tgeo_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tgeo_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn tspatial_body_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn tgeo_type_all(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tgeo_type_all(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn tgeometry_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tgeometry_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn tgeodetic_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tgeodetic_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_tnumber_tpoint_type(type_: MeosType) -> bool;
+}
+extern "C" {
+    pub fn box3d_make(xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, srid: ::std::os::raw::c_int) -> *mut BOX3D;
+}
+extern "C" {
+    pub fn box3d_in(str_: *const ::std::os::raw::c_char) -> *mut BOX3D;
+}
+extern "C" {
+    pub fn box3d_out(box_: *const BOX3D, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn gbox_make(hasz: bool, hasm: bool, geodetic: bool, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, mmin: f64, mmax: f64) -> *mut GBOX;
+}
+extern "C" {
+    pub fn gbox_in(str_: *const ::std::os::raw::c_char) -> *mut GBOX;
+}
+extern "C" {
+    pub fn gbox_out(box_: *const GBOX, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn geo_as_ewkb(gs: *const GSERIALIZED, endian: *const ::std::os::raw::c_char, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
@@ -4791,7 +6102,7 @@ extern "C" {
     pub fn geo_as_text(gs: *const GSERIALIZED, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn geo_from_ewkb(wkb: *const ::std::os::raw::c_uchar, wkb_size: size_t, srid: int32) -> *mut GSERIALIZED;
+    pub fn geo_from_ewkb(wkb: *const ::std::os::raw::c_uchar, wkb_size: size_t, srid: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geo_from_geojson(geojson: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
@@ -4803,34 +6114,19 @@ extern "C" {
     pub fn geo_out(gs: *const GSERIALIZED) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn geog_from_binary(wkb_bytea: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
-}
-extern "C" {
-    pub fn geog_from_hexewkb(wkt: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
+    pub fn geog_from_hexewkb(hexwkb: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geog_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geom_from_hexewkb(wkt: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
+    pub fn geom_from_hexewkb(hexwkb: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geom_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn box3d_make(xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, srid: ::std::os::raw::c_int) -> *mut BOX3D;
-}
-extern "C" {
-    pub fn box3d_out(box_: *const BOX3D, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn gbox_make(hasz: bool, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64) -> *mut GBOX;
-}
-extern "C" {
-    pub fn gbox_out(box_: *const GBOX, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn geo_copy(g: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn geo_copy(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geogpoint_make2d(srid: ::std::os::raw::c_int, x: f64, y: f64) -> *mut GSERIALIZED;
@@ -4851,28 +6147,46 @@ extern "C" {
     pub fn geog_to_geom(geog: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geo_is_empty(g: *const GSERIALIZED) -> bool;
+    pub fn geo_is_empty(gs: *const GSERIALIZED) -> bool;
 }
 extern "C" {
     pub fn geo_is_unitary(gs: *const GSERIALIZED) -> bool;
 }
 extern "C" {
+    pub fn geo_mem_size(gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn geo_area(gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn geo_centroid(gs: *const GSERIALIZED, spheroid: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_length(gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn geo_perimeter(gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
     pub fn geo_typename(type_: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn geog_area(g: *const GSERIALIZED, use_spheroid: bool) -> f64;
+    pub fn geog_area(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn geog_centroid(g: *const GSERIALIZED, use_spheroid: bool) -> *mut GSERIALIZED;
+    pub fn geog_centroid(gs: *const GSERIALIZED, use_spheroid: bool) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geog_length(g: *const GSERIALIZED, use_spheroid: bool) -> f64;
+    pub fn geog_length(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn geog_perimeter(g: *const GSERIALIZED, use_spheroid: bool) -> f64;
+    pub fn geog_perimeter(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
 }
 extern "C" {
     pub fn geom_azimuth(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn geom_area(gs: *const GSERIALIZED) -> f64;
 }
 extern "C" {
     pub fn geom_length(gs: *const GSERIALIZED) -> f64;
@@ -4887,10 +6201,43 @@ extern "C" {
     pub fn line_point_n(geom: *const GSERIALIZED, n: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn geo_affine(gs: *const GSERIALIZED, a: f64, b: f64, c: f64, d: f64, e: f64, f: f64, g: f64, h: f64, i: f64, xoff: f64, yoff: f64, zoff: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
     pub fn geo_reverse(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn geo_rotate(gs: *const GSERIALIZED, angle: f64, x0: f64, y0: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_rotate_geo(gs: *const GSERIALIZED, angle: f64, origin: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_rotate_x(gs: *const GSERIALIZED, angle: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_rotate_y(gs: *const GSERIALIZED, angle: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_rotate_z(gs: *const GSERIALIZED, angle: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
     pub fn geo_round(gs: *const GSERIALIZED, maxdd: ::std::os::raw::c_int) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_scale(gs: *const GSERIALIZED, xfactor: f64, yfactor: f64, zfactor: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_scale_geo(gs: *const GSERIALIZED, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_segmentize(gs: *const GSERIALIZED, max_seg_length: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_translate(gs: *const GSERIALIZED, deltax: f64, deltay: f64, deltaz: f64) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_transscale(gs: *const GSERIALIZED, deltax: f64, deltay: f64, xfactor: f64, yfactor: f64) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geo_set_srid(gs: *const GSERIALIZED, srid: ::std::os::raw::c_int) -> *mut GSERIALIZED;
@@ -4902,7 +6249,7 @@ extern "C" {
     pub fn geo_transform(geom: *const GSERIALIZED, srid_to: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geo_transform_pipeline(gs: *const GSERIALIZED, pipeline: *mut ::std::os::raw::c_char, srid_to: ::std::os::raw::c_int, is_forward: bool) -> *mut GSERIALIZED;
+    pub fn geo_transform_pipeline(gs: *const GSERIALIZED, pipelinestr: *const ::std::os::raw::c_char, srid: ::std::os::raw::c_int, is_forward: bool) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geo_collect_garray(gsarr: *mut *mut GSERIALIZED, count: ::std::os::raw::c_int) -> *mut GSERIALIZED;
@@ -4929,6 +6276,9 @@ extern "C" {
     pub fn geom_array_union(gsarr: *mut *mut GSERIALIZED, count: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn geog_array_union(gsarr: *mut *mut GSERIALIZED, count: ::std::os::raw::c_int) -> *mut GSERIALIZED;
+}
+extern "C" {
     pub fn geom_boundary(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
@@ -4944,22 +6294,37 @@ extern "C" {
     pub fn geom_difference2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn geom_is_simple(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
     pub fn geom_intersection2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geom_intersection2d_coll(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geom_min_bounding_radius(geom: *const GSERIALIZED, radius: *mut f64) -> *mut GSERIALIZED;
+    pub fn geom_minimum_bounding_radius(geom: *const GSERIALIZED, radius: *mut f64) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geom_shortestline2d(gs1: *const GSERIALIZED, s2: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn geom_oriented_envelope(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geom_shortestline3d(gs1: *const GSERIALIZED, s2: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn geom_shortestline(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geom_unary_union(gs: *const GSERIALIZED, prec: f64) -> *mut GSERIALIZED;
+    pub fn geom_shortestline2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geom_shortestline3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geom_symdifference2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geom_unary_union(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geom_union2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn line_interpolate_point(gs: *const GSERIALIZED, distance_fraction: f64, repeat: bool) -> *mut GSERIALIZED;
@@ -4974,6 +6339,9 @@ extern "C" {
     pub fn geog_dwithin(g1: *const GSERIALIZED, g2: *const GSERIALIZED, tolerance: f64, use_spheroid: bool) -> bool;
 }
 extern "C" {
+    pub fn geog_disjoint(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, use_spheroid: bool) -> bool;
+}
+extern "C" {
     pub fn geog_intersects(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, use_spheroid: bool) -> bool;
 }
 extern "C" {
@@ -4983,7 +6351,13 @@ extern "C" {
     pub fn geom_covers(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
 }
 extern "C" {
+    pub fn geom_disjoint(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
     pub fn geom_disjoint2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geom_dwithin(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64) -> bool;
 }
 extern "C" {
     pub fn geom_dwithin2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64) -> bool;
@@ -4992,10 +6366,16 @@ extern "C" {
     pub fn geom_dwithin3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64) -> bool;
 }
 extern "C" {
+    pub fn geom_intersects(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
     pub fn geom_intersects2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
 }
 extern "C" {
     pub fn geom_intersects3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geom_relate(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn geom_relate_pattern(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, patt: *mut ::std::os::raw::c_char) -> bool;
@@ -5013,10 +6393,31 @@ extern "C" {
     pub fn geo_split_n_stboxes(gs: *const GSERIALIZED, box_count: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut STBox;
 }
 extern "C" {
-    pub fn geog_distance(g1: *const GSERIALIZED, g2: *const GSERIALIZED) -> f64;
+    pub fn geo_distance(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn geo_shortestline(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, spheroid: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geog_distance(g1: *const GSERIALIZED, g2: *const GSERIALIZED, use_spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn geog_shortestline(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, use_spheroid: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geom_distance(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
 }
 extern "C" {
     pub fn geom_distance2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn geom_max_distance(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn geom_max_distance2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn geom_max_distance3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
 }
 extern "C" {
     pub fn geom_distance3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
@@ -5034,16 +6435,28 @@ extern "C" {
     pub fn geomset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 extern "C" {
+    pub fn spatialset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
     pub fn spatialset_as_text(set: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn spatialset_as_ewkb(s: *const Set, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn spatialset_as_ewkt(set: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn spatialset_as_hexewkb(s: *const Set, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn geoset_make(values: *mut *mut GSERIALIZED, count: ::std::os::raw::c_int) -> *mut Set;
 }
 extern "C" {
     pub fn geo_to_set(gs: *const GSERIALIZED) -> *mut Set;
+}
+extern "C" {
+    pub fn geoset_to_geo(s: *const Set) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geoset_end_value(s: *const Set) -> *mut GSERIALIZED;
@@ -5055,7 +6468,7 @@ extern "C" {
     pub fn geoset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut GSERIALIZED) -> bool;
 }
 extern "C" {
-    pub fn geoset_values(s: *const Set) -> *mut *mut GSERIALIZED;
+    pub fn geoset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut GSERIALIZED;
 }
 extern "C" {
     pub fn contained_geo_set(gs: *const GSERIALIZED, s: *const Set) -> bool;
@@ -5085,6 +6498,12 @@ extern "C" {
     pub fn union_set_geo(s: *const Set, gs: *const GSERIALIZED) -> *mut Set;
 }
 extern "C" {
+    pub fn distance_geoset_geoset(s1: *const Set, s2: *const Set, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn distance_set_geo(s: *const Set, gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
     pub fn spatialset_set_srid(s: *const Set, srid: ::std::os::raw::c_int) -> *mut Set;
 }
 extern "C" {
@@ -5097,7 +6516,13 @@ extern "C" {
     pub fn spatialset_transform_pipeline(s: *const Set, pipelinestr: *const ::std::os::raw::c_char, srid: ::std::os::raw::c_int, is_forward: bool) -> *mut Set;
 }
 extern "C" {
-    pub fn stbox_as_hexwkb(box_: *const STBox, variant: ::std::os::raw::c_uchar, size: *mut size_t) -> *mut ::std::os::raw::c_char;
+    pub fn stbox_as_ewkb(box_: *const STBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn stbox_as_hexewkb(box_: *const STBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn stbox_as_hexwkb(box_: *const STBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn stbox_as_wkb(box_: *const STBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
@@ -5124,7 +6549,7 @@ extern "C" {
     pub fn stbox_copy(box_: *const STBox) -> *mut STBox;
 }
 extern "C" {
-    pub fn stbox_make(hasx: bool, hasz: bool, geodetic: bool, srid: int32, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, s: *const Span) -> *mut STBox;
+    pub fn stbox_make(hasx: bool, hasz: bool, geodetic: bool, srid: ::std::os::raw::c_int, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, s: *const Span) -> *mut STBox;
 }
 extern "C" {
     pub fn geo_to_stbox(gs: *const GSERIALIZED) -> *mut STBox;
@@ -5229,7 +6654,13 @@ extern "C" {
     pub fn stbox_round(box_: *const STBox, maxdd: ::std::os::raw::c_int) -> *mut STBox;
 }
 extern "C" {
+    pub fn stbox_scale_time(box_: *const STBox, duration: *const Interval) -> *mut STBox;
+}
+extern "C" {
     pub fn stbox_shift_scale_time(box_: *const STBox, shift: *const Interval, duration: *const Interval) -> *mut STBox;
+}
+extern "C" {
+    pub fn stbox_shift_time(box_: *const STBox, shift: *const Interval) -> *mut STBox;
 }
 extern "C" {
     pub fn stboxarr_round(boxarr: *const STBox, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut STBox;
@@ -5337,6 +6768,12 @@ extern "C" {
     pub fn stbox_ne(box1: *const STBox, box2: *const STBox) -> bool;
 }
 extern "C" {
+    pub fn stbox_sortkey(box_: *const STBox, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn tspatial_out(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
     pub fn tgeogpoint_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
@@ -5361,13 +6798,16 @@ extern "C" {
     pub fn tgeompoint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tspatial_as_ewkb(temp: *const Temporal, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn tspatial_as_ewkt(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn tspatial_as_text(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn tspatial_as_hexewkb(temp: *const Temporal, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn tspatial_out(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn tspatial_as_text(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn tgeo_from_base_temp(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
@@ -5397,7 +6837,7 @@ extern "C" {
     pub fn tpointseq_from_base_tstzspan(gs: *const GSERIALIZED, s: *const Span, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tpointseq_make_coords(xcoords: *const f64, ycoords: *const f64, zcoords: *const f64, times: *const TimestampTz, count: ::std::os::raw::c_int, srid: int32, geodetic: bool, lower_inc: bool, upper_inc: bool, interp: interpType, normalize: bool) -> *mut TSequence;
+    pub fn tpointseq_make_coords(xcoords: *const f64, ycoords: *const f64, zcoords: *const f64, times: *const TimestampTz, count: ::std::os::raw::c_int, srid: ::std::os::raw::c_int, geodetic: bool, lower_inc: bool, upper_inc: bool, interp: interpType, normalize: bool) -> *mut TSequence;
 }
 extern "C" {
     pub fn tpointseqset_from_base_tstzspanset(gs: *const GSERIALIZED, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
@@ -5424,6 +6864,12 @@ extern "C" {
     pub fn tgeometry_to_tgeography(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tgeogpoint_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
     pub fn tgeometry_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
@@ -5448,7 +6894,7 @@ extern "C" {
     pub fn bearing_tpoint_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tgeo_centroid(temp: *const Temporal) -> *mut Temporal;
+    pub fn tgeo_centroid(temp: *const Temporal, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tgeo_convex_hull(temp: *const Temporal) -> *mut GSERIALIZED;
@@ -5463,7 +6909,10 @@ extern "C" {
     pub fn tgeo_traversed_area(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn tgeo_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut GSERIALIZED) -> bool;
+    pub fn tgeo_value(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tgeo_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut *mut GSERIALIZED) -> bool;
 }
 extern "C" {
     pub fn tgeo_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut GSERIALIZED) -> bool;
@@ -5472,13 +6921,16 @@ extern "C" {
     pub fn tgeo_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn tgeo_unnest(temp: *const Temporal, values: *mut *mut *mut GSERIALIZED, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
     pub fn tpoint_angular_difference(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_azimuth(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tpoint_cumulative_length(temp: *const Temporal) -> *mut Temporal;
+    pub fn tpoint_cumulative_length(temp: *const Temporal, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_direction(temp: *const Temporal, result: *mut f64) -> bool;
@@ -5496,10 +6948,10 @@ extern "C" {
     pub fn tpoint_is_simple(temp: *const Temporal) -> bool;
 }
 extern "C" {
-    pub fn tpoint_length(temp: *const Temporal) -> f64;
+    pub fn tpoint_length(temp: *const Temporal, spheroid: bool) -> f64;
 }
 extern "C" {
-    pub fn tpoint_speed(temp: *const Temporal) -> *mut Temporal;
+    pub fn tpoint_speed(temp: *const Temporal, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_trajectory(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;
@@ -5508,10 +6960,34 @@ extern "C" {
     pub fn tpoint_twcentroid(temp: *const Temporal) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn tgeo_affine(temp: *const Temporal, a: *const AFFINE) -> *mut Temporal;
+    pub fn tgeo_affine(temp: *const Temporal, a: f64, b: f64, c: f64, d: f64, e: f64, f: f64, g: f64, h: f64, i: f64, xoff: f64, yoff: f64, zoff: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tgeo_scale(temp: *const Temporal, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tgeo_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_rotate_geo(temp: *const Temporal, angle: f64, origin: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_rotate_x(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_rotate_y(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_scale(temp: *const Temporal, xfactor: f64, yfactor: f64, zfactor: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_scale_geo(temp: *const Temporal, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_transscale(temp: *const Temporal, deltax: f64, deltay: f64, xfactor: f64, yfactor: f64) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_make_simple(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
@@ -5547,13 +7023,19 @@ extern "C" {
     pub fn tgeo_minus_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tpoint_at_geom(temp: *const Temporal, gs: *const GSERIALIZED, zspan: *const Span) -> *mut Temporal;
+    pub fn tpoint_at_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_at_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_at_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tpoint_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED, zspan: *const Span) -> *mut Temporal;
+    pub fn tpoint_minus_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpoint_minus_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
@@ -5611,6 +7093,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tgeo_space_boxes(temp: *const Temporal, xsize: f64, ysize: f64, zsize: f64, sorigin: *const GSERIALIZED, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn tgeo_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
 }
 extern "C" {
     pub fn tgeo_space_time_boxes(temp: *const Temporal, xsize: f64, ysize: f64, zsize: f64, duration: *const Interval, sorigin: *const GSERIALIZED, torigin: TimestampTz, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
@@ -5820,22 +7305,43 @@ extern "C" {
     pub fn acontains_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn acovers_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acovers_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acovers_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adisjoint_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn adisjoint_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn adisjoint_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn adwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
+    pub fn adwithin_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn adwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+    pub fn adwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn aintersects_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn aintersects_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn aintersects_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn atouches_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn atouches_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
@@ -5845,6 +7351,9 @@ extern "C" {
 }
 extern "C" {
     pub fn atouches_tpoint_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn atouches_geo_tpoint(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn econtains_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
@@ -5865,22 +7374,34 @@ extern "C" {
     pub fn ecovers_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn edisjoint_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn edisjoint_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn edisjoint_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn edwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
+    pub fn edwithin_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn edwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+    pub fn edwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64, spheroid: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn eintersects_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn eintersects_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn eintersects_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn etouches_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn etouches_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
@@ -5892,91 +7413,139 @@ extern "C" {
     pub fn etouches_tpoint_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn tcontains_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn etouches_geo_tpoint(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn tcontains_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcontains_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, dist: f64, spheroid: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdistance_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn ttouches_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdistance_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+    pub fn edwithin_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, dist: f64, spheroid: bool, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nad_stbox_geo(box_: *const STBox, gs: *const GSERIALIZED) -> f64;
+    pub fn adwithin_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, dist: f64, spheroid: bool, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nad_stbox_stbox(box1: *const STBox, box2: *const STBox) -> f64;
+    pub fn eintersects_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nad_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> f64;
+    pub fn aintersects_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nad_tgeo_stbox(temp: *const Temporal, box_: *const STBox) -> f64;
+    pub fn etouches_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nad_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn atouches_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nai_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut TInstant;
+    pub fn edisjoint_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn nai_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+    pub fn adisjoint_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn shortestline_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn tdwithin_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, dist: f64, spheroid: bool, count: *mut ::std::os::raw::c_int, periods: *mut *mut *mut SpanSet) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn shortestline_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+    pub fn tintersects_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int, periods: *mut *mut *mut SpanSet) -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ttouches_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int, periods: *mut *mut *mut SpanSet) -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tdisjoint_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int, periods: *mut *mut *mut SpanSet) -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tdistance_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, spheroid: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn nad_stbox_geo(box_: *const STBox, gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn nad_stbox_stbox(box1: *const STBox, box2: *const STBox, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn stbox_spatial_distance(box1: *const STBox, box2: *const STBox) -> f64;
+}
+extern "C" {
+    pub fn nad_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn nad_tgeo_stbox(temp: *const Temporal, box_: *const STBox, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn nad_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn nai_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, spheroid: bool) -> *mut TInstant;
+}
+extern "C" {
+    pub fn nai_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> *mut TInstant;
+}
+extern "C" {
+    pub fn shortestline_tgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED, spheroid: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn shortestline_tgeo_tgeo(temp1: *const Temporal, temp2: *const Temporal, spheroid: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn mindistance_tgeoarr_tgeoarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn tpoint_tcentroid_combinefn(state1: *mut SkipList, state2: *mut SkipList) -> *mut SkipList;
 }
 extern "C" {
     pub fn tpoint_tcentroid_finalfn(state: *mut SkipList) -> *mut Temporal;
@@ -5985,7 +7554,10 @@ extern "C" {
     pub fn tpoint_tcentroid_transfn(state: *mut SkipList, temp: *mut Temporal) -> *mut SkipList;
 }
 extern "C" {
-    pub fn tspatial_extent_transfn(box_: *mut STBox, temp: *const Temporal) -> *mut STBox;
+    pub fn stbox_extent_transfn(state: *mut STBox, box_: *const STBox) -> *mut STBox;
+}
+extern "C" {
+    pub fn tspatial_extent_transfn(state: *mut STBox, temp: *const Temporal) -> *mut STBox;
 }
 extern "C" {
     pub fn stbox_get_space_tile(point: *const GSERIALIZED, xsize: f64, ysize: f64, zsize: f64, sorigin: *const GSERIALIZED) -> *mut STBox;
@@ -6012,7 +7584,7 @@ extern "C" {
     pub fn tgeo_space_time_split(temp: *const Temporal, xsize: f64, ysize: f64, zsize: f64, duration: *const Interval, sorigin: *const GSERIALIZED, torigin: TimestampTz, bitmatrix: bool, border_inc: bool, space_bins: *mut *mut *mut GSERIALIZED, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn geo_cluster_kmeans(geoms: *mut *const GSERIALIZED, ngeoms: ::std::os::raw::c_uint, k: ::std::os::raw::c_uint) -> *mut ::std::os::raw::c_int;
+    pub fn geo_cluster_kmeans(geoms: *mut *const GSERIALIZED, ngeoms: ::std::os::raw::c_uint, k: ::std::os::raw::c_uint, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn geo_cluster_dbscan(geoms: *mut *const GSERIALIZED, ngeoms: ::std::os::raw::c_uint, tolerance: f64, minpoints: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_uint;
@@ -6024,10 +7596,16 @@ extern "C" {
     pub fn geo_cluster_within(geoms: *mut *const GSERIALIZED, ngeoms: ::std::os::raw::c_uint, tolerance: f64, count: *mut ::std::os::raw::c_int) -> *mut *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn cbuffer_as_ewkb(cb: *const Cbuffer, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn cbuffer_as_ewkt(cb: *const Cbuffer, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn cbuffer_as_hexwkb(cb: *const Cbuffer, variant: ::std::os::raw::c_uchar, size: *mut size_t) -> *mut ::std::os::raw::c_char;
+    pub fn cbuffer_as_hexewkb(cb: *const Cbuffer, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn cbuffer_as_hexwkb(cb: *const Cbuffer, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn cbuffer_as_text(cb: *const Cbuffer, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
@@ -6072,6 +7650,9 @@ extern "C" {
     pub fn cbuffer_hash_extended(cb: *const Cbuffer, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
 }
 extern "C" {
+    pub fn cbuffer_mem_size(cb: *const Cbuffer) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn cbuffer_point(cb: *const Cbuffer) -> *mut GSERIALIZED;
 }
 extern "C" {
@@ -6084,7 +7665,7 @@ extern "C" {
     pub fn cbufferarr_round(cbarr: *mut *const Cbuffer, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut Cbuffer;
 }
 extern "C" {
-    pub fn cbuffer_set_srid(cb: *mut Cbuffer, srid: ::std::os::raw::c_int);
+    pub fn cbuffer_set_srid(cb: *const Cbuffer, srid: ::std::os::raw::c_int) -> *mut Cbuffer;
 }
 extern "C" {
     pub fn cbuffer_srid(cb: *const Cbuffer) -> ::std::os::raw::c_int;
@@ -6153,19 +7734,13 @@ extern "C" {
     pub fn cbuffer_ne(cb1: *const Cbuffer, cb2: *const Cbuffer) -> bool;
 }
 extern "C" {
-    pub fn cbuffer_nsame(cb1: *const Cbuffer, cb2: *const Cbuffer) -> bool;
-}
-extern "C" {
-    pub fn cbuffer_same(cb1: *const Cbuffer, cb2: *const Cbuffer) -> bool;
-}
-extern "C" {
     pub fn cbufferset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 extern "C" {
     pub fn cbufferset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn cbufferset_make(values: *mut *mut Cbuffer, count: ::std::os::raw::c_int) -> *mut Set;
+    pub fn cbufferset_make(values: *const Cbuffer, count: ::std::os::raw::c_int) -> *mut Set;
 }
 extern "C" {
     pub fn cbuffer_to_set(cb: *const Cbuffer) -> *mut Set;
@@ -6180,7 +7755,7 @@ extern "C" {
     pub fn cbufferset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Cbuffer) -> bool;
 }
 extern "C" {
-    pub fn cbufferset_values(s: *const Set) -> *mut *mut Cbuffer;
+    pub fn cbufferset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Cbuffer;
 }
 extern "C" {
     pub fn cbuffer_union_transfn(state: *mut Set, cb: *const Cbuffer) -> *mut Set;
@@ -6210,10 +7785,34 @@ extern "C" {
     pub fn union_set_cbuffer(s: *const Set, cb: *const Cbuffer) -> *mut Set;
 }
 extern "C" {
+    pub fn distance_cbufferset_cbufferset(s1: *const Set, s2: *const Set) -> f64;
+}
+extern "C" {
     pub fn tcbuffer_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tcbuffer_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbufferinst_make(cb: *const Cbuffer, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
     pub fn tcbuffer_make(tpoint: *const Temporal, tfloat: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbuffer_from_base_temp(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbufferseq_from_base_tstzset(cb: *const Cbuffer, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tcbufferseq_from_base_tstzspan(cb: *const Cbuffer, s: *const Span, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tcbufferseqset_from_base_tstzspanset(cb: *const Cbuffer, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tcbuffer_end_value(temp: *const Temporal) -> *mut Cbuffer;
 }
 extern "C" {
     pub fn tcbuffer_points(temp: *const Temporal) -> *mut Set;
@@ -6222,7 +7821,28 @@ extern "C" {
     pub fn tcbuffer_radius(temp: *const Temporal) -> *mut Set;
 }
 extern "C" {
-    pub fn tcbuffer_trav_area(temp: *const Temporal, merge_union: bool) -> *mut GSERIALIZED;
+    pub fn tcbuffer_traversed_area(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tcbuffer_convex_hull(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tcbuffer_start_value(temp: *const Temporal) -> *mut Cbuffer;
+}
+extern "C" {
+    pub fn tcbuffer_value(temp: *const Temporal) -> *mut Cbuffer;
+}
+extern "C" {
+    pub fn tcbuffer_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Cbuffer) -> bool;
+}
+extern "C" {
+    pub fn tcbuffer_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Cbuffer) -> bool;
+}
+extern "C" {
+    pub fn tcbuffer_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Cbuffer;
+}
+extern "C" {
+    pub fn tcbuffer_unnest(temp: *const Temporal, values: *mut *mut *mut Cbuffer, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
 }
 extern "C" {
     pub fn tcbuffer_to_tfloat(temp: *const Temporal) -> *mut Temporal;
@@ -6235,6 +7855,15 @@ extern "C" {
 }
 extern "C" {
     pub fn tcbuffer_expand(temp: *const Temporal, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbuffer_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbuffer_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcbuffer_translate(temp: *const Temporal, deltax: f64, deltay: f64) -> *mut Temporal;
 }
 extern "C" {
     pub fn tcbuffer_at_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
@@ -6274,6 +7903,12 @@ extern "C" {
 }
 extern "C" {
     pub fn nad_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn mindistance_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, threshold: f64) -> f64;
+}
+extern "C" {
+    pub fn mindistance_tcbufferarr_tcbufferarr(arr1: *mut *const Temporal, count1: ::std::os::raw::c_int, arr2: *mut *const Temporal, count2: ::std::os::raw::c_int) -> f64;
 }
 extern "C" {
     pub fn nai_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut TInstant;
@@ -6354,6 +7989,9 @@ extern "C" {
     pub fn acontains_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn acontains_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn acovers_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -6366,6 +8004,15 @@ extern "C" {
     pub fn acovers_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn acovers_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adisjoint_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adisjoint_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn adisjoint_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -6373,6 +8020,12 @@ extern "C" {
 }
 extern "C" {
     pub fn adisjoint_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adwithin_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adwithin_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn adwithin_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
@@ -6384,6 +8037,12 @@ extern "C" {
     pub fn adwithin_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn aintersects_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn aintersects_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn aintersects_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -6391,6 +8050,12 @@ extern "C" {
 }
 extern "C" {
     pub fn aintersects_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn atouches_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn atouches_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn atouches_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
@@ -6405,13 +8070,22 @@ extern "C" {
     pub fn econtains_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn econtains_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn econtains_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn econtains_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn econtains_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ecovers_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ecovers_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn ecovers_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> ::std::os::raw::c_int;
@@ -6423,10 +8097,25 @@ extern "C" {
     pub fn ecovers_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn edisjoint_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edisjoint_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn edisjoint_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn edisjoint_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edisjoint_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edwithin_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edwithin_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn edwithin_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
@@ -6438,6 +8127,12 @@ extern "C" {
     pub fn edwithin_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn eintersects_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn eintersects_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn eintersects_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -6445,6 +8140,12 @@ extern "C" {
 }
 extern "C" {
     pub fn eintersects_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn etouches_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn etouches_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn etouches_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
@@ -6456,97 +8157,526 @@ extern "C" {
     pub fn etouches_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn tcontains_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcontains_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcontains_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcontains_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcontains_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcontains_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tcovers_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tcovers_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, dist: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdwithin_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, dist: f64, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, dist: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdwithin_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdisjoint_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tdisjoint_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tintersects_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn tintersects_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_geo_tcbuffer(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_tcbuffer_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn ttouches_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal, restr: bool, atvalue: bool) -> *mut Temporal;
+    pub fn ttouches_tcbuffer_cbuffer(temp: *const Temporal, cb: *const Cbuffer) -> *mut Temporal;
 }
 extern "C" {
-    pub fn gsl_get_generation_rng() -> *mut gsl_rng;
+    pub fn ttouches_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn gsl_get_aggregation_rng() -> *mut gsl_rng;
+    pub fn tcellindex_get_resolution(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcellindex_is_valid_cell(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcellindex_cell_to_parent(temp: *const Temporal, resolution: int32) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcellindex_cell_to_point(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcellindex_cell_to_boundary(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tcellindex_cell_area(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn h3index_in(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn bigint_to_h3index(i: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3index_out(cell: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn h3_is_valid_cell(cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3_is_valid_directed_edge(edge: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3_is_valid_vertex(vertex: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_eq(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_ne(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_lt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_le(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_gt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_ge(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3index_cmp(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn h3index_hash(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn h3index_hash_extended(cell: ::std::os::raw::c_ulong, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3_grid_disk(origin: ::std::os::raw::c_ulong, k: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_cell_to_children(origin: ::std::os::raw::c_ulong, childRes: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_compact_cells(cells: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_uncompact_cells(cells: *const Set, res: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_grid_ring(origin: ::std::os::raw::c_ulong, k: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_grid_path_cells(start: ::std::os::raw::c_ulong, end: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_origin_to_directed_edges(origin: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_cell_to_vertexes(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3_get_icosahedron_faces(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3index_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3index_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3index_as_wkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn h3index_as_hexwkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn h3index_get_resolution(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn h3index_cell_to_parent(cell: ::std::os::raw::c_ulong, parent_resolution: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3index_cell_to_point(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn h3index_cell_to_boundary(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn h3index_cell_area(cell: ::std::os::raw::c_ulong) -> f64;
+}
+extern "C" {
+    pub fn th3index_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3indexinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn th3indexseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn th3indexseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn th3index_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn th3index_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3indexinst_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn th3index_from_base_temp(value: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3indexseq_from_base_tstzset(value: ::std::os::raw::c_ulong, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn th3indexseq_from_base_tstzspan(value: ::std::os::raw::c_ulong, s: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn th3indexseqset_from_base_tstzspanset(value: ::std::os::raw::c_ulong, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn th3indexseq_make(values: *const ::std::os::raw::c_ulong, times: *const TimestampTz, count: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool) -> *mut TSequence;
+}
+extern "C" {
+    pub fn th3indexseqset_make(sequences: *mut *const TSequence, count: ::std::os::raw::c_int) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn th3index_start_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn th3index_end_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn th3index_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn th3index_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn th3index_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn th3index_unnest(temp: *const Temporal, values: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn th3index_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn tbigint_to_th3index(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_at_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_minus_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ever_eq_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_h3index_th3index(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_th3index_h3index(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_th3index_th3index(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_get_base_cell_number(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_is_res_class_iii(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_is_pentagon(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_parent_next(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_center_child(temp: *const Temporal, resolution: int32) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_center_child_next(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_child_pos(temp: *const Temporal, parent_res: int32) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_child_pos_to_cell(child_pos: *const Temporal, parent: *const Temporal, child_res: int32) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_to_th3index(temp: *const Temporal, resolution: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_to_th3index(temp: *const Temporal, resolution: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_h3index_split(temp: *const Temporal, resolution: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_h3index_split(temp: *const Temporal, resolution: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn h3index_to_set(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3indexset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn h3indexset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn h3indexset_make(values: *const ::std::os::raw::c_ulong, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3indexset_end_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3indexset_start_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn h3indexset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn h3indexset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn contained_h3index_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contains_set_h3index(s: *const Set, cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn intersection_h3index_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_h3index(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_h3index_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_h3index(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn union_h3index_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_h3index(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3index_union_transfn(state: *mut Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn h3indexset_grid_disk(cells: *const Set, k: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn h3indexset_cover_cells(cells: *const Set, resolution: int32) -> *mut Set;
+}
+extern "C" {
+    pub fn geo_to_h3index_cell(point: *const GSERIALIZED, resolution: int32) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn geo_to_h3index_set(gs: *const GSERIALIZED, resolution: int32) -> *mut Set;
+}
+extern "C" {
+    pub fn h3index_cell_to_cover(cell: ::std::os::raw::c_ulong, resolution: int32) -> *mut Set;
+}
+extern "C" {
+    pub fn h3index_to_stbox(cell: ::std::os::raw::c_ulong) -> *mut STBox;
+}
+extern "C" {
+    pub fn h3index_timestamptz_to_stbox(cell: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut STBox;
+}
+extern "C" {
+    pub fn h3index_tstzspan_to_stbox(cell: ::std::os::raw::c_ulong, s: *const Span) -> *mut STBox;
+}
+extern "C" {
+    pub fn ever_eq_h3indexset_th3index(cells: *const Set, th3idx: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_th3index_h3indexset(th3idx: *const Temporal, cells: *const Set) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn th3index_are_neighbor_cells(origin: *const Temporal, dest: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cells_to_directed_edge(origin: *const Temporal, dest: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_is_valid_directed_edge(edge: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_get_directed_edge_origin(edge: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_get_directed_edge_destination(edge: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_directed_edge_to_boundary(edge: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_vertex(temp: *const Temporal, vertex_num: int32) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_vertex_to_latlng(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_is_valid_vertex(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_grid_distance(origin: *const Temporal, dest: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_cell_to_local_ij(origin: *const Temporal, cell: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_local_ij_to_cell(origin: *const Temporal, coord: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn th3index_edge_length(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_great_circle_distance(a: *const Temporal, b: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn meos_array_get_intl(array: *const MeosArray, n: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn prng_get_generation_rng() -> *mut pg_prng_state;
+}
+extern "C" {
+    pub fn prng_get_aggregation_rng() -> *mut pg_prng_state;
+}
+extern "C" {
+    pub fn meos_random_double(rng: *mut pg_prng_state) -> f64;
+}
+extern "C" {
+    pub fn meos_random_exponential(rng: *mut pg_prng_state, mean: f64) -> f64;
+}
+extern "C" {
+    pub fn meos_random_binomial20_half(rng: *mut pg_prng_state) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn basetype_in(str_: *const ::std::os::raw::c_char, type_: MeosType, end: bool, result: *mut Datum) -> bool;
 }
 extern "C" {
     pub fn datum_ceil(d: Datum) -> Datum;
@@ -6561,10 +8691,10 @@ extern "C" {
     pub fn datum_floor(d: Datum) -> Datum;
 }
 extern "C" {
-    pub fn datum_hash(d: Datum, basetype: meosType) -> ::std::os::raw::c_uint;
+    pub fn datum_hash(d: Datum, basetype: MeosType) -> ::std::os::raw::c_uint;
 }
 extern "C" {
-    pub fn datum_hash_extended(d: Datum, basetype: meosType, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+    pub fn datum_hash_extended(d: Datum, basetype: MeosType, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
 }
 extern "C" {
     pub fn datum_radians(d: Datum) -> Datum;
@@ -6573,37 +8703,37 @@ extern "C" {
     pub fn floatspan_round_set(s: *const Span, maxdd: ::std::os::raw::c_int, result: *mut Span);
 }
 extern "C" {
-    pub fn set_in(str_: *const ::std::os::raw::c_char, basetype: meosType) -> *mut Set;
+    pub fn set_in(str_: *const ::std::os::raw::c_char, settype: MeosType) -> *mut Set;
 }
 extern "C" {
     pub fn set_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn span_in(str_: *const ::std::os::raw::c_char, spantype: meosType) -> *mut Span;
+    pub fn span_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut Span;
 }
 extern "C" {
     pub fn span_out(s: *const Span, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn spanset_in(str_: *const ::std::os::raw::c_char, spantype: meosType) -> *mut SpanSet;
+    pub fn spanset_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut SpanSet;
 }
 extern "C" {
     pub fn spanset_out(ss: *const SpanSet, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn set_make(values: *const Datum, count: ::std::os::raw::c_int, basetype: meosType, order: bool) -> *mut Set;
+    pub fn set_make(values: *const Datum, count: ::std::os::raw::c_int, basetype: MeosType, order: bool) -> *mut Set;
 }
 extern "C" {
-    pub fn set_make_exp(values: *const Datum, count: ::std::os::raw::c_int, maxcount: ::std::os::raw::c_int, basetype: meosType, order: bool) -> *mut Set;
+    pub fn set_make_exp(values: *const Datum, count: ::std::os::raw::c_int, maxcount: ::std::os::raw::c_int, basetype: MeosType, order: bool) -> *mut Set;
 }
 extern "C" {
-    pub fn set_make_free(values: *mut Datum, count: ::std::os::raw::c_int, basetype: meosType, order: bool) -> *mut Set;
+    pub fn set_make_free(values: *mut Datum, count: ::std::os::raw::c_int, basetype: MeosType, order: bool) -> *mut Set;
 }
 extern "C" {
-    pub fn span_make(lower: Datum, upper: Datum, lower_inc: bool, upper_inc: bool, basetype: meosType) -> *mut Span;
+    pub fn span_make(lower: Datum, upper: Datum, lower_inc: bool, upper_inc: bool, basetype: MeosType) -> *mut Span;
 }
 extern "C" {
-    pub fn span_set(lower: Datum, upper: Datum, lower_inc: bool, upper_inc: bool, basetype: meosType, spantype: meosType, s: *mut Span);
+    pub fn span_set(lower: Datum, upper: Datum, lower_inc: bool, upper_inc: bool, basetype: MeosType, spantype: MeosType, s: *mut Span);
 }
 extern "C" {
     pub fn spanset_make_exp(spans: *mut Span, count: ::std::os::raw::c_int, maxcount: ::std::os::raw::c_int, normalize: bool, order: bool) -> *mut SpanSet;
@@ -6612,22 +8742,31 @@ extern "C" {
     pub fn spanset_make_free(spans: *mut Span, count: ::std::os::raw::c_int, normalize: bool, order: bool) -> *mut SpanSet;
 }
 extern "C" {
+    pub fn set_sortkey_intl(s: *const Set, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn span_sortkey_intl(s: *const Span, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn spanset_sortkey_intl(ss: *const SpanSet, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn set_span(s: *const Set) -> *mut Span;
 }
 extern "C" {
     pub fn set_spanset(s: *const Set) -> *mut SpanSet;
 }
 extern "C" {
-    pub fn value_set_span(value: Datum, basetype: meosType, s: *mut Span);
+    pub fn value_set_span(value: Datum, basetype: MeosType, s: *mut Span);
 }
 extern "C" {
-    pub fn value_set(d: Datum, basetype: meosType) -> *mut Set;
+    pub fn value_set(d: Datum, basetype: MeosType) -> *mut Set;
 }
 extern "C" {
-    pub fn value_span(d: Datum, basetype: meosType) -> *mut Span;
+    pub fn value_span(d: Datum, basetype: MeosType) -> *mut Span;
 }
 extern "C" {
-    pub fn value_spanset(d: Datum, basetype: meosType) -> *mut SpanSet;
+    pub fn value_spanset(d: Datum, basetype: MeosType) -> *mut SpanSet;
 }
 extern "C" {
     pub fn numspan_width(s: *const Span) -> Datum;
@@ -6637,9 +8776,6 @@ extern "C" {
 }
 extern "C" {
     pub fn set_end_value(s: *const Set) -> Datum;
-}
-extern "C" {
-    pub fn set_mem_size(s: *const Set) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn set_set_subspan(s: *const Set, minidx: ::std::os::raw::c_int, maxidx: ::std::os::raw::c_int, result: *mut Span);
@@ -6657,16 +8793,13 @@ extern "C" {
     pub fn set_vals(s: *const Set) -> *mut Datum;
 }
 extern "C" {
-    pub fn set_values(s: *const Set) -> *mut Datum;
+    pub fn set_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut Datum;
 }
 extern "C" {
     pub fn spanset_lower(ss: *const SpanSet) -> Datum;
 }
 extern "C" {
-    pub fn spanset_mem_size(ss: *const SpanSet) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn spanset_sps(ss: *const SpanSet) -> *mut *const Span;
+    pub fn spanset_sps(ss: *const SpanSet, count: *mut ::std::os::raw::c_int) -> *mut *const Span;
 }
 extern "C" {
     pub fn spanset_upper(ss: *const SpanSet) -> Datum;
@@ -6675,7 +8808,19 @@ extern "C" {
     pub fn datespan_set_tstzspan(s1: *const Span, s2: *mut Span);
 }
 extern "C" {
+    pub fn bigintspan_set_floatspan(s1: *const Span, s2: *mut Span);
+}
+extern "C" {
+    pub fn bigintspan_set_intspan(s1: *const Span, s2: *mut Span);
+}
+extern "C" {
+    pub fn floatspan_set_bigintspan(s1: *const Span, s2: *mut Span);
+}
+extern "C" {
     pub fn floatspan_set_intspan(s1: *const Span, s2: *mut Span);
+}
+extern "C" {
+    pub fn intspan_set_bigintspan(s1: *const Span, s2: *mut Span);
 }
 extern "C" {
     pub fn intspan_set_floatspan(s1: *const Span, s2: *mut Span);
@@ -6684,13 +8829,22 @@ extern "C" {
     pub fn numset_shift_scale(s: *const Set, shift: Datum, width: Datum, hasshift: bool, haswidth: bool) -> *mut Set;
 }
 extern "C" {
+    pub fn tstzset_shift_scale_intl(s: *const Set, shift: *const Interval, duration: *const Interval) -> *mut Set;
+}
+extern "C" {
     pub fn numspan_expand(s: *const Span, value: Datum) -> *mut Span;
 }
 extern "C" {
     pub fn numspan_shift_scale(s: *const Span, shift: Datum, width: Datum, hasshift: bool, haswidth: bool) -> *mut Span;
 }
 extern "C" {
+    pub fn tstzspan_shift_scale_intl(s: *const Span, shift: *const Interval, duration: *const Interval) -> *mut Span;
+}
+extern "C" {
     pub fn numspanset_shift_scale(ss: *const SpanSet, shift: Datum, width: Datum, hasshift: bool, haswidth: bool) -> *mut SpanSet;
+}
+extern "C" {
+    pub fn tstzspanset_shift_scale_intl(ss: *const SpanSet, shift: *const Interval, duration: *const Interval) -> *mut SpanSet;
 }
 extern "C" {
     pub fn set_compact(s: *const Set) -> *mut Set;
@@ -6699,10 +8853,13 @@ extern "C" {
     pub fn span_expand(s1: *const Span, s2: *mut Span);
 }
 extern "C" {
+    pub fn super_union_span_span(s1: *const Span, s2: *const Span) -> *mut Span;
+}
+extern "C" {
     pub fn spanset_compact(ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
-    pub fn tbox_expand_value(box_: *const TBox, value: Datum, basetyp: meosType) -> *mut TBox;
+    pub fn tbox_expand_value(box_: *const TBox, value: Datum, basetyp: MeosType) -> *mut TBox;
 }
 extern "C" {
     pub fn textcat_textset_text_common(s: *const Set, txt: *const text, invert: bool) -> *mut Set;
@@ -6816,19 +8973,73 @@ extern "C" {
     pub fn right_spanset_value(ss: *const SpanSet, value: Datum) -> bool;
 }
 extern "C" {
-    pub fn bbox_type(bboxtype: meosType) -> bool;
+    pub fn bbox_type(bboxtype: MeosType) -> bool;
 }
 extern "C" {
-    pub fn bbox_get_size(bboxtype: meosType) -> size_t;
+    pub fn bbox_get_size(bboxtype: MeosType) -> size_t;
 }
 extern "C" {
-    pub fn bbox_max_dims(bboxtype: meosType) -> ::std::os::raw::c_int;
+    pub fn bbox_max_dims(bboxtype: MeosType) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn temporal_bbox_eq(box1: *const ::std::os::raw::c_void, box2: *const ::std::os::raw::c_void, temptype: meosType) -> bool;
+    pub fn temporal_bbox_eq(box1: *const ::std::os::raw::c_void, box2: *const ::std::os::raw::c_void, temptype: MeosType) -> bool;
 }
 extern "C" {
-    pub fn temporal_bbox_cmp(box1: *const ::std::os::raw::c_void, box2: *const ::std::os::raw::c_void, temptype: meosType) -> ::std::os::raw::c_int;
+    pub fn temporal_bbox_cmp(box1: *const ::std::os::raw::c_void, box2: *const ::std::os::raw::c_void, temptype: MeosType) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ensure_bbox_temporal_compatible(bboxtype: MeosType, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn ensure_same_index_bboxtype(bboxtype1: MeosType, bboxtype2: MeosType) -> bool;
+}
+extern "C" {
+    pub fn ensure_index_join_op(op: IndexSearchOp) -> bool;
+}
+extern "C" {
+    pub fn ensure_index_result(result: *const MeosArray) -> bool;
+}
+extern "C" {
+    pub fn rtree_create(bboxtype: MeosType) -> *mut RTree;
+}
+extern "C" {
+    pub fn sptree_create(bboxtype: MeosType, kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn rtree_search_intl(rtree: *const RTree, op: IndexSearchOp, query: *const ::std::os::raw::c_void, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sptree_search_intl(sptree: *const SPTree, op: IndexSearchOp, query: *const ::std::os::raw::c_void, result: *mut MeosArray) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn bbox_temporal_split_boxes(bboxtype: MeosType, boxsize: size_t, temp: *const Temporal, maxboxes: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn span_contains(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_contained(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_overlaps(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_same(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_adjacent(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_left(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_right(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_overleft(s1: *const Span, s2: *const Span) -> bool;
+}
+extern "C" {
+    pub fn span_overright(s1: *const Span, s2: *const Span) -> bool;
 }
 extern "C" {
     pub fn bbox_union_span_span(s1: *const Span, s2: *const Span, result: *mut Span);
@@ -6876,9 +9087,6 @@ extern "C" {
     pub fn minus_value_spanset(value: Datum, ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
-    pub fn super_union_span_span(s1: *const Span, s2: *const Span) -> *mut Span;
-}
-extern "C" {
     pub fn union_set_value(s: *const Set, value: Datum) -> *mut Set;
 }
 extern "C" {
@@ -6918,19 +9126,19 @@ extern "C" {
     pub fn distance_spanset_value(ss: *const SpanSet, value: Datum) -> Datum;
 }
 extern "C" {
-    pub fn distance_value_value(l: Datum, r: Datum, basetype: meosType) -> Datum;
+    pub fn distance_value_value(l: Datum, r: Datum, basetype: MeosType) -> Datum;
 }
 extern "C" {
-    pub fn spanbase_extent_transfn(state: *mut Span, value: Datum, basetype: meosType) -> *mut Span;
+    pub fn spanbase_extent_transfn(state: *mut Span, value: Datum, basetype: MeosType) -> *mut Span;
 }
 extern "C" {
-    pub fn value_union_transfn(state: *mut Set, value: Datum, basetype: meosType) -> *mut Set;
+    pub fn value_union_transfn(state: *mut Set, value: Datum, basetype: MeosType) -> *mut Set;
 }
 extern "C" {
-    pub fn number_tstzspan_to_tbox(d: Datum, basetype: meosType, s: *const Span) -> *mut TBox;
+    pub fn number_tstzspan_to_tbox(d: Datum, basetype: MeosType, s: *const Span) -> *mut TBox;
 }
 extern "C" {
-    pub fn number_timestamptz_to_tbox(d: Datum, basetype: meosType, t: TimestampTz) -> *mut TBox;
+    pub fn number_timestamptz_to_tbox(d: Datum, basetype: MeosType, t: TimestampTz) -> *mut TBox;
 }
 extern "C" {
     pub fn tbox_set(s: *const Span, p: *const Span, box_: *mut TBox);
@@ -6942,10 +9150,10 @@ extern "C" {
     pub fn int_set_tbox(i: ::std::os::raw::c_int, box_: *mut TBox);
 }
 extern "C" {
-    pub fn number_set_tbox(d: Datum, basetype: meosType, box_: *mut TBox);
+    pub fn number_set_tbox(d: Datum, basetype: MeosType, box_: *mut TBox);
 }
 extern "C" {
-    pub fn number_tbox(value: Datum, basetype: meosType) -> *mut TBox;
+    pub fn number_tbox(value: Datum, basetype: MeosType) -> *mut TBox;
 }
 extern "C" {
     pub fn numset_set_tbox(s: *const Set, box_: *mut TBox);
@@ -6963,13 +9171,58 @@ extern "C" {
     pub fn tstzspan_set_tbox(s: *const Span, box_: *mut TBox);
 }
 extern "C" {
+    pub fn tbox_shift_scale_time_intl(box_: *const TBox, shift: *const Interval, duration: *const Interval) -> *mut TBox;
+}
+extern "C" {
     pub fn tbox_shift_scale_value(box_: *const TBox, shift: Datum, width: Datum, hasshift: bool, haswidth: bool) -> *mut TBox;
 }
 extern "C" {
     pub fn tbox_expand(box1: *const TBox, box2: *mut TBox);
 }
 extern "C" {
+    pub fn tbox_contains(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_contained(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_overlaps(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_same(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_adjacent(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_left(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_right(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_overleft(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_overright(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_before(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_after(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_overbefore(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_overafter(box1: *const TBox, box2: *const TBox) -> bool;
+}
+extern "C" {
     pub fn inter_tbox_tbox(box1: *const TBox, box2: *const TBox, result: *mut TBox) -> bool;
+}
+extern "C" {
+    pub fn tbox_sortkey_intl(box_: *const TBox, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
     pub fn tboolinst_from_mfjson(mfjson: *mut json_object) -> *mut TInstant;
@@ -6990,13 +9243,13 @@ extern "C" {
     pub fn tboolseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn temporal_in(str_: *const ::std::os::raw::c_char, temptype: meosType) -> *mut Temporal;
+    pub fn temporal_in(str_: *const ::std::os::raw::c_char, temptype: MeosType) -> *mut Temporal;
 }
 extern "C" {
     pub fn temporal_out(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn temparr_out(temparr: *mut *mut Temporal, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut ::std::os::raw::c_char;
+    pub fn temparr_out(temparr: *mut *const Temporal, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn tfloatinst_from_mfjson(mfjson: *mut json_object) -> *mut TInstant;
@@ -7017,13 +9270,31 @@ extern "C" {
     pub fn tfloatseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tinstant_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: meosType) -> *mut TInstant;
+    pub fn tinstant_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: MeosType) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tinstant_in(str_: *const ::std::os::raw::c_char, temptype: meosType) -> *mut TInstant;
+    pub fn tinstant_in(str_: *const ::std::os::raw::c_char, temptype: MeosType) -> *mut TInstant;
 }
 extern "C" {
     pub fn tinstant_out(inst: *const TInstant, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tbigintinst_from_mfjson(mfjson: *mut json_object) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tbigintinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tbigintseq_from_mfjson(mfjson: *mut json_object) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tbigintseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tbigintseqset_from_mfjson(mfjson: *mut json_object) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tbigintseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tintinst_from_mfjson(mfjson: *mut json_object) -> *mut TInstant;
@@ -7044,19 +9315,19 @@ extern "C" {
     pub fn tintseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tsequence_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: meosType, interp: interpType) -> *mut TSequence;
+    pub fn tsequence_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: MeosType, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tsequence_in(str_: *const ::std::os::raw::c_char, temptype: meosType, interp: interpType) -> *mut TSequence;
+    pub fn tsequence_in(str_: *const ::std::os::raw::c_char, temptype: MeosType, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
     pub fn tsequence_out(seq: *const TSequence, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn tsequenceset_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: meosType, interp: interpType) -> *mut TSequenceSet;
+    pub fn tsequenceset_from_mfjson(mfjson: *mut json_object, spatial: bool, srid: ::std::os::raw::c_int, temptype: MeosType, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tsequenceset_in(str_: *const ::std::os::raw::c_char, temptype: meosType, interp: interpType) -> *mut TSequenceSet;
+    pub fn tsequenceset_in(str_: *const ::std::os::raw::c_char, temptype: MeosType, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tsequenceset_out(ss: *const TSequenceSet, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
@@ -7080,31 +9351,43 @@ extern "C" {
     pub fn ttextseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn temporal_from_mfjson(mfjson: *const ::std::os::raw::c_char, temptype: meosType) -> *mut Temporal;
+    pub fn tjsonbinst_from_mfjson(mfjson: *mut json_object) -> *mut TInstant;
 }
 extern "C" {
-    pub fn temporal_from_base_temp(value: Datum, temptype: meosType, temp: *const Temporal) -> *mut Temporal;
+    pub fn tjsonbseq_from_mfjson(mfjson: *mut json_object) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tjsonbseqset_from_mfjson(mfjson: *mut json_object) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn temporal_from_mfjson(mfjson: *const ::std::os::raw::c_char, temptype: MeosType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn temporal_from_base_temp(value: Datum, temptype: MeosType, temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tinstant_copy(inst: *const TInstant) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tinstant_make(value: Datum, temptype: meosType, t: TimestampTz) -> *mut TInstant;
+    pub fn tinstant_make(value: Datum, temptype: MeosType, t: TimestampTz) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tinstant_make_free(value: Datum, temptype: meosType, t: TimestampTz) -> *mut TInstant;
+    pub fn tinstant_make_free(value: Datum, temptype: MeosType, t: TimestampTz) -> *mut TInstant;
 }
 extern "C" {
     pub fn tsequence_copy(seq: *const TSequence) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tsequence_from_base_temp(value: Datum, temptype: meosType, seq: *const TSequence) -> *mut TSequence;
+    pub fn tsequence_derivative(seq: *const TSequence, spheroid: bool) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tsequence_from_base_tstzset(value: Datum, temptype: meosType, s: *const Set) -> *mut TSequence;
+    pub fn tsequence_from_base_temp(value: Datum, temptype: MeosType, seq: *const TSequence) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tsequence_from_base_tstzspan(value: Datum, temptype: meosType, s: *const Span, interp: interpType) -> *mut TSequence;
+    pub fn tsequence_from_base_tstzset(value: Datum, temptype: MeosType, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tsequence_from_base_tstzspan(value: Datum, temptype: MeosType, s: *const Span, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
     pub fn tsequence_make_exp(instants: *mut *mut TInstant, count: ::std::os::raw::c_int, maxcount: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool, interp: interpType, normalize: bool) -> *mut TSequence;
@@ -7116,13 +9399,16 @@ extern "C" {
     pub fn tsequenceset_copy(ss: *const TSequenceSet) -> *mut TSequenceSet;
 }
 extern "C" {
+    pub fn tsequenceset_derivative(ss: *const TSequenceSet, spheroid: bool) -> *mut TSequenceSet;
+}
+extern "C" {
     pub fn tseqsetarr_to_tseqset(seqsets: *mut *mut TSequenceSet, count: ::std::os::raw::c_int, totalseqs: ::std::os::raw::c_int) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tsequenceset_from_base_temp(value: Datum, temptype: meosType, ss: *const TSequenceSet) -> *mut TSequenceSet;
+    pub fn tsequenceset_from_base_temp(value: Datum, temptype: MeosType, ss: *const TSequenceSet) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tsequenceset_from_base_tstzspanset(value: Datum, temptype: meosType, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
+    pub fn tsequenceset_from_base_tstzspanset(value: Datum, temptype: MeosType, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tsequenceset_make_exp(sequences: *mut *mut TSequence, count: ::std::os::raw::c_int, maxcount: ::std::os::raw::c_int, normalize: bool) -> *mut TSequenceSet;
@@ -7173,9 +9459,6 @@ extern "C" {
     pub fn temporal_max_value(temp: *const Temporal) -> Datum;
 }
 extern "C" {
-    pub fn temporal_mem_size(temp: *const Temporal) -> size_t;
-}
-extern "C" {
     pub fn temporal_min_inst_p(temp: *const Temporal) -> *const TInstant;
 }
 extern "C" {
@@ -7206,6 +9489,9 @@ extern "C" {
     pub fn tinstant_hash(inst: *const TInstant) -> ::std::os::raw::c_uint;
 }
 extern "C" {
+    pub fn tinstant_hash_extended(inst: *const TInstant, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
     pub fn tinstant_insts(inst: *const TInstant, count: *mut ::std::os::raw::c_int) -> *mut *const TInstant;
 }
 extern "C" {
@@ -7230,7 +9516,7 @@ extern "C" {
     pub fn tinstant_values_p(inst: *const TInstant, count: *mut ::std::os::raw::c_int) -> *mut Datum;
 }
 extern "C" {
-    pub fn tnumber_set_span(temp: *const Temporal, span: *mut Span);
+    pub fn tnumber_set_span(temp: *const Temporal, s: *mut Span);
 }
 extern "C" {
     pub fn tnumberinst_valuespans(inst: *const TInstant) -> *mut SpanSet;
@@ -7257,7 +9543,10 @@ extern "C" {
     pub fn tsequence_hash(seq: *const TSequence) -> ::std::os::raw::c_uint;
 }
 extern "C" {
-    pub fn tsequence_insts_p(seq: *const TSequence) -> *mut *const TInstant;
+    pub fn tsequence_hash_extended(seq: *const TSequence, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn tsequence_insts_p(seq: *const TSequence, count: *mut ::std::os::raw::c_int) -> *mut *const TInstant;
 }
 extern "C" {
     pub fn tsequence_max_inst_p(seq: *const TSequence) -> *const TInstant;
@@ -7302,10 +9591,13 @@ extern "C" {
     pub fn tsequenceset_hash(ss: *const TSequenceSet) -> ::std::os::raw::c_uint;
 }
 extern "C" {
+    pub fn tsequenceset_hash_extended(ss: *const TSequenceSet, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
     pub fn tsequenceset_inst_n(ss: *const TSequenceSet, n: ::std::os::raw::c_int) -> *const TInstant;
 }
 extern "C" {
-    pub fn tsequenceset_insts_p(ss: *const TSequenceSet) -> *mut *const TInstant;
+    pub fn tsequenceset_insts_p(ss: *const TSequenceSet, count: *mut ::std::os::raw::c_int) -> *mut *const TInstant;
 }
 extern "C" {
     pub fn tsequenceset_max_inst_p(ss: *const TSequenceSet) -> *const TInstant;
@@ -7350,6 +9642,9 @@ extern "C" {
     pub fn tsequenceset_value_n(ss: *const TSequenceSet, n: ::std::os::raw::c_int, result: *mut Datum) -> bool;
 }
 extern "C" {
+    pub fn tsequenceset_value_n_p(ss: *const TSequenceSet, n: ::std::os::raw::c_int, result: *mut Datum) -> bool;
+}
+extern "C" {
     pub fn tsequenceset_values_p(ss: *const TSequenceSet, count: *mut ::std::os::raw::c_int) -> *mut Datum;
 }
 extern "C" {
@@ -7362,16 +9657,22 @@ extern "C" {
     pub fn temporal_tsequenceset(temp: *const Temporal, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
+    pub fn temporal_unnest(temp: *const Temporal, values: *mut *mut Datum, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
     pub fn tinstant_shift_time(inst: *const TInstant, interv: *const Interval) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tinstant_to_tsequence(inst: *const TInstant, interp: interpType) -> *mut TSequence;
+    pub fn tinstant_as_tsequence(inst: *const TInstant, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
     pub fn tinstant_to_tsequence_free(inst: *mut TInstant, interp: interpType) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tinstant_to_tsequenceset(inst: *const TInstant, interp: interpType) -> *mut TSequenceSet;
+    pub fn tinstant_as_tsequenceset(inst: *const TInstant, interp: interpType) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn temporal_shift_scale_time_intl(temp: *const Temporal, shift: *const Interval, duration: *const Interval) -> *mut Temporal;
 }
 extern "C" {
     pub fn tnumber_shift_scale_value(temp: *const Temporal, shift: Datum, width: Datum, hasshift: bool, haswidth: bool) -> *mut Temporal;
@@ -7398,10 +9699,10 @@ extern "C" {
     pub fn tsequence_subseq(seq: *const TSequence, from: ::std::os::raw::c_int, to: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool) -> *mut TSequence;
 }
 extern "C" {
-    pub fn tsequence_to_tinstant(seq: *const TSequence) -> *mut TInstant;
+    pub fn tsequence_as_tinstant(seq: *const TSequence) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tsequence_to_tsequenceset(seq: *const TSequence) -> *mut TSequenceSet;
+    pub fn tsequence_as_tsequenceset(seq: *const TSequence) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tsequence_to_tsequenceset_free(seq: *mut TSequence) -> *mut TSequenceSet;
@@ -7428,10 +9729,10 @@ extern "C" {
     pub fn tsequenceset_to_step(ss: *const TSequenceSet) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tsequenceset_to_tinstant(ss: *const TSequenceSet) -> *mut TInstant;
+    pub fn tsequenceset_as_tinstant(ss: *const TSequenceSet) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tsequenceset_to_tsequence(ss: *const TSequenceSet) -> *mut TSequence;
+    pub fn tsequenceset_as_tsequence(ss: *const TSequenceSet) -> *mut TSequence;
 }
 extern "C" {
     pub fn tinstant_merge(inst1: *const TInstant, inst2: *const TInstant) -> *mut Temporal;
@@ -7632,6 +9933,9 @@ extern "C" {
     pub fn tinstant_cmp(inst1: *const TInstant, inst2: *const TInstant) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn temporal_sortkey_intl(temp: *const Temporal, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn tinstant_eq(inst1: *const TInstant, inst2: *const TInstant) -> bool;
 }
 extern "C" {
@@ -7719,7 +10023,46 @@ extern "C" {
     pub fn ever_lt_temporal_base(temp: *const Temporal, value: Datum) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn teq_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tlt_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tlt_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tle_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tle_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgt_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgt_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tge_base_temporal(value: Datum, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tge_temporal_base(temp: *const Temporal, value: Datum) -> *mut Temporal;
+}
+extern "C" {
     pub fn tnumberinst_abs(inst: *const TInstant) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tnumberinst_distance(inst1: *const TInstant, inst2: *const TInstant) -> f64;
 }
 extern "C" {
     pub fn tnumberseq_abs(seq: *const TSequence) -> *mut TSequence;
@@ -7743,16 +10086,22 @@ extern "C" {
     pub fn tdistance_tnumber_number(temp: *const Temporal, value: Datum) -> *mut Temporal;
 }
 extern "C" {
-    pub fn nad_tbox_tbox(box1: *const TBox, box2: *const TBox) -> f64;
+    pub fn nad_tbox_tbox(box1: *const TBox, box2: *const TBox) -> Datum;
 }
 extern "C" {
-    pub fn nad_tnumber_number(temp: *const Temporal, value: Datum) -> f64;
+    pub fn nad_tnumber_number(temp: *const Temporal, value: Datum) -> Datum;
 }
 extern "C" {
-    pub fn nad_tnumber_tbox(temp: *const Temporal, box_: *const TBox) -> f64;
+    pub fn nad_tnumber_tbox(temp: *const Temporal, box_: *const TBox) -> Datum;
 }
 extern "C" {
-    pub fn nad_tnumber_tnumber(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn nad_numspan_tbox(s: *const Span, box_: *const TBox) -> Datum;
+}
+extern "C" {
+    pub fn nad_tnumber_numspan(temp: *const Temporal, s: *const Span) -> Datum;
+}
+extern "C" {
+    pub fn nad_tnumber_tnumber(temp1: *const Temporal, temp2: *const Temporal) -> Datum;
 }
 extern "C" {
     pub fn tnumberseq_integral(seq: *const TSequence) -> f64;
@@ -7800,34 +10149,31 @@ extern "C" {
     pub fn skiplist_keys_values(list: *mut SkipList, values: *mut *mut ::std::os::raw::c_void) -> *mut *mut ::std::os::raw::c_void;
 }
 extern "C" {
-    pub fn temporal_app_tinst_transfn(state: *mut Temporal, inst: *const TInstant, interp: interpType, maxdist: f64, maxt: *const Interval) -> *mut Temporal;
+    pub fn span_bins(s: *const Span, vsize: Datum, vorigin: Datum, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn temporal_app_tseq_transfn(state: *mut Temporal, seq: *const TSequence) -> *mut Temporal;
+    pub fn spanset_bins(ss: *const SpanSet, vsize: Datum, vorigin: Datum, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn span_bins(s: *const Span, size: Datum, origin: Datum, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tnumber_value_bins(temp: *const Temporal, vsize: Datum, vorigin: Datum, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut Span;
 }
 extern "C" {
-    pub fn spanset_bins(ss: *const SpanSet, size: Datum, origin: Datum, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tnumber_value_time_boxes(temp: *const Temporal, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tnumber_value_bins(temp: *const Temporal, size: Datum, origin: Datum, count: *mut ::std::os::raw::c_int) -> *mut Span;
+    pub fn tnumber_value_split(temp: *const Temporal, vsize: Datum, vorigin: Datum, border_inc: bool, bins: *mut *mut Datum, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn tnumber_value_time_boxes(temp: *const Temporal, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut TBox;
+    pub fn tbox_value_time_tile(value: Datum, t: TimestampTz, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, basetype: MeosType, spantype: MeosType) -> *mut TBox;
 }
 extern "C" {
-    pub fn tnumber_value_split(temp: *const Temporal, vsize: Datum, vorigin: Datum, bins: *mut *mut Datum, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+    pub fn tbox_value_time_tiles(box_: *const TBox, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut TBox;
 }
 extern "C" {
-    pub fn tbox_get_value_time_tile(value: Datum, t: TimestampTz, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, basetype: meosType, spantype: meosType) -> *mut TBox;
+    pub fn tnumber_value_time_split(temp: *const Temporal, vsize: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, border_inc: bool, value_bins: *mut *mut Datum, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
 }
 extern "C" {
-    pub fn tnumber_value_time_split(temp: *const Temporal, size: Datum, duration: *const Interval, vorigin: Datum, torigin: TimestampTz, value_bins: *mut *mut Datum, time_bins: *mut *mut TimestampTz, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
-}
-extern "C" {
-    pub fn proj_get_context() -> *mut PJ_CONTEXT;
+    pub fn meos_proj_get_context() -> *mut PJ_CONTEXT;
 }
 extern "C" {
     pub fn datum_geo_round(value: Datum, size: Datum) -> Datum;
@@ -7836,46 +10182,127 @@ extern "C" {
     pub fn point_round(gs: *const GSERIALIZED, maxdd: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn stbox_set(hasx: bool, hasz: bool, geodetic: bool, srid: int32, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, s: *const Span, box_: *mut STBox);
+    pub fn stbox_set(hasx: bool, hasz: bool, geodetic: bool, srid: int32, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, s: *const Span, result: *mut STBox);
 }
 extern "C" {
     pub fn gbox_set_stbox(box_: *const GBOX, srid: ::std::os::raw::c_int, result: *mut STBox);
 }
 extern "C" {
-    pub fn geo_set_stbox(gs: *const GSERIALIZED, box_: *mut STBox) -> bool;
+    pub fn geo_set_stbox(gs: *const GSERIALIZED, result: *mut STBox) -> bool;
 }
 extern "C" {
-    pub fn geoarr_set_stbox(values: *const Datum, count: ::std::os::raw::c_int, box_: *mut STBox);
+    pub fn geoarr_set_stbox(values: *const Datum, count: ::std::os::raw::c_int, result: *mut STBox);
 }
 extern "C" {
-    pub fn spatial_set_stbox(d: Datum, basetype: meosType, box_: *mut STBox) -> bool;
+    pub fn spatial_set_stbox(d: Datum, basetype: MeosType, result: *mut STBox) -> bool;
 }
 extern "C" {
-    pub fn spatialset_set_stbox(set: *const Set, box_: *mut STBox);
+    pub fn spatialset_set_stbox(set: *const Set, result: *mut STBox);
 }
 extern "C" {
-    pub fn stbox_set_box3d(box_: *const STBox, box3d: *mut BOX3D);
+    pub fn distance_spatialset_value(s: *const Set, value: Datum, spheroid: bool) -> Datum;
 }
 extern "C" {
-    pub fn stbox_set_gbox(box_: *const STBox, gbox: *mut GBOX);
+    pub fn distance_spatialset_spatialset(s1: *const Set, s2: *const Set, spheroid: bool) -> Datum;
 }
 extern "C" {
-    pub fn tstzset_set_stbox(s: *const Set, box_: *mut STBox);
+    pub fn stbox_set_box3d(box_: *const STBox, result: *mut BOX3D);
 }
 extern "C" {
-    pub fn tstzspan_set_stbox(s: *const Span, box_: *mut STBox);
+    pub fn stbox_set_gbox(box_: *const STBox, result: *mut GBOX);
 }
 extern "C" {
-    pub fn tstzspanset_set_stbox(s: *const SpanSet, box_: *mut STBox);
+    pub fn tstzset_set_stbox(s: *const Set, result: *mut STBox);
+}
+extern "C" {
+    pub fn timestamptz_set_stbox(t: TimestampTz, result: *mut STBox);
+}
+extern "C" {
+    pub fn tstzspan_set_stbox(s: *const Span, result: *mut STBox);
+}
+extern "C" {
+    pub fn tstzspanset_set_stbox(s: *const SpanSet, result: *mut STBox);
 }
 extern "C" {
     pub fn stbox_expand(box1: *const STBox, box2: *mut STBox);
+}
+extern "C" {
+    pub fn stbox_expand_space_set(box_: *const STBox, d: f64, result: *mut STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_shift_scale_time_intl(box_: *const STBox, shift: *const Interval, duration: *const Interval) -> *mut STBox;
+}
+extern "C" {
+    pub fn stbox_contains(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_contained(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overlaps(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_same(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_adjacent(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_left(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_right(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overleft(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overright(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_below(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_above(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overbelow(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overabove(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_front(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_back(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overfront(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overback(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_before(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_after(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overbefore(box1: *const STBox, box2: *const STBox) -> bool;
+}
+extern "C" {
+    pub fn stbox_overafter(box1: *const STBox, box2: *const STBox) -> bool;
 }
 extern "C" {
     pub fn inter_stbox_stbox(box1: *const STBox, box2: *const STBox, result: *mut STBox) -> bool;
 }
 extern "C" {
     pub fn stbox_geo(box_: *const STBox) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn stbox_sortkey_intl(box_: *const STBox, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
     pub fn tgeogpointinst_from_mfjson(mfjson: *mut json_object, srid: ::std::os::raw::c_int) -> *mut TInstant;
@@ -7950,7 +10377,7 @@ extern "C" {
     pub fn tgeometryseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tspatial_set_stbox(temp: *const Temporal, box_: *mut STBox);
+    pub fn tspatial_set_stbox(temp: *const Temporal, result: *mut STBox);
 }
 extern "C" {
     pub fn tgeoinst_set_stbox(inst: *const TInstant, box_: *mut STBox);
@@ -7962,34 +10389,103 @@ extern "C" {
     pub fn tspatialseqset_set_stbox(ss: *const TSequenceSet, box_: *mut STBox);
 }
 extern "C" {
-    pub fn tgeo_restrict_geom(temp: *const Temporal, gs: *const GSERIALIZED, zspan: *const Span, atfunc: bool) -> *mut Temporal;
+    pub fn tgeo_restrict_elevation(temp: *const Temporal, s: *const Span, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_restrict_elevation_intl(temp: *const Temporal, s: *const Span, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_restrict_geom(temp: *const Temporal, gs: *const GSERIALIZED, atfunc: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tgeo_restrict_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool, atfunc: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tgeoinst_restrict_geom(inst: *const TInstant, gs: *const GSERIALIZED, zspan: *const Span, atfunc: bool) -> *mut TInstant;
+    pub fn tgeoinst_restrict_geom(inst: *const TInstant, gs: *const GSERIALIZED, atfunc: bool) -> *mut TInstant;
 }
 extern "C" {
     pub fn tgeoinst_restrict_stbox(inst: *const TInstant, box_: *const STBox, border_inc: bool, atfunc: bool) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tgeoseq_restrict_geom(seq: *const TSequence, gs: *const GSERIALIZED, zspan: *const Span, atfunc: bool) -> *mut Temporal;
+    pub fn tgeoseq_restrict_geom(seq: *const TSequence, gs: *const GSERIALIZED, atfunc: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tgeoseq_restrict_stbox(seq: *const TSequence, box_: *const STBox, border_inc: bool, atfunc: bool) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tgeoseqset_restrict_geom(ss: *const TSequenceSet, gs: *const GSERIALIZED, zspan: *const Span, atfunc: bool) -> *mut TSequenceSet;
+    pub fn tgeoseqset_restrict_geom(ss: *const TSequenceSet, gs: *const GSERIALIZED, atfunc: bool) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tgeoseqset_restrict_stbox(ss: *const TSequenceSet, box_: *const STBox, border_inc: bool, atfunc: bool) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn spatial_srid(d: Datum, basetype: meosType) -> ::std::os::raw::c_int;
+    pub fn geo_edge_ctx_make(gs: *const GSERIALIZED) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
-    pub fn spatial_set_srid(d: Datum, basetype: meosType, srid: ::std::os::raw::c_int) -> bool;
+    pub fn geo_is_planar_linear(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_clip_subject(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_is_planar_areal(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_every_part_bounds_area(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_is_point_set(gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_meos_coverage(gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn geo_points_covered(pts: *const GSERIALIZED, gs: *const GSERIALIZED, covered: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_clip_linear_geom(line: *const GSERIALIZED, gs: *const GSERIALIZED, inside: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_edge_ctx_free(ctx: *mut ::std::os::raw::c_void);
+}
+extern "C" {
+    pub fn geo_intersects2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn geo_intersects2d_ctx(gs: *const GSERIALIZED, ctx: *const ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn geo_covers2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn tpoint_linear_inter_geom(temp: *const Temporal, gs: *const GSERIALIZED, clip: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_linear_inter_geom_ctx(temp: *const Temporal, ctx: *const ::std::os::raw::c_void, clip: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_linear_dwithin_geom(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_linear_dwithin_geom_ctx(temp: *const Temporal, ctx: *const ::std::os::raw::c_void, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_linear_distance_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpoint_linear_restrict_geom(temp: *const Temporal, gs: *const GSERIALIZED, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn geom_meos_coverage(geom: *const LWGEOM) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn stbox_nad(box1: *const STBox, box2: *const STBox, spheroid: bool) -> f64;
+}
+extern "C" {
+    pub fn spatial_srid(d: Datum, basetype: MeosType) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn spatial_set_srid(d: Datum, basetype: MeosType, srid: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
     pub fn tspatialinst_srid(inst: *const TInstant) -> ::std::os::raw::c_int;
@@ -7998,13 +10494,13 @@ extern "C" {
     pub fn tpointseq_azimuth(seq: *const TSequence) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tpointseq_cumulative_length(seq: *const TSequence, prevlength: f64) -> *mut TSequence;
+    pub fn tpointseq_cumulative_length(seq: *const TSequence, prevlength: f64, spheroid: bool) -> *mut TSequence;
 }
 extern "C" {
     pub fn tpointseq_is_simple(seq: *const TSequence) -> bool;
 }
 extern "C" {
-    pub fn tpointseq_length(seq: *const TSequence) -> f64;
+    pub fn tpointseq_length(seq: *const TSequence, spheroid: bool) -> f64;
 }
 extern "C" {
     pub fn tpointseq_linear_trajectory(seq: *const TSequence, unary_union: bool) -> *mut GSERIALIZED;
@@ -8019,13 +10515,13 @@ extern "C" {
     pub fn tpointseqset_azimuth(ss: *const TSequenceSet) -> *mut TSequenceSet;
 }
 extern "C" {
-    pub fn tpointseqset_cumulative_length(ss: *const TSequenceSet) -> *mut TSequenceSet;
+    pub fn tpointseqset_cumulative_length(ss: *const TSequenceSet, spheroid: bool) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tpointseqset_is_simple(ss: *const TSequenceSet) -> bool;
 }
 extern "C" {
-    pub fn tpointseqset_length(ss: *const TSequenceSet) -> f64;
+    pub fn tpointseqset_length(ss: *const TSequenceSet, spheroid: bool) -> f64;
 }
 extern "C" {
     pub fn tgeoseqset_stboxes(ss: *const TSequenceSet, count: *mut ::std::os::raw::c_int) -> *mut STBox;
@@ -8073,7 +10569,802 @@ extern "C" {
     pub fn tpointseqset_twcentroid(ss: *const TSequenceSet) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn float4_to_numeric(num: f32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn float8_to_numeric(num: f64) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn int16_to_numeric(num: int16) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn int32_to_numeric(num: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn int64_to_numeric(num: ::std::os::raw::c_long) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric(num: *mut ::std::os::raw::c_void, typmod: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_abs(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_add(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_ceil(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_cmp(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn numeric_copy(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_div(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_div_trunc(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_eq(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_exp(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_fac(num: ::std::os::raw::c_long) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_floor(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_gcd(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_ge(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_gt(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_hash(key: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn numeric_hash_extended(num: *mut ::std::os::raw::c_void, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn numeric_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_inc(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_larger(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_lcm(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_le(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_ln(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_log(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_lt(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_min_scale(num: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn numeric_minus(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_mod(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_mul(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_ne(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn numeric_out(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn numeric_pow(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_round(num: *mut ::std::os::raw::c_void, scale: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_scale(num: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn numeric_sign(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_smaller(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_sqrt(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_to_float4(num: *mut ::std::os::raw::c_void) -> f32;
+}
+extern "C" {
+    pub fn numeric_to_float8(num: *mut ::std::os::raw::c_void) -> f64;
+}
+extern "C" {
+    pub fn numeric_to_int16(num: *mut ::std::os::raw::c_void) -> int16;
+}
+extern "C" {
+    pub fn numeric_to_int32(num: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn numeric_to_int64(num: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn numeric_trim_scale(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_trunc(num: *mut ::std::os::raw::c_void, scale: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_uminus(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_uplus(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn numeric_width_bucket(operand: *mut ::std::os::raw::c_void, bound1: *mut ::std::os::raw::c_void, bound2: *mut ::std::os::raw::c_void, count: int32) -> int32;
+}
+extern "C" {
+    pub fn json_in(str_: *const ::std::os::raw::c_char) -> *mut text;
+}
+extern "C" {
+    pub fn json_out(js: *const text) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn jsonb_from_text(txt: *const text, unique_keys: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_out(jb: *const Jsonb) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn json_make(keys_vals: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn json_make_two_arg(keys: *mut *mut text, values: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_copy(jb: *const Jsonb) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_make(keys_vals: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_make_two_arg(keys: *mut *mut text, values: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_to_bool(jb: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_to_cstring(jb: *const Jsonb) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn jsonb_to_float4(jb: *const Jsonb) -> f32;
+}
+extern "C" {
+    pub fn jsonb_to_float8(jb: *const Jsonb) -> f64;
+}
+extern "C" {
+    pub fn jsonb_to_int16(jb: *const Jsonb) -> int16;
+}
+extern "C" {
+    pub fn jsonb_to_int32(jb: *const Jsonb) -> int32;
+}
+extern "C" {
+    pub fn jsonb_to_int64(jb: *const Jsonb) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn jsonb_to_numeric(jb: *const Jsonb) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn jsonb_to_text(jb: *const Jsonb) -> *mut text;
+}
+extern "C" {
+    pub fn json_array_element(js: *const text, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn json_array_element_text(js: *const text, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn json_array_elements(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_array_elements_text(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_array_length(js: *const text) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn json_each(js: *const text, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_each_text(js: *const text, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_extract_path(js: *const text, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn json_extract_path_text(js: *const text, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn json_object_field(js: *const text, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn json_object_field_text(js: *const text, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn json_object_keys(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_typeof(js: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_array_element(jb: *const Jsonb, element: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_array_element_text(jb: *const Jsonb, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_array_elements(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_array_elements_text(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn jsonb_array_length(jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn jsonb_contained(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_contains(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_each(jb: *const Jsonb, values: *mut *mut *mut Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn jsonb_each_text(jb: *const Jsonb, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn jsonb_exists(jb: *const Jsonb, key: *const text) -> bool;
+}
+extern "C" {
+    pub fn jsonb_exists_array(jb: *const Jsonb, keys_elems: *mut *mut text, keys_len: ::std::os::raw::c_int, any: bool) -> bool;
+}
+extern "C" {
+    pub fn jsonb_extract_path(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_extract_path_text(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_hash(jb: *const Jsonb) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn jsonb_hash_extended(jb: *const Jsonb, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn jsonb_mem_size(jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn jsonb_object_field(jb: *const Jsonb, key: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_object_field_text(jb: *const Jsonb, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_object_keys(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn json_strip_nulls(js: *const text, strip_in_arrays: bool) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_concat(jb1: *const Jsonb, jb2: *const Jsonb) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_delete(jb: *const Jsonb, key: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_delete_array(jb: *const Jsonb, keys_elems: *mut *mut text, keys_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_delete_index(jb: *const Jsonb, idx: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_delete_path(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_insert(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, after: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_pretty(jb: *const Jsonb) -> *mut text;
+}
+extern "C" {
+    pub fn jsonb_set(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_set_lax(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, handle_null: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_strip_nulls(jb: *const Jsonb, strip_in_arrays: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_cmp(jb1: *const Jsonb, jb2: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn jsonb_eq(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_ge(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_gt(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_le(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_lt(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_ne(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonb_path_exists(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn jsonb_path_match(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> bool;
+}
+extern "C" {
+    pub fn jsonb_path_query_all(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_path_query_array(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonb_path_query_first(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonpath_in(str_: *const ::std::os::raw::c_char) -> *mut JsonPath;
+}
+extern "C" {
+    pub fn jsonpath_copy(jp: *const JsonPath) -> *mut JsonPath;
+}
+extern "C" {
+    pub fn jsonpath_mem_size(jp: *const JsonPath) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn jsonpath_out(jp: *const JsonPath) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn jsonbset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn jsonbset_make(values: *mut *const Jsonb, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonb_to_set(jb: *const Jsonb) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_textset(s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn textset_to_jsonbset(s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_end_value(s: *const Set) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonbset_start_value(s: *const Set) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn jsonbset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Jsonb) -> bool;
+}
+extern "C" {
+    pub fn jsonbset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
+}
+extern "C" {
+    pub fn concat_jsonbset_jsonb(s: *const Set, jb: *const Jsonb, invert: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_array_length(set: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_object_field(set: *const Set, key: *const text, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_object_field_text(set: *const Set, key: *const text, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_array_element(set: *const Set, idx: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_array_element_text(set: *const Set, idx: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_delete_index(set: *const Set, idx: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_delete(set: *const Set, key: *const text) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_delete_array(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_exists(set: *const Set, key: *const text, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_exists_array(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, any: bool, rescount: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_set(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text, lax: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_alphanumset(set: *const Set, key: *const ::std::os::raw::c_char, settype: MeosType, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_intset(set: *const Set, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_bigintset(set: *const Set, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_floatset(set: *const Set, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_to_textset_key(set: *const Set, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_strip_nulls(set: *const Set, strip_in_arrays: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_pretty(set: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_delete_path(set: *const Set, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_extract_path(set: *const Set, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_extract_path_text(set: *const Set, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_insert(set: *const Set, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, after: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_path_exists(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_path_match(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_path_query_array(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_path_query_first(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_array_element_common(set: *const Set, idx: ::std::os::raw::c_int, astext: bool, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_extract_path_common(set: *const Set, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, astext: bool, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_object_field_common(set: *const Set, key: *const text, astext: bool, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn contained_jsonb_set(jb: *const Jsonb, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contains_set_jsonb(s: *const Set, jb: *mut Jsonb) -> bool;
+}
+extern "C" {
+    pub fn intersection_jsonb_set(jb: *const Jsonb, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_jsonb(s: *const Set, jb: *const Jsonb) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonb_union_transfn(state: *mut Set, jb: *const Jsonb) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_jsonb_set(jb: *const Jsonb, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_jsonb(s: *const Set, jb: *const Jsonb) -> *mut Set;
+}
+extern "C" {
+    pub fn union_jsonb_set(jb: *const Jsonb, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_jsonb(s: *const Set, jb: *const Jsonb) -> *mut Set;
+}
+extern "C" {
+    pub fn tjsonb_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tjsonbinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tjsonbseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tjsonbseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tjsonb_from_base_temp(jsonb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonbinst_make(jsonb: *const Jsonb, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tjsonbseq_from_base_tstzset(jsonb: *const Jsonb, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tjsonbseq_from_base_tstzspan(jsonb: *const Jsonb, sp: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tjsonbseqset_from_base_tstzspanset(jsonb: *const Jsonb, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tjsonb_to_ttext(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ttext_to_tjsonb(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_end_value(temp: *const Temporal) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn tjsonb_start_value(temp: *const Temporal) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn tjsonb_value(temp: *const Temporal) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn tjsonb_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Jsonb) -> bool;
+}
+extern "C" {
+    pub fn tjsonb_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Jsonb) -> bool;
+}
+extern "C" {
+    pub fn tjsonb_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
+}
+extern "C" {
+    pub fn tjsonb_unnest(temp: *const Temporal, values: *mut *mut *mut Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn concat_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb, invert: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn concat_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn contains_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb, invert: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn contains_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn null_handle_type_from_string(str_: *const ::std::os::raw::c_char) -> nullHandleType;
+}
+extern "C" {
+    pub fn tjson_array_element(temp: *const Temporal, idx: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjson_array_length(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjson_extract_path(temp: *const Temporal, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjson_object_field(temp: *const Temporal, key: *const text, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjson_strip_nulls(temp: *const Temporal, strip_in_arrays: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_array_element(temp: *const Temporal, idx: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_array_element_text(temp: *const Temporal, idx: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_array_length(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_delete(temp: *const Temporal, key: *const text) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_delete_array(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_delete_index(temp: *const Temporal, idx: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_delete_path(temp: *const Temporal, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_exists(temp: *const Temporal, key: *const text) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_exists_all(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_exists_any(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_exists_array(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, any: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_extract_path(temp: *const Temporal, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_extract_path_text(temp: *const Temporal, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_insert(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, after: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_object_field(temp: *const Temporal, key: *const text, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_object_field_text(temp: *const Temporal, key: *const text, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_exists(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_match(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_query_array(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_query_first(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_pretty(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_set(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, handle_null: *const text, lax: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_strip_nulls(temp: *const Temporal, strip_in_arrays: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tbigint(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tbool(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tfloat(temp: *const Temporal, key: *const ::std::os::raw::c_char, interp: interpType, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tgeogpoint(temp: *const Temporal, key: *const ::std::os::raw::c_char, interp: interpType, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tgeography(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tgeometry(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tgeompoint(temp: *const Temporal, key: *const ::std::os::raw::c_char, interp: interpType, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_tint(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_to_ttext_key(temp: *const Temporal, key: *const ::std::os::raw::c_char, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjson_object_field_common(temp: *const Temporal, key: *const text, astext: bool, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_array_element_common(temp: *const Temporal, idx: ::std::os::raw::c_int, astext: bool, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_extract_path_common(temp: *const Temporal, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, astext: bool, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_object_field_common(temp: *const Temporal, key: *const text, astext: bool, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_at_value(temp: *const Temporal, jsb: *const Jsonb) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_minus_value(temp: *const Temporal, jsb: *const Jsonb) -> *mut Temporal;
+}
+extern "C" {
+    pub fn always_eq_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> *mut Temporal;
+}
+extern "C" {
+    pub fn npoint_as_ewkb(np: *const Npoint, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn npoint_as_ewkt(np: *const Npoint, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn npoint_as_hexewkb(np: *const Npoint, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn npoint_as_hexwkb(np: *const Npoint, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
@@ -8097,13 +11388,43 @@ extern "C" {
     pub fn npoint_out(np: *const Npoint, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn nsegment_as_hexewkb(ns: *const Nsegment, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn nsegment_as_hexwkb(ns: *const Nsegment, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn nsegment_as_wkb(ns: *const Nsegment, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn nsegment_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Nsegment;
+}
+extern "C" {
+    pub fn nsegment_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> *mut Nsegment;
+}
+extern "C" {
     pub fn nsegment_in(str_: *const ::std::os::raw::c_char) -> *mut Nsegment;
 }
 extern "C" {
     pub fn nsegment_out(ns: *const Nsegment, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn nsegment_as_ewkb(ns: *const Nsegment, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn nsegment_as_ewkt(ns: *const Nsegment, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn nsegment_as_text(ns: *const Nsegment, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn npoint_copy(np: *const Npoint) -> *mut Npoint;
+}
+extern "C" {
     pub fn npoint_make(rid: ::std::os::raw::c_long, pos: f64) -> *mut Npoint;
+}
+extern "C" {
+    pub fn nsegment_copy(ns: *const Nsegment) -> *mut Nsegment;
 }
 extern "C" {
     pub fn nsegment_make(rid: ::std::os::raw::c_long, pos1: f64, pos2: f64) -> *mut Nsegment;
@@ -8127,7 +11448,7 @@ extern "C" {
     pub fn nsegment_to_geom(ns: *const Nsegment) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn nsegment_to_stbox(np: *const Nsegment) -> *mut STBox;
+    pub fn nsegment_to_stbox(ns: *const Nsegment) -> *mut STBox;
 }
 extern "C" {
     pub fn npoint_hash(np: *const Npoint) -> ::std::os::raw::c_uint;
@@ -8202,9 +11523,6 @@ extern "C" {
     pub fn npoint_ne(np1: *const Npoint, np2: *const Npoint) -> bool;
 }
 extern "C" {
-    pub fn npoint_same(np1: *const Npoint, np2: *const Npoint) -> bool;
-}
-extern "C" {
     pub fn nsegment_cmp(ns1: *const Nsegment, ns2: *const Nsegment) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -8232,7 +11550,7 @@ extern "C" {
     pub fn npointset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn npointset_make(values: *mut *mut Npoint, count: ::std::os::raw::c_int) -> *mut Set;
+    pub fn npointset_make(values: *const Npoint, count: ::std::os::raw::c_int) -> *mut Set;
 }
 extern "C" {
     pub fn npoint_to_set(np: *const Npoint) -> *mut Set;
@@ -8250,7 +11568,7 @@ extern "C" {
     pub fn npointset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Npoint) -> bool;
 }
 extern "C" {
-    pub fn npointset_values(s: *const Set) -> *mut *mut Npoint;
+    pub fn npointset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Npoint;
 }
 extern "C" {
     pub fn contained_npoint_set(np: *const Npoint, s: *const Set) -> bool;
@@ -8280,13 +11598,31 @@ extern "C" {
     pub fn union_set_npoint(s: *const Set, np: *const Npoint) -> *mut Set;
 }
 extern "C" {
+    pub fn distance_npointset_npointset(s1: *const Set, s2: *const Set) -> f64;
+}
+extern "C" {
     pub fn tnpoint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tnpoint_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
     pub fn tnpoint_out(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn tnpointinst_make(np: *const Npoint, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tnpoint_from_base_temp(np: *const Npoint, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tnpointseq_from_base_tstzset(np: *const Npoint, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tnpointseq_from_base_tstzspan(np: *const Npoint, s: *const Span, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tnpointseqset_from_base_tstzspanset(np: *const Npoint, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
 }
 extern "C" {
     pub fn tgeompoint_to_tnpoint(temp: *const Temporal) -> *mut Temporal;
@@ -8296,6 +11632,9 @@ extern "C" {
 }
 extern "C" {
     pub fn tnpoint_cumulative_length(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tnpoint_end_value(temp: *const Temporal) -> *mut Npoint;
 }
 extern "C" {
     pub fn tnpoint_length(temp: *const Temporal) -> f64;
@@ -8313,7 +11652,25 @@ extern "C" {
     pub fn tnpoint_speed(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
+    pub fn tnpoint_start_value(temp: *const Temporal) -> *mut Npoint;
+}
+extern "C" {
     pub fn tnpoint_trajectory(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tnpoint_value(temp: *const Temporal) -> *mut Npoint;
+}
+extern "C" {
+    pub fn tnpoint_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Npoint) -> bool;
+}
+extern "C" {
+    pub fn tnpoint_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Npoint) -> bool;
+}
+extern "C" {
+    pub fn tnpoint_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Npoint;
+}
+extern "C" {
+    pub fn tnpoint_unnest(temp: *const Temporal, values: *mut *mut *mut Npoint, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
 }
 extern "C" {
     pub fn tnpoint_twcentroid(temp: *const Temporal) -> *mut GSERIALIZED;
@@ -8346,7 +11703,7 @@ extern "C" {
     pub fn tdistance_tnpoint_npoint(temp: *const Temporal, np: *const Npoint) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdistance_tnpoint_point(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tdistance_tnpoint_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tdistance_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
@@ -8382,7 +11739,7 @@ extern "C" {
     pub fn shortestline_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn tnpoint_tcentroid_transfn(state: *mut SkipList, temp: *mut Temporal) -> *mut SkipList;
+    pub fn tnpoint_tcentroid_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
 }
 extern "C" {
     pub fn always_eq_npoint_tnpoint(np: *const Npoint, temp: *const Temporal) -> ::std::os::raw::c_int;
@@ -8427,10 +11784,985 @@ extern "C" {
     pub fn tne_tnpoint_npoint(temp: *const Temporal, np: *const Npoint) -> *mut Temporal;
 }
 extern "C" {
+    pub fn contained_rid_bigint_tnpoint(rid: ::std::os::raw::c_long, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contained_rid_bigintset_tnpoint(s: *const Set, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contained_rid_npoint_tnpoint(np: *const Npoint, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contained_rid_tnpoint_bigintset(temp: *const Temporal, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contained_rid_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contains_rid_bigintset_tnpoint(s: *const Set, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contains_rid_tnpoint_bigint(temp: *const Temporal, rid: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn contains_rid_tnpoint_bigintset(temp: *const Temporal, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contains_rid_tnpoint_npoint(temp: *const Temporal, np: *const Npoint) -> bool;
+}
+extern "C" {
+    pub fn contains_rid_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overlaps_rid_bigintset_tnpoint(s: *const Set, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overlaps_rid_tnpoint_bigintset(temp: *const Temporal, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn overlaps_rid_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_rid_bigint_tnpoint(rid: ::std::os::raw::c_long, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_rid_bigintset_tnpoint(s: *const Set, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_rid_npoint_tnpoint(np: *const Npoint, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_rid_tnpoint_bigint(temp: *const Temporal, rid: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn same_rid_tnpoint_bigintset(temp: *const Temporal, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn same_rid_tnpoint_npoint(temp: *const Temporal, np: *const Npoint) -> bool;
+}
+extern "C" {
+    pub fn same_rid_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_hex_in(str_: *const ::std::os::raw::c_char) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpoint_hex_out(pt: *const Pcpoint, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpoint_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpoint_as_hexwkb(pt: *const Pcpoint) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpoint_make(pcid: ::std::os::raw::c_uint, values: *const f64, count: ::std::os::raw::c_int) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpoint_copy(pt: *const Pcpoint) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpoint_get_pcid(pt: *const Pcpoint) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcpoint_hash(pt: *const Pcpoint) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcpoint_hash_extended(pt: *const Pcpoint, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn pcpoint_mem_size(pt: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pcpoint_get_x(pt: *const Pcpoint, out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_get_y(pt: *const Pcpoint, out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_get_z(pt: *const Pcpoint, out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_get_dim(pt: *const Pcpoint, name: *const ::std::os::raw::c_char, out: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_to_tpcbox(pt: *const Pcpoint) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn meos_pc_schema(pcid: ::std::os::raw::c_uint) -> *mut PCSCHEMA;
+}
+extern "C" {
+    pub fn meos_pc_schema_register(pcid: ::std::os::raw::c_uint, schema: *mut PCSCHEMA);
+}
+extern "C" {
+    pub fn meos_pc_schema_from_dims(pcid: ::std::os::raw::c_uint, srid: ::std::os::raw::c_int, compression: *const ::std::os::raw::c_char, dims: *const PCDimensionSpec, ndims: ::std::os::raw::c_int) -> *mut PCSCHEMA;
+}
+extern "C" {
+    pub fn meos_pc_schema_register_dims(pcid: ::std::os::raw::c_uint, srid: ::std::os::raw::c_int, compression: *const ::std::os::raw::c_char, dims: *const PCDimensionSpec, ndims: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn meos_pc_schema_register_xml(pcid: ::std::os::raw::c_uint, schema: *mut PCSCHEMA, xml_text: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn meos_pc_schema_xml(pcid: ::std::os::raw::c_uint) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn meos_pc_schema_clear();
+}
+extern "C" {
+    pub fn meos_pc_schema_srid(pcid: ::std::os::raw::c_uint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_pc_schema_compression(pcid: ::std::os::raw::c_uint) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn meos_pc_schema_ndims(pcid: ::std::os::raw::c_uint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn meos_set_pointcloud_schemas_xml(path: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn meos_initialize_pointcloud();
+}
+extern "C" {
+    pub fn rtree_create_tpcbox() -> *mut RTree;
+}
+extern "C" {
+    pub fn sptree_create_tpcbox(kind: SPTreeKind) -> *mut SPTree;
+}
+extern "C" {
+    pub fn pcpoint_cmp(pt1: *const Pcpoint, pt2: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pcpoint_eq(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_ne(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_lt(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_le(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_gt(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpoint_ge(pt1: *const Pcpoint, pt2: *const Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_hex_in(str_: *const ::std::os::raw::c_char) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatch_hex_out(pa: *const Pcpatch, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpatch_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatch_as_hexwkb(pa: *const Pcpatch) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpatch_make(points: *mut *const Pcpoint, count: ::std::os::raw::c_int) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatch_make_coords(pcid: ::std::os::raw::c_uint, values: *const f64, count: ::std::os::raw::c_int) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatch_copy(pa: *const Pcpatch) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatch_get_pcid(pa: *const Pcpatch) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcpatch_npoints(pa: *const Pcpatch) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcpatch_point_n(pa: *const Pcpatch, n: ::std::os::raw::c_int) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpatch_points(pa: *const Pcpatch, count: *mut ::std::os::raw::c_int) -> *mut *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpatch_hash(pa: *const Pcpatch) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcpatch_hash_extended(pa: *const Pcpatch, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn pcpatch_mem_size(pa: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pcpatch_to_geom(pa: *const Pcpatch) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn pcpatch_cmp(pa1: *const Pcpatch, pa2: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pcpatch_eq(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_ne(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_lt(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_le(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_gt(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatch_ge(pa1: *const Pcpatch, pa2: *const Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpointset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpointset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpointset_make(values: *mut *mut Pcpoint, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpoint_to_set(pt: *const Pcpoint) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpointset_start_value(s: *const Set) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpointset_end_value(s: *const Set) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn pcpointset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn pcpointset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Pcpoint;
+}
+extern "C" {
+    pub fn contains_set_pcpoint(s: *const Set, pt: *mut Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn contained_pcpoint_set(pt: *const Pcpoint, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn intersection_pcpoint_set(pt: *const Pcpoint, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_pcpoint(s: *const Set, pt: *const Pcpoint) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_pcpoint_set(pt: *const Pcpoint, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_pcpoint(s: *const Set, pt: *const Pcpoint) -> *mut Set;
+}
+extern "C" {
+    pub fn union_pcpoint_set(pt: *const Pcpoint, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_pcpoint(s: *const Set, pt: *const Pcpoint) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpoint_union_transfn(state: *mut Set, pt: *const Pcpoint) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpatchset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpatchset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pcpatchset_make(values: *mut *mut Pcpatch, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpatch_to_set(pa: *const Pcpatch) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpatchset_start_value(s: *const Set) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatchset_end_value(s: *const Set) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn pcpatchset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn pcpatchset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Pcpatch;
+}
+extern "C" {
+    pub fn contains_set_pcpatch(s: *const Set, pa: *mut Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn contained_pcpatch_set(pa: *const Pcpatch, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn intersection_pcpatch_set(pa: *const Pcpatch, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_pcpatch(s: *const Set, pa: *const Pcpatch) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_pcpatch_set(pa: *const Pcpatch, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_pcpatch(s: *const Set, pa: *const Pcpatch) -> *mut Set;
+}
+extern "C" {
+    pub fn union_pcpatch_set(pa: *const Pcpatch, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_pcpatch(s: *const Set, pa: *const Pcpatch) -> *mut Set;
+}
+extern "C" {
+    pub fn pcpatch_union_transfn(state: *mut Set, pa: *const Pcpatch) -> *mut Set;
+}
+extern "C" {
+    pub fn tpcbox_as_ewkb(box_: *const TPCBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn tpcbox_as_hexewkb(box_: *const TPCBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpcbox_as_hexwkb(box_: *const TPCBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpcbox_as_wkb(box_: *const TPCBox, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn tpcbox_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_in(str_: *const ::std::os::raw::c_char) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_out(box_: *const TPCBox, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpcbox_make(hasx: bool, hasz: bool, hast: bool, geodetic: bool, pcid: ::std::os::raw::c_uint, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, period: *const Span) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_copy(box_: *const TPCBox) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn pcpatch_to_tpcbox(pa: *const Pcpatch) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_hasx(box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_hasz(box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_hast(box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_geodetic(box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_xmin(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_xmax(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_ymin(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_ymax(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_zmin(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_zmax(box_: *const TPCBox, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_tmin(box_: *const TPCBox, result: *mut TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_tmin_inc(box_: *const TPCBox, result: *mut bool) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_tmax(box_: *const TPCBox, result: *mut TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_tmax_inc(box_: *const TPCBox, result: *mut bool) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_srid(box_: *const TPCBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tpcbox_pcid(box_: *const TPCBox) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn tpcbox_to_stbox(box_: *const TPCBox) -> *mut STBox;
+}
+extern "C" {
+    pub fn tpcbox_round(box_: *const TPCBox, maxdd: ::std::os::raw::c_int) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_set_srid(box_: *const TPCBox, srid: ::std::os::raw::c_int) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn union_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox, strict: bool) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn inter_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox, result: *mut TPCBox) -> bool;
+}
+extern "C" {
+    pub fn intersection_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn contains_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn contained_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn same_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_cmp(box1: *const TPCBox, box2: *const TPCBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tpcbox_eq(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_ne(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_sortkey(box_: *const TPCBox, size: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn tpcbox_lt(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_le(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_gt(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcbox_ge(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn left_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overleft_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn right_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overright_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn below_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overbelow_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn above_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overabove_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn front_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overfront_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn back_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overback_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn before_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn after_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overafter_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn tpcpoint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpoint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpcpoint_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpcpatch_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpointinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tpcpointseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpointseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpcpatchinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tpcpatchseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpatchseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpcpoint_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_to_tgeometry(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpointinst_make(pt: *const Pcpoint, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tpcpointseq_from_base_tstzset(pt: *const Pcpoint, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpointseq_from_base_tstzspan(pt: *const Pcpoint, sp: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpointseqset_from_base_tstzspanset(pt: *const Pcpoint, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpcpoint_from_base_temp(pt: *const Pcpoint, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpoint_start_value(temp: *const Temporal) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn tpcpoint_end_value(temp: *const Temporal) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn tpcpoint_value(temp: *const Temporal) -> *mut Pcpoint;
+}
+extern "C" {
+    pub fn tpcpoint_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn tpcpoint_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Pcpoint;
+}
+extern "C" {
+    pub fn tpcpoint_unnest(temp: *const Temporal, values: *mut *mut *mut Pcpoint, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tpcpoint_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Pcpoint) -> bool;
+}
+extern "C" {
+    pub fn tpcpoint_at_value(temp: *const Temporal, pt: *const Pcpoint) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpoint_minus_value(temp: *const Temporal, pt: *const Pcpoint) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpoint_pcid(temp: *const Temporal) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn tpcpatchinst_make(pa: *const Pcpatch, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tpcpatchseq_from_base_tstzset(pa: *const Pcpatch, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpatchseq_from_base_tstzspan(pa: *const Pcpatch, sp: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tpcpatchseqset_from_base_tstzspanset(pa: *const Pcpatch, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpcpatch_from_base_temp(pa: *const Pcpatch, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_start_value(temp: *const Temporal) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn tpcpatch_end_value(temp: *const Temporal) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn tpcpatch_value(temp: *const Temporal) -> *mut Pcpatch;
+}
+extern "C" {
+    pub fn tpcpatch_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn tpcpatch_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Pcpatch;
+}
+extern "C" {
+    pub fn tpcpatch_unnest(temp: *const Temporal, values: *mut *mut *mut Pcpatch, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tpcpatch_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Pcpatch) -> bool;
+}
+extern "C" {
+    pub fn tpcpatch_at_value(temp: *const Temporal, pa: *const Pcpatch) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_minus_value(temp: *const Temporal, pa: *const Pcpatch) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpcpatch_pcid(temp: *const Temporal) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn tpcpatch_start_npoints(temp: *const Temporal) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn tpcpatch_end_npoints(temp: *const Temporal) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn tpcpatch_npoints(temp: *const Temporal) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn tpcpatch_swath(temp: *const Temporal, maxt: *const Interval) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn ever_eq_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tpcpoint_tpcpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tpcpoint_tpcpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tpcpoint_tpcpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tpcpoint_tpcpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tpcpatch_tpcpatch(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tpcpatch_tpcpatch(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tpcpatch_tpcpatch(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tpcpatch_tpcpatch(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_pcpoint_tpcpoint(pt: *const Pcpoint, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tpcpoint_pcpoint(temp: *const Temporal, pt: *const Pcpoint) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tpcpatch_pcpatch(temp: *const Temporal, pa: *const Pcpatch) -> *mut Temporal;
+}
+extern "C" {
+    pub fn adjacent_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn adjacent_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contained_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contained_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn contained_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contains_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn contains_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn contains_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overlaps_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn same_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn same_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn left_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn left_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn left_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overleft_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overleft_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overleft_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn right_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn right_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn right_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overright_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overright_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overright_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn below_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn below_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn below_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overbelow_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overbelow_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overbelow_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn above_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn above_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn above_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overabove_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overabove_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overabove_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn front_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn front_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn front_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overfront_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overfront_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overfront_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn back_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn back_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn back_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overback_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overback_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overback_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn before_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn before_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn before_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overbefore_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn after_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn after_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn after_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overafter_tpcbox_tpointcloud(box_: *const TPCBox, temp: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn overafter_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> bool;
+}
+extern "C" {
+    pub fn overafter_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> bool;
+}
+extern "C" {
+    pub fn tpc_extent_transfn(state: *mut TPCBox, temp: *const Temporal) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcbox_extent_transfn(state: *mut TPCBox, box_: *const TPCBox) -> *mut TPCBox;
+}
+extern "C" {
+    pub fn tpcpatch_tdensity_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn tpcpatch_tnpoints_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
+}
+extern "C" {
+    pub fn eintersects_tpcpoint_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn nad_tpcpoint_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn pose_as_ewkb(pose: *const Pose, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
     pub fn pose_as_ewkt(pose: *const Pose, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn pose_as_hexwkb(pose: *const Pose, variant: ::std::os::raw::c_uchar, size: *mut size_t) -> *mut ::std::os::raw::c_char;
+    pub fn pose_as_hexewkb(pose: *const Pose, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pose_as_hexwkb(pose: *const Pose, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn pose_as_text(pose: *const Pose, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
@@ -8445,25 +12777,100 @@ extern "C" {
     pub fn pose_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Pose;
 }
 extern "C" {
+    pub fn pose_from_text(str_: *const ::std::os::raw::c_char) -> *mut Pose;
+}
+extern "C" {
     pub fn pose_in(str_: *const ::std::os::raw::c_char) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_out(pose: *const Pose, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn pose_from_geopose(json: *const ::std::os::raw::c_char) -> *mut Pose;
+}
+extern "C" {
+    pub fn pose_as_geopose(pose: *const Pose, conformance: ::std::os::raw::c_int, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpose_from_geopose(json: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_as_geopose(temp: *const Temporal, conformance: ::std::os::raw::c_int, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpose_as_geopose_stream_header(temp: *const Temporal, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpose_as_geopose_stream_element(temp: *const Temporal, inst: *const TInstant, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tpose_as_geopose_stream(temp: *const Temporal, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn geopose_frames(count: *mut ::std::os::raw::c_int) -> *const GeoPoseFrame;
+}
+extern "C" {
+    pub fn geopose_frame(frame_id: ::std::os::raw::c_int) -> *const GeoPoseFrame;
+}
+extern "C" {
+    pub fn geopose_frame_name(frame_id: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn geopose_frame_srid(frame_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn geopose_frame_is_geographic(frame_id: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn pose_apply_geo(pose: *const Pose, body: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tpose_apply_geo(temp: *const Temporal, body: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_compose_pose(body: *const Temporal, frame: *const Pose) -> *mut Temporal;
+}
+extern "C" {
+    pub fn pose_compose_tpose(body: *const Pose, frame: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_compose_tpose(body: *const Temporal, frame: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_inverse(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_rotate_x(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_rotate_y(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
+}
+extern "C" {
     pub fn pose_copy(pose: *const Pose) -> *mut Pose;
 }
 extern "C" {
-    pub fn pose_make_2d(x: f64, y: f64, theta: f64, srid: ::std::os::raw::c_int) -> *mut Pose;
+    pub fn pose_make_2d(x: f64, y: f64, theta: f64, geodetic: bool, srid: ::std::os::raw::c_int) -> *mut Pose;
 }
 extern "C" {
-    pub fn pose_make_3d(x: f64, y: f64, z: f64, W: f64, X: f64, Y: f64, Z: f64, srid: ::std::os::raw::c_int) -> *mut Pose;
+    pub fn pose_make_3d(x: f64, y: f64, z: f64, W: f64, X: f64, Y: f64, Z: f64, geodetic: bool, srid: ::std::os::raw::c_int) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_make_point2d(gs: *const GSERIALIZED, theta: f64) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_make_point3d(gs: *const GSERIALIZED, W: f64, X: f64, Y: f64, Z: f64) -> *mut Pose;
+}
+extern "C" {
+    pub fn pose_make_point3d_ypr(gs: *const GSERIALIZED, yaw: f64, pitch: f64, roll: f64) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_to_point(pose: *const Pose) -> *mut GSERIALIZED;
@@ -8478,10 +12885,34 @@ extern "C" {
     pub fn pose_hash_extended(pose: *const Pose, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
 }
 extern "C" {
-    pub fn pose_orientation(pose: *const Pose) -> *mut f64;
+    pub fn pose_mem_size(pose: *const Pose) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn pose_rotation(pose: *const Pose) -> f64;
+    pub fn pose_quaternion(pose: *const Pose, count: *mut ::std::os::raw::c_int) -> *mut f64;
+}
+extern "C" {
+    pub fn pose_ypr(pose: *const Pose, count: *mut ::std::os::raw::c_int) -> *mut f64;
+}
+extern "C" {
+    pub fn pose_yaw(pose: *const Pose) -> f64;
+}
+extern "C" {
+    pub fn pose_pitch(pose: *const Pose) -> f64;
+}
+extern "C" {
+    pub fn pose_roll(pose: *const Pose) -> f64;
+}
+extern "C" {
+    pub fn pose_angular_distance(pose1: *const Pose, pose2: *const Pose) -> f64;
+}
+extern "C" {
+    pub fn pose_compose(body: *const Pose, frame: *const Pose) -> *mut Pose;
+}
+extern "C" {
+    pub fn pose_inverse(pose: *const Pose) -> *mut Pose;
+}
+extern "C" {
+    pub fn pose_normalize(pose: *const Pose) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_round(pose: *const Pose, maxdd: ::std::os::raw::c_int) -> *mut Pose;
@@ -8490,7 +12921,7 @@ extern "C" {
     pub fn posearr_round(posearr: *mut *const Pose, count: ::std::os::raw::c_int, maxdd: ::std::os::raw::c_int) -> *mut *mut Pose;
 }
 extern "C" {
-    pub fn pose_set_srid(pose: *mut Pose, srid: ::std::os::raw::c_int);
+    pub fn pose_set_srid(pose: *const Pose, srid: ::std::os::raw::c_int) -> *mut Pose;
 }
 extern "C" {
     pub fn pose_srid(pose: *const Pose) -> ::std::os::raw::c_int;
@@ -8538,12 +12969,6 @@ extern "C" {
     pub fn pose_ne(pose1: *const Pose, pose2: *const Pose) -> bool;
 }
 extern "C" {
-    pub fn pose_nsame(pose1: *const Pose, pose2: *const Pose) -> bool;
-}
-extern "C" {
-    pub fn pose_same(pose1: *const Pose, pose2: *const Pose) -> bool;
-}
-extern "C" {
     pub fn poseset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 extern "C" {
@@ -8565,7 +12990,7 @@ extern "C" {
     pub fn poseset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut Pose) -> bool;
 }
 extern "C" {
-    pub fn poseset_values(s: *const Set) -> *mut *mut Pose;
+    pub fn poseset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Pose;
 }
 extern "C" {
     pub fn contained_pose_set(pose: *const Pose, s: *const Set) -> bool;
@@ -8595,10 +13020,31 @@ extern "C" {
     pub fn union_set_pose(s: *const Set, pose: *const Pose) -> *mut Set;
 }
 extern "C" {
+    pub fn distance_poseset_poseset(s1: *const Set, s2: *const Set) -> f64;
+}
+extern "C" {
+    pub fn tpose_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
     pub fn tpose_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tpose_make(tpoint: *const Temporal, tradius: *const Temporal) -> *mut Temporal;
+    pub fn tposeinst_make(pose: *const Pose, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tpose_from_base_temp(pose: *const Pose, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposeseq_from_base_tstzset(pose: *const Pose, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tposeseq_from_base_tstzspan(pose: *const Pose, s: *const Span, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tposeseqset_from_base_tstzspanset(pose: *const Pose, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpose_make(tpoint: *const Temporal, ttheta: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpose_to_tpoint(temp: *const Temporal) -> *mut Temporal;
@@ -8610,7 +13056,19 @@ extern "C" {
     pub fn tpose_points(temp: *const Temporal) -> *mut Set;
 }
 extern "C" {
-    pub fn tpose_rotation(temp: *const Temporal) -> *mut Temporal;
+    pub fn tpose_yaw(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_pitch(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_roll(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_speed(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_angular_speed(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpose_start_value(temp: *const Temporal) -> *mut Pose;
@@ -8619,7 +13077,10 @@ extern "C" {
     pub fn tpose_trajectory(temp: *const Temporal) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn tpose_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, value: *mut *mut Pose) -> bool;
+    pub fn tpose_value(temp: *const Temporal) -> *mut Pose;
+}
+extern "C" {
+    pub fn tpose_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut *mut Pose) -> bool;
 }
 extern "C" {
     pub fn tpose_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut Pose) -> bool;
@@ -8628,7 +13089,13 @@ extern "C" {
     pub fn tpose_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Pose;
 }
 extern "C" {
-    pub fn tpose_at_geom(temp: *const Temporal, gs: *const GSERIALIZED, zspan: *const Span) -> *mut Temporal;
+    pub fn tpose_unnest(temp: *const Temporal, values: *mut *mut *mut Pose, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tpose_at_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_at_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpose_at_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
@@ -8637,7 +13104,10 @@ extern "C" {
     pub fn tpose_at_pose(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tpose_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED, zspan: *const Span) -> *mut Temporal;
+    pub fn tpose_minus_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tpose_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tpose_minus_pose(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
@@ -8649,7 +13119,7 @@ extern "C" {
     pub fn tdistance_tpose_pose(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tdistance_tpose_point(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tdistance_tpose_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tdistance_tpose_tpose(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
@@ -8733,206 +13203,4328 @@ extern "C" {
     pub fn tne_tpose_pose(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
 }
 extern "C" {
-    pub fn trgeo_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn posechain_in(str_: *const ::std::os::raw::c_char) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeoinst_make(geom: *const GSERIALIZED, pose: *const Pose, t: TimestampTz) -> *mut TInstant;
+    pub fn posechain_out(pc: *const PoseChain, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn geo_tpose_to_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+    pub fn posechain_as_text(pc: *const PoseChain, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_to_tpose(temp: *const Temporal) -> *mut Temporal;
+    pub fn posechain_as_ewkb(pc: *const PoseChain, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
-    pub fn trgeo_to_tpoint(temp: *const Temporal) -> *mut Temporal;
+    pub fn posechain_as_ewkt(pc: *const PoseChain, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_end_instant(temp: *const Temporal) -> *mut TInstant;
+    pub fn posechain_as_wkb(pc: *const PoseChain, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
 }
 extern "C" {
-    pub fn trgeo_end_sequence(temp: *const Temporal) -> *mut TSequence;
+    pub fn posechain_as_hexewkb(pc: *const PoseChain, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_end_value(temp: *const Temporal) -> *mut GSERIALIZED;
+    pub fn posechain_as_hexwkb(pc: *const PoseChain, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_geom(temp: *const Temporal) -> *mut GSERIALIZED;
+    pub fn posechain_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_instant_n(temp: *const Temporal, n: ::std::os::raw::c_int) -> *mut TInstant;
+    pub fn posechain_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_instants(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TInstant;
+    pub fn posechain_make(poses: *mut *const Pose, count: ::std::os::raw::c_int) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_points(temp: *const Temporal) -> *mut Set;
+    pub fn posechain_copy(pc: *const PoseChain) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_rotation(temp: *const Temporal) -> *mut Temporal;
+    pub fn posechain_append(pc: *const PoseChain, pose: *const Pose) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_segments(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TSequence;
+    pub fn pose_to_posechain(pose: *const Pose) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_sequence_n(temp: *const Temporal, i: ::std::os::raw::c_int) -> *mut TSequence;
+    pub fn posechain_to_pose(pc: *const PoseChain) -> *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_sequences(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TSequence;
+    pub fn posechain_prefix_pose(pc: *const PoseChain, n: ::std::os::raw::c_int) -> *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_start_instant(temp: *const Temporal) -> *mut TInstant;
+    pub fn posechain_to_point(pc: *const PoseChain) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn trgeo_start_sequence(temp: *const Temporal) -> *mut TSequence;
+    pub fn posechain_to_stbox(pc: *const PoseChain) -> *mut STBox;
 }
 extern "C" {
-    pub fn trgeo_start_value(temp: *const Temporal) -> *mut GSERIALIZED;
+    pub fn posechain_timestamptz_to_stbox(pc: *const PoseChain, t: TimestampTz) -> *mut STBox;
 }
 extern "C" {
-    pub fn trgeo_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut GSERIALIZED) -> bool;
+    pub fn posechain_tstzspan_to_stbox(pc: *const PoseChain, s: *const Span) -> *mut STBox;
 }
 extern "C" {
-    pub fn trgeo_traversed_area(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;
+    pub fn posechain_num_poses(pc: *const PoseChain) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn trgeo_append_tinstant(temp: *mut Temporal, inst: *const TInstant, interp: interpType, maxdist: f64, maxt: *const Interval, expand: bool) -> *mut Temporal;
+    pub fn posechain_start_pose(pc: *const PoseChain) -> *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_append_tsequence(temp: *mut Temporal, seq: *const TSequence, expand: bool) -> *mut Temporal;
+    pub fn posechain_end_pose(pc: *const PoseChain) -> *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_delete_timestamptz(temp: *const Temporal, t: TimestampTz, connect: bool) -> *mut Temporal;
+    pub fn posechain_pose_n(pc: *const PoseChain, n: ::std::os::raw::c_int) -> *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_delete_tstzset(temp: *const Temporal, s: *const Set, connect: bool) -> *mut Temporal;
+    pub fn posechain_poses(pc: *const PoseChain, count: *mut ::std::os::raw::c_int) -> *mut *mut Pose;
 }
 extern "C" {
-    pub fn trgeo_delete_tstzspan(temp: *const Temporal, s: *const Span, connect: bool) -> *mut Temporal;
+    pub fn posechain_hash(pc: *const PoseChain) -> ::std::os::raw::c_uint;
 }
 extern "C" {
-    pub fn trgeo_delete_tstzspanset(temp: *const Temporal, ss: *const SpanSet, connect: bool) -> *mut Temporal;
+    pub fn posechain_hash_extended(pc: *const PoseChain, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
 }
 extern "C" {
-    pub fn trgeo_round(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut Temporal;
+    pub fn posechain_mem_size(pc: *const PoseChain) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn trgeo_set_interp(temp: *const Temporal, interp: interpType) -> *mut Temporal;
+    pub fn posechain_round(pc: *const PoseChain, maxdd: ::std::os::raw::c_int) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_to_tinstant(temp: *const Temporal) -> *mut TInstant;
+    pub fn posechain_srid(pc: *const PoseChain) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn trgeo_after_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool) -> *mut Temporal;
+    pub fn posechain_set_srid(pc: *const PoseChain, srid: ::std::os::raw::c_int) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_before_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool) -> *mut Temporal;
+    pub fn posechain_transform(pc: *const PoseChain, srid_to: ::std::os::raw::c_int) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_restrict_value(temp: *const Temporal, value: Datum, atfunc: bool) -> *mut Temporal;
+    pub fn posechain_transform_pipeline(pc: *const PoseChain, pipelinestr: *const ::std::os::raw::c_char, srid: ::std::os::raw::c_int, is_forward: bool) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn trgeo_restrict_values(temp: *const Temporal, s: *const Set, atfunc: bool) -> *mut Temporal;
+    pub fn tposechain_from_geopose(json: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
-    pub fn trgeo_restrict_timestamptz(temp: *const Temporal, t: TimestampTz, atfunc: bool) -> *mut Temporal;
+    pub fn tposechain_as_geopose(temp: *const Temporal, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_restrict_tstzset(temp: *const Temporal, s: *const Set, atfunc: bool) -> *mut Temporal;
+    pub fn tposechainarr_as_geopose(temparr: *mut *const Temporal, count: ::std::os::raw::c_int, precision: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn trgeo_restrict_tstzspan(temp: *const Temporal, s: *const Span, atfunc: bool) -> *mut Temporal;
+    pub fn posechain_eq(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn trgeo_restrict_tstzspanset(temp: *const Temporal, ss: *const SpanSet, atfunc: bool) -> *mut Temporal;
+    pub fn posechain_ne(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn tdistance_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn posechain_cmp(pc1: *const PoseChain, pc2: *const PoseChain) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn tdistance_trgeo_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+    pub fn posechain_lt(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn tdistance_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+    pub fn posechain_le(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn nad_stbox_trgeo(box_: *const STBox, temp: *const Temporal) -> f64;
+    pub fn posechain_gt(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn nad_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> f64;
+    pub fn posechain_ge(pc1: *const PoseChain, pc2: *const PoseChain) -> bool;
 }
 extern "C" {
-    pub fn nad_trgeo_stbox(temp: *const Temporal, box_: *const STBox) -> f64;
+    pub fn distance_posechain_geo(pc: *const PoseChain, gs: *const GSERIALIZED) -> f64;
 }
 extern "C" {
-    pub fn nad_trgeo_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn distance_posechain_posechain(pc1: *const PoseChain, pc2: *const PoseChain) -> f64;
 }
 extern "C" {
-    pub fn nad_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+    pub fn distance_posechain_stbox(pc: *const PoseChain, box_: *const STBox) -> f64;
 }
 extern "C" {
-    pub fn nai_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut TInstant;
+    pub fn posechainset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 extern "C" {
-    pub fn nai_trgeo_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+    pub fn posechainset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn nai_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+    pub fn posechainset_make(values: *mut *const PoseChain, count: ::std::os::raw::c_int) -> *mut Set;
 }
 extern "C" {
-    pub fn shortestline_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn posechain_to_set(pc: *const PoseChain) -> *mut Set;
 }
 extern "C" {
-    pub fn shortestline_trgeo_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+    pub fn posechainset_end_value(s: *const Set) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn shortestline_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+    pub fn posechainset_start_value(s: *const Set) -> *mut PoseChain;
 }
 extern "C" {
-    pub fn always_eq_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn posechainset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut *mut PoseChain) -> bool;
 }
 extern "C" {
-    pub fn always_eq_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+    pub fn posechainset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut PoseChain;
 }
 extern "C" {
-    pub fn always_eq_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn contained_posechain_set(pc: *const PoseChain, s: *const Set) -> bool;
 }
 extern "C" {
-    pub fn always_ne_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn contains_set_posechain(s: *const Set, pc: *mut PoseChain) -> bool;
 }
 extern "C" {
-    pub fn always_ne_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+    pub fn intersection_posechain_set(pc: *const PoseChain, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn always_ne_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn intersection_set_posechain(s: *const Set, pc: *const PoseChain) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_eq_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn minus_posechain_set(pc: *const PoseChain, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_eq_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+    pub fn minus_set_posechain(s: *const Set, pc: *const PoseChain) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_eq_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn posechain_union_transfn(state: *mut Set, pc: *const PoseChain) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_ne_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn union_posechain_set(pc: *const PoseChain, s: *const Set) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_ne_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+    pub fn union_set_posechain(s: *const Set, pc: *const PoseChain) -> *mut Set;
 }
 extern "C" {
-    pub fn ever_ne_trgeo_trgeo(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+    pub fn distance_posechainset_posechainset(s1: *const Set, s2: *const Set) -> f64;
 }
 extern "C" {
-    pub fn teq_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+    pub fn tposechain_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
-    pub fn teq_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tposechain_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tne_geo_trgeo(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+    pub fn tposechaininst_make(pc: *const PoseChain, t: TimestampTz) -> *mut TInstant;
 }
 extern "C" {
-    pub fn tne_trgeo_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tposechain_from_base_temp(pc: *const PoseChain, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechainseq_from_base_tstzset(pc: *const PoseChain, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tposechainseq_from_base_tstzspan(pc: *const PoseChain, s: *const Span, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tposechainseqset_from_base_tstzspanset(pc: *const PoseChain, ss: *const SpanSet, interp: interpType) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tposechain_to_tpose(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_end_value(temp: *const Temporal) -> *mut PoseChain;
+}
+extern "C" {
+    pub fn tposechain_num_poses(temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn tposechain_start_value(temp: *const Temporal) -> *mut PoseChain;
+}
+extern "C" {
+    pub fn tposechain_value(temp: *const Temporal) -> *mut PoseChain;
+}
+extern "C" {
+    pub fn tposechain_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut *mut PoseChain) -> bool;
+}
+extern "C" {
+    pub fn tposechain_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut PoseChain) -> bool;
+}
+extern "C" {
+    pub fn tposechain_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut PoseChain;
+}
+extern "C" {
+    pub fn tposechain_unnest(temp: *const Temporal, values: *mut *mut *mut PoseChain, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tposechain_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_rotate_x(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_rotate_y(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_at_value(temp: *const Temporal, pc: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tposechain_minus_value(temp: *const Temporal, pc: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_tposechain_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_tposechain_posechain(temp: *const Temporal, pc: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn nad_tposechain_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn nad_tposechain_posechain(temp: *const Temporal, pc: *const PoseChain) -> f64;
+}
+extern "C" {
+    pub fn nad_tposechain_stbox(temp: *const Temporal, box_: *const STBox) -> f64;
+}
+extern "C" {
+    pub fn nad_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn nai_tposechain_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut TInstant;
+}
+extern "C" {
+    pub fn nai_tposechain_posechain(temp: *const Temporal, pc: *const PoseChain) -> *mut TInstant;
+}
+extern "C" {
+    pub fn nai_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn shortestline_tposechain_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn shortestline_tposechain_posechain(temp: *const Temporal, pc: *const PoseChain) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn shortestline_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn always_eq_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tposechain_posechain(temp: *const Temporal, posechain: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    pub fn quadbin_as_hexwkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn quadbin_as_wkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn quadbin_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_in(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn bigint_to_quadbin(i: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_out(cell: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn quadbin_eq(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_ne(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_lt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_le(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_gt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_ge(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_cmp(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn quadbin_hash(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn quadbin_hash_extended(cell: ::std::os::raw::c_ulong, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_is_valid_index(index: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_is_valid_cell(cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_tile_to_cell(x: ::std::os::raw::c_uint, y: ::std::os::raw::c_uint, z: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_cell_to_tile(cell: ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn quadbin_get_resolution(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn quadbin_cell_to_parent(cell: ::std::os::raw::c_ulong, parent_resolution: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_cell_to_children(cell: ::std::os::raw::c_ulong, children_resolution: ::std::os::raw::c_uint, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_cell_sibling(cell: ::std::os::raw::c_ulong, direction: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_k_ring(cell: ::std::os::raw::c_ulong, k: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_point_to_cell(longitude: f64, latitude: f64, resolution: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn geo_to_quadbin_cell(point: *const GSERIALIZED, resolution: int32) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn geo_to_quadbin_set(gs: *const GSERIALIZED, resolution: int32) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbin_cell_to_geompoint(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn quadbin_cell_to_geom(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn ever_eq_quadbinset_tquadbin(cells: *const Set, tqb: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tquadbin_quadbinset(tqb: *const Temporal, cells: *const Set) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn quadbin_to_stbox(cell: ::std::os::raw::c_ulong) -> *mut STBox;
+}
+extern "C" {
+    pub fn quadbin_timestamptz_to_stbox(cell: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut STBox;
+}
+extern "C" {
+    pub fn quadbin_tstzspan_to_stbox(cell: ::std::os::raw::c_ulong, s: *const Span) -> *mut STBox;
+}
+extern "C" {
+    pub fn quadbin_cell_area(cell: ::std::os::raw::c_ulong) -> f64;
+}
+extern "C" {
+    pub fn quadbin_index_to_string(index: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn quadbin_string_to_index(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbin_cell_to_quadkey(cell: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn quadbin_grid_disk(origin: ::std::os::raw::c_ulong, k: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_grid_disk(cells: *const Set, k: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbin_cell_to_children_set(origin: ::std::os::raw::c_ulong, children_resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_compact_cells(cells: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_uncompact_cells(cells: *const Set, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbin_cell_to_cover(cell: ::std::os::raw::c_ulong, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_cover_cells(cells: *const Set, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn quadbinset_make(values: *const ::std::os::raw::c_ulong, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbinset_end_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbinset_start_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn quadbinset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbinset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn contained_quadbin_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contains_set_quadbin(s: *const Set, cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn intersection_quadbin_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_quadbin(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_quadbin_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_quadbin(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn union_quadbin_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_quadbin(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn quadbin_union_transfn(state: *mut Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn tquadbin_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbininst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tquadbinseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tquadbinseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tquadbin_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn tquadbin_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbininst_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn tquadbin_from_base_temp(value: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbinseq_from_base_tstzset(value: ::std::os::raw::c_ulong, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tquadbinseq_from_base_tstzspan(value: ::std::os::raw::c_ulong, s: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tquadbinseqset_from_base_tstzspanset(value: ::std::os::raw::c_ulong, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tquadbinseq_make(values: *const ::std::os::raw::c_ulong, times: *const TimestampTz, count: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool) -> *mut TSequence;
+}
+extern "C" {
+    pub fn tquadbinseqset_make(sequences: *mut *const TSequence, count: ::std::os::raw::c_int) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tquadbin_start_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn tquadbin_end_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn tquadbin_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn tquadbin_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn tquadbin_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn tquadbin_unnest(temp: *const Temporal, values: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn tquadbin_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn quadbin_to_set(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn tbigint_to_tquadbin(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_at_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_minus_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ever_eq_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_quadbin_tquadbin(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tquadbin_quadbin(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_tquadbin_tquadbin(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_to_tquadbin(temp: *const Temporal, resolution: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_to_tquadbin(temp: *const Temporal, resolution: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_quadbin_split(temp: *const Temporal, resolution: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_quadbin_split(temp: *const Temporal, resolution: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_cell_to_quadkey(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tquadbin_grid_distance(origin: *const Temporal, dest: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raquet_pixtype_size(pixtype: MeosPixType) -> size_t;
+}
+extern "C" {
+    pub fn raquet_pixtype_from_string(str_: *const ::std::os::raw::c_char) -> MeosPixType;
+}
+extern "C" {
+    pub fn raquet_in(str_: *const ::std::os::raw::c_char) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_out(rq: *const Raquet) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raquet_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_as_wkb(rq: *const Raquet, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn raquet_as_hexwkb(rq: *const Raquet, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raquet_make(quadbin: ::std::os::raw::c_ulong, width: int32, height: int32, pixtype: MeosPixType, nodata: f64, has_nodata: bool, pixels: *const ::std::os::raw::c_uchar, pixels_size: size_t) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_copy(rq: *const Raquet) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_read(path: *const ::std::os::raw::c_char, quadbin: ::std::os::raw::c_ulong) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_read_bytes(data: *const ::std::os::raw::c_uchar, size: size_t, quadbin: ::std::os::raw::c_ulong) -> *mut Raquet;
+}
+extern "C" {
+    pub fn raquet_quadbin(rq: *const Raquet) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn raquet_width(rq: *const Raquet) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raquet_height(rq: *const Raquet) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raquet_band_pixel_type(rq: *const Raquet) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raquet_band_has_nodata_value(rq: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_band_nodata_value(rq: *const Raquet, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn raquet_pixels(rq: *const Raquet, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn raquet_hash(rq: *const Raquet) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn raquet_hash_extended(rq: *const Raquet, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn raquet_mem_size(rq: *const Raquet) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_as_wkb(rast: *const Raster, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn raster_as_hexwkb(rast: *const Raster, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raster_copy(rast: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_make(width: ::std::os::raw::c_int, height: ::std::os::raw::c_int, upperleftx: f64, upperlefty: f64, scalex: f64, scaley: f64, skewx: f64, skewy: f64, srid: ::std::os::raw::c_int, pixeltype: *const ::std::os::raw::c_char, nodataval: f64, has_nodata: bool, pixels: *const ::std::os::raw::c_uchar, size: size_t) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_make_empty(width: ::std::os::raw::c_int, height: ::std::os::raw::c_int, upperleftx: f64, upperlefty: f64, scalex: f64, scaley: f64, skewx: f64, skewy: f64, srid: ::std::os::raw::c_int) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_add_band(rast: *const Raster, index: ::std::os::raw::c_int, pixeltype: *const ::std::os::raw::c_char, initialvalue: f64, nodataval: f64, has_nodata: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_add_band_raster(torast: *const Raster, fromrast: *const Raster, fromband: ::std::os::raw::c_int, toindex: ::std::os::raw::c_int) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_mem_size(rast: *const Raster) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_num_bands(rast: *const Raster) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_width(rast: *const Raster) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_height(rast: *const Raster) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_srid(rast: *const Raster) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_upper_left_x(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_upper_left_y(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_scale_x(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_scale_y(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_skew_x(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_skew_y(rast: *const Raster) -> f64;
+}
+extern "C" {
+    pub fn raster_band_pixel_type(rast: *const Raster, band: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raster_band_has_nodata_value(rast: *const Raster, band: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn raster_band_nodata_value(rast: *const Raster, band: ::std::os::raw::c_int, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn raster_band_pixels(rast: *const Raster, band: ::std::os::raw::c_int, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn bandstats_count(stats: *const BandStats) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn bandstats_sum(stats: *const BandStats, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn bandstats_mean(stats: *const BandStats, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn bandstats_stddev(stats: *const BandStats, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn bandstats_min(stats: *const BandStats, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn bandstats_max(stats: *const BandStats, result: *mut f64) -> bool;
+}
+extern "C" {
+    pub fn raster_clip(rast: *const Raster, bands: *const ::std::os::raw::c_int, nbands: ::std::os::raw::c_int, gs: *const GSERIALIZED, nodata: *const f64, nnodata: ::std::os::raw::c_int, crop: bool, touched: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_transform(rast: *const Raster, srid: ::std::os::raw::c_int, algorithm: *const ::std::os::raw::c_char, max_err: f64, scale_x: f64, scale_y: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_transform_pipeline(rast: *const Raster, pipelinestr: *const ::std::os::raw::c_char, srid: ::std::os::raw::c_int, is_forward: bool, algorithm: *const ::std::os::raw::c_char, max_err: f64, scale_x: f64, scale_y: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_transform_raster(rast: *const Raster, alignto: *const Raster, algorithm: *const ::std::os::raw::c_char, max_err: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_rescale(rast: *const Raster, scale_x: f64, scale_y: f64, algorithm: *const ::std::os::raw::c_char, max_err: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_dump_as_polygons(rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool, count: *mut ::std::os::raw::c_int) -> *mut GeomVal;
+}
+extern "C" {
+    pub fn raster_dump_values(rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool, nodata: *mut *mut bool, count: *mut ::std::os::raw::c_int) -> *mut f64;
+}
+extern "C" {
+    pub fn raster_pixel_as_points(rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool, count: *mut ::std::os::raw::c_int) -> *mut Pixel;
+}
+extern "C" {
+    pub fn raster_summary_stats(rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool) -> *mut BandStats;
+}
+extern "C" {
+    pub fn raster_value_count(rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool, searchvalues: *const f64, nsearch: ::std::os::raw::c_int, roundto: f64, count: *mut ::std::os::raw::c_int) -> *mut ValueCount;
+}
+extern "C" {
+    pub fn raster_set_values(rast: *const Raster, band: ::std::os::raw::c_int, x: ::std::os::raw::c_int, y: ::std::os::raw::c_int, width: ::std::os::raw::c_int, height: ::std::os::raw::c_int, values: *const f64, nodata: *const bool, noset: *const bool, nosetwidth: ::std::os::raw::c_int, nosetheight: ::std::os::raw::c_int, count: ::std::os::raw::c_int, keepnodata: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_reclass(rast: *const Raster, band: ::std::os::raw::c_int, expr: *const ::std::os::raw::c_char, pixeltype: *const ::std::os::raw::c_char, has_nodata: bool, nodataval: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_slope(rast: *const Raster, band: ::std::os::raw::c_int, customextent: *const Raster, pixeltype: *const ::std::os::raw::c_char, units: *const ::std::os::raw::c_char, scale: f64, interpolate_nodata: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_tpi(rast: *const Raster, band: ::std::os::raw::c_int, customextent: *const Raster, pixeltype: *const ::std::os::raw::c_char, interpolate_nodata: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_tri(rast: *const Raster, band: ::std::os::raw::c_int, customextent: *const Raster, pixeltype: *const ::std::os::raw::c_char, interpolate_nodata: bool) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_map_algebra(rast: *const Raster, band: ::std::os::raw::c_int, stat: *const ::std::os::raw::c_char, pixeltype: *const ::std::os::raw::c_char, extenttype: *const ::std::os::raw::c_char, customextent: *const Raster, distancex: int32, distancey: int32) -> *mut Raster;
+}
+extern "C" {
+    pub fn geomval_arr_free(gvarr: *mut GeomVal, count: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn pixel_arr_free(pixarr: *mut Pixel, count: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn add_float_raster(d: f64, rast: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn add_raster_float(rast: *const Raster, d: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn add_raster_raster(rast1: *const Raster, rast2: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn div_float_raster(d: f64, rast: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn div_raster_float(rast: *const Raster, d: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn div_raster_raster(rast1: *const Raster, rast2: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn mul_float_raster(d: f64, rast: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn mul_raster_float(rast: *const Raster, d: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn mul_raster_raster(rast1: *const Raster, rast2: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn sub_float_raster(d: f64, rast: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn sub_raster_float(rast: *const Raster, d: f64) -> *mut Raster;
+}
+extern "C" {
+    pub fn sub_raster_raster(rast1: *const Raster, rast2: *const Raster) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_same_alignment(rast1: *const Raster, rast2: *const Raster) -> bool;
+}
+extern "C" {
+    pub fn raster_not_same_alignment_reason(rast1: *const Raster, rast2: *const Raster) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn raster_same_alignment_combinefn(state1: *mut RasterAlignState, state2: *const RasterAlignState) -> *mut RasterAlignState;
+}
+extern "C" {
+    pub fn raster_same_alignment_finalfn(state: *mut RasterAlignState) -> bool;
+}
+extern "C" {
+    pub fn raster_same_alignment_transfn(state: *mut RasterAlignState, rast: *const Raster) -> *mut RasterAlignState;
+}
+extern "C" {
+    pub fn raster_summary_stats_combinefn(state1: *mut RasterStatsState, state2: *const RasterStatsState) -> *mut RasterStatsState;
+}
+extern "C" {
+    pub fn raster_summary_stats_finalfn(state: *mut RasterStatsState) -> *mut BandStats;
+}
+extern "C" {
+    pub fn raster_summary_stats_transfn(state: *mut RasterStatsState, rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool) -> *mut RasterStatsState;
+}
+extern "C" {
+    pub fn raster_union_combinefn(state1: *mut RasterUnionState, state2: *const RasterUnionState) -> *mut RasterUnionState;
+}
+extern "C" {
+    pub fn raster_union_finalfn(state: *mut RasterUnionState) -> *mut Raster;
+}
+extern "C" {
+    pub fn raster_union_transfn(state: *mut RasterUnionState, rast: *const Raster, band: ::std::os::raw::c_int, uniontype: *const ::std::os::raw::c_char) -> *mut RasterUnionState;
+}
+extern "C" {
+    pub fn rasteralignstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut RasterAlignState;
+}
+extern "C" {
+    pub fn rasteralignstate_serialize(state: *const RasterAlignState, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn rasterstatsstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut RasterStatsState;
+}
+extern "C" {
+    pub fn rasterstatsstate_serialize(state: *const RasterStatsState, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn rasterunionstate_deserialize(bytes: *const ::std::os::raw::c_uchar, size: size_t) -> *mut RasterUnionState;
+}
+extern "C" {
+    pub fn rasterunionstate_serialize(state: *const RasterUnionState, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn raquet_to_stbox(rq: *const Raquet) -> *mut STBox;
+}
+extern "C" {
+    pub fn raster_to_stbox(rast: *const Raster) -> *mut STBox;
+}
+extern "C" {
+    pub fn raquet_cmp(rq1: *const Raquet, rq2: *const Raquet) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raquet_eq(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_ne(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_lt(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_le(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_ge(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raquet_gt(rq1: *const Raquet, rq2: *const Raquet) -> bool;
+}
+extern "C" {
+    pub fn raster_value(traj: *const Temporal, rast: *const Raster, band: ::std::os::raw::c_int, exclude_nodata: bool, resample: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_at_value(traj: *const Temporal, rast: *const Raster, band: ::std::os::raw::c_int, vspan: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_minus_value(traj: *const Temporal, rast: *const Raster, band: ::std::os::raw::c_int, vspan: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn eraster_value(traj: *const Temporal, rast: *const Raster, band: ::std::os::raw::c_int, vspan: *const Span) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn araster_value(traj: *const Temporal, rast: *const Raster, band: ::std::os::raw::c_int, vspan: *const Span) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_value_gdal(traj: *const Temporal, path: *const ::std::os::raw::c_char, band: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_at_value_gdal(traj: *const Temporal, path: *const ::std::os::raw::c_char, band: ::std::os::raw::c_int, vspan: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_minus_value_gdal(traj: *const Temporal, path: *const ::std::os::raw::c_char, band: ::std::os::raw::c_int, vspan: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn eraster_value_gdal(traj: *const Temporal, path: *const ::std::os::raw::c_char, band: ::std::os::raw::c_int, vspan: *const Span) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn araster_value_gdal(traj: *const Temporal, path: *const ::std::os::raw::c_char, band: ::std::os::raw::c_int, vspan: *const Span) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn raster_tile_value_quadbin(traj: *const Temporal, pixels: *const ::std::os::raw::c_uchar, pixels_size: size_t, width: int32, height: int32, quadbin: ::std::os::raw::c_ulong, pixtype: MeosPixType, nodata: f64, has_nodata: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_tile_value(traj: *const Temporal, rq: *const Raquet) -> *mut Temporal;
+}
+extern "C" {
+    pub fn raster_tile_value_array(traj: *const Temporal, rqarr: *mut *const Raquet, count: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn trgeometry_as_text(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn trgeometry_as_ewkt(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn trgeometryinst_make(geom: *const GSERIALIZED, pose: *const Pose, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometryseq_make(geom: *const GSERIALIZED, instants: *mut *mut TInstant, count: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool, interp: interpType, normalize: bool) -> *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometryseqset_make(geom: *const GSERIALIZED, sequences: *mut *mut TSequence, count: ::std::os::raw::c_int, normalize: bool) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn trgeometryseqset_make_gaps(geom: *const GSERIALIZED, instants: *mut *mut TInstant, count: ::std::os::raw::c_int, interp: interpType, maxt: *const Interval, maxdist: f64) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn geometry_tpose_to_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_to_tpose(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_to_tgeometry(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_end_instant(temp: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometry_end_sequence(temp: *const Temporal) -> *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_end_value(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_geom(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_instant_n(temp: *const Temporal, n: ::std::os::raw::c_int) -> *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometry_instants(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometry_points(temp: *const Temporal) -> *mut Set;
+}
+extern "C" {
+    pub fn trgeometry_yaw(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_pitch(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_roll(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_segments(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_sequence_n(temp: *const Temporal, i: ::std::os::raw::c_int) -> *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_sequences(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_start_instant(temp: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometry_start_sequence(temp: *const Temporal) -> *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_start_value(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_value(temp: *const Temporal) -> *mut Pose;
+}
+extern "C" {
+    pub fn trgeometry_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut *mut Pose;
+}
+extern "C" {
+    pub fn trgeometry_unnest(temp: *const Temporal, values: *mut *mut *mut GSERIALIZED, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn trgeometry_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn trgeometry_traversed_area(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_centroid(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_convex_hull(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_body_point_trajectory(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_space_boxes(temp: *const Temporal, xsize: f64, ysize: f64, zsize: f64, sorigin: *const GSERIALIZED, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_time_boxes(temp: *const Temporal, duration: *const Interval, torigin: TimestampTz, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_space_time_boxes(temp: *const Temporal, xsize: f64, ysize: f64, zsize: f64, duration: *const Interval, sorigin: *const GSERIALIZED, torigin: TimestampTz, bitmatrix: bool, border_inc: bool, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_stboxes(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_split_n_stboxes(temp: *const Temporal, box_count: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_split_each_n_stboxes(temp: *const Temporal, elem_count: ::std::os::raw::c_int, count: *mut ::std::os::raw::c_int) -> *mut STBox;
+}
+extern "C" {
+    pub fn trgeometry_length(temp: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn trgeometry_cumulative_length(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_angular_speed(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_speed(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_twcentroid(temp: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn trgeometry_append_tinstant(temp: *mut Temporal, inst: *const TInstant, interp: interpType, maxdist: f64, maxt: *const Interval, expand: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_append_tsequence(temp: *mut Temporal, seq: *const TSequence, expand: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_delete_timestamptz(temp: *const Temporal, t: TimestampTz, connect: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_delete_tstzset(temp: *const Temporal, s: *const Set, connect: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_delete_tstzspan(temp: *const Temporal, s: *const Span, connect: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_delete_tstzspanset(temp: *const Temporal, ss: *const SpanSet, connect: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_merge(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_merge_array(temparr: *mut *mut Temporal, count: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_round(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_rotate_x(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_rotate_y(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_set_interp(temp: *const Temporal, interp: interpType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_as_tinstant(temp: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn trgeometry_as_tsequence(temp: *const Temporal, interp_str: *const ::std::os::raw::c_char) -> *mut TSequence;
+}
+extern "C" {
+    pub fn trgeometry_as_tsequenceset(temp: *const Temporal, interp_str: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn trgeometry_after_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_before_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_restrict_values(temp: *const Temporal, s: *const Set, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_restrict_timestamptz(temp: *const Temporal, t: TimestampTz, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_restrict_tstzset(temp: *const Temporal, s: *const Set, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_restrict_tstzspan(temp: *const Temporal, s: *const Span, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_restrict_tstzspanset(temp: *const Temporal, ss: *const SpanSet, atfunc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_value(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_value(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_values(temp: *const Temporal, s: *const Set) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_values(temp: *const Temporal, s: *const Set) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_timestamptz(temp: *const Temporal, t: TimestampTz) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_timestamptz(temp: *const Temporal, t: TimestampTz) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_tstzset(temp: *const Temporal, s: *const Set) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_tstzset(temp: *const Temporal, s: *const Set) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_tstzspan(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_tstzspan(temp: *const Temporal, s: *const Span) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_at_tstzspanset(temp: *const Temporal, ss: *const SpanSet) -> *mut Temporal;
+}
+extern "C" {
+    pub fn trgeometry_minus_tstzspanset(temp: *const Temporal, ss: *const SpanSet) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_trgeometry_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdistance_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn nad_stbox_trgeometry(box_: *const STBox, temp: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn nad_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> f64;
+}
+extern "C" {
+    pub fn nad_trgeometry_stbox(temp: *const Temporal, box_: *const STBox) -> f64;
+}
+extern "C" {
+    pub fn nad_trgeometry_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn nad_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+}
+extern "C" {
+    pub fn nai_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut TInstant;
+}
+extern "C" {
+    pub fn nai_trgeometry_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn nai_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> *mut TInstant;
+}
+extern "C" {
+    pub fn shortestline_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn shortestline_trgeometry_tpoint(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn shortestline_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn tdwithin_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdwithin_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tdwithin_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> *mut Temporal;
+}
+extern "C" {
+    pub fn always_eq_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn econtains_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acontains_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ecovers_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acovers_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ecovers_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acovers_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edisjoint_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adisjoint_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn eintersects_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn aintersects_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn etouches_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn atouches_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edwithin_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adwithin_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edisjoint_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adisjoint_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn eintersects_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn aintersects_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn edwithin_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn adwithin_trgeometry_trgeometry(temp1: *const Temporal, temp2: *const Temporal, dist: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn s2cell_as_hexwkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn s2cell_as_wkb(cell: ::std::os::raw::c_ulong, variant: ::std::os::raw::c_uchar, size_out: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn s2cell_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_from_wkb(wkb: *const ::std::os::raw::c_uchar, size: size_t) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_in(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn bigint_to_s2cell(i: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_out(cell: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn s2cell_eq(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_ne(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_lt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_le(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_gt(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_ge(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_cmp(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn s2cell_hash(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn s2cell_hash_extended(cell: ::std::os::raw::c_ulong, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_is_valid_cell(cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_cell_to_token(cell: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn s2cell_token_to_cell(token: *const ::std::os::raw::c_char) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_get_resolution(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn s2cell_get_face(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn s2cell_cell_to_parent(cell: ::std::os::raw::c_ulong, level: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_cell_to_child(cell: ::std::os::raw::c_ulong, level: ::std::os::raw::c_uint, position: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_cell_to_children(cell: ::std::os::raw::c_ulong, level: ::std::os::raw::c_uint, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_cell_contains(cell: ::std::os::raw::c_ulong, other: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_common_ancestor_level(a: ::std::os::raw::c_ulong, b: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn s2cell_range_min(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_range_max(cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_edge_neighbors(cell: ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_point_to_cell(longitude: f64, latitude: f64, level: ::std::os::raw::c_uint) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cell_cell_area(cell: ::std::os::raw::c_ulong) -> f64;
+}
+extern "C" {
+    pub fn s2cell_edge_length(cell: ::std::os::raw::c_ulong, edge: ::std::os::raw::c_uint) -> f64;
+}
+extern "C" {
+    pub fn geo_to_s2cell_cell(point: *const GSERIALIZED, level: int32) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn geo_to_s2cell_set(gs: *const GSERIALIZED, level: int32) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cell_cell_to_geogpoint(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn s2cell_cell_to_geog(cell: ::std::os::raw::c_ulong) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn ever_eq_s2cellset_ts2cell(cells: *const Set, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_ts2cell_s2cellset(temp: *const Temporal, cells: *const Set) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn s2cell_to_stbox(cell: ::std::os::raw::c_ulong) -> *mut STBox;
+}
+extern "C" {
+    pub fn s2cell_timestamptz_to_stbox(cell: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut STBox;
+}
+extern "C" {
+    pub fn s2cell_tstzspan_to_stbox(cell: ::std::os::raw::c_ulong, s: *const Span) -> *mut STBox;
+}
+extern "C" {
+    pub fn s2cell_edge_neighbors_set(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cell_cell_to_children_set(cell: ::std::os::raw::c_ulong, children_level: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_compact_cells(cells: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_uncompact_cells(cells: *const Set, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cell_cell_to_cover(cell: ::std::os::raw::c_ulong, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_cover_cells(cells: *const Set, resolution: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn s2cellset_make(values: *const ::std::os::raw::c_ulong, count: ::std::os::raw::c_int) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cellset_end_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cellset_start_value(s: *const Set) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn s2cellset_value_n(s: *const Set, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cellset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn contained_s2cell_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> bool;
+}
+extern "C" {
+    pub fn contains_set_s2cell(s: *const Set, cell: ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn intersection_s2cell_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn intersection_set_s2cell(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_s2cell_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn minus_set_s2cell(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn union_s2cell_set(cell: ::std::os::raw::c_ulong, s: *const Set) -> *mut Set;
+}
+extern "C" {
+    pub fn union_set_s2cell(s: *const Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn s2cell_union_transfn(state: *mut Set, cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn ts2cell_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cellinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
+}
+extern "C" {
+    pub fn ts2cellseq_in(str_: *const ::std::os::raw::c_char, interp: interpType) -> *mut TSequence;
+}
+extern "C" {
+    pub fn ts2cellseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn ts2cell_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn ts2cell_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cellinst_make(value: ::std::os::raw::c_ulong, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
+    pub fn ts2cell_from_base_temp(value: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cellseq_from_base_tstzset(value: ::std::os::raw::c_ulong, s: *const Set) -> *mut TSequence;
+}
+extern "C" {
+    pub fn ts2cellseq_from_base_tstzspan(value: ::std::os::raw::c_ulong, s: *const Span) -> *mut TSequence;
+}
+extern "C" {
+    pub fn ts2cellseqset_from_base_tstzspanset(value: ::std::os::raw::c_ulong, ss: *const SpanSet) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn ts2cellseq_make(values: *const ::std::os::raw::c_ulong, times: *const TimestampTz, count: ::std::os::raw::c_int, lower_inc: bool, upper_inc: bool) -> *mut TSequence;
+}
+extern "C" {
+    pub fn ts2cellseqset_make(sequences: *mut *const TSequence, count: ::std::os::raw::c_int) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn ts2cell_start_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn ts2cell_end_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn ts2cell_value(temp: *const Temporal) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn ts2cell_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn ts2cell_values(temp: *const Temporal, count: *mut ::std::os::raw::c_int) -> *mut ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn ts2cell_unnest(temp: *const Temporal, values: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut SpanSet;
+}
+extern "C" {
+    pub fn ts2cell_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut ::std::os::raw::c_ulong) -> bool;
+}
+extern "C" {
+    pub fn s2cell_to_set(cell: ::std::os::raw::c_ulong) -> *mut Set;
+}
+extern "C" {
+    pub fn tbigint_to_ts2cell(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_to_ts2cell(temp: *const Temporal, level: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_to_ts2cell(temp: *const Temporal, level: int32, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeogpoint_s2cell_split(temp: *const Temporal, level: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn tgeompoint_s2cell_split(temp: *const Temporal, level: int32, border_inc: bool, cells: *mut *mut ::std::os::raw::c_ulong, count: *mut ::std::os::raw::c_int) -> *mut *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_at_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_minus_value(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ever_eq_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_eq_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ever_ne_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_eq_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn always_ne_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn teq_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn teq_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_s2cell_ts2cell(cell: ::std::os::raw::c_ulong, temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_ts2cell_s2cell(temp: *const Temporal, cell: ::std::os::raw::c_ulong) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tne_ts2cell_ts2cell(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_cell_to_token(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn ts2cell_grid_distance(origin: *const Temporal, dest: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    pub fn bool_eq(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_ge(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_gt(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_hash(arg: bool) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn bool_hash_extended(arg: bool, seed: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn bool_le(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_lt(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_ne(arg1: bool, arg2: bool) -> bool;
+}
+extern "C" {
+    pub fn bool_to_text(b: bool) -> *mut text;
+}
+extern "C" {
+    pub fn add_date_int(date: DateADT, days: int32) -> DateADT;
+}
+extern "C" {
+    pub fn add_date_interval(date: DateADT, interv: *mut Interval) -> DateADT;
+}
+extern "C" {
+    pub fn cmp_date_timestamp(date: DateADT, ts: Timestamp) -> int32;
+}
+extern "C" {
+    pub fn cmp_date_date(date1: DateADT, date2: DateADT) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn cmp_date_timestamptz(date: DateADT, tstz: TimestampTz) -> int32;
+}
+extern "C" {
+    pub fn cmp_timestamp_date(ts: Timestamp, date: DateADT) -> int32;
+}
+extern "C" {
+    pub fn cmp_timestamptz_date(tstz: TimestampTz, date: DateADT) -> int32;
+}
+extern "C" {
+    pub fn date_extract(date: DateADT, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn date_hash(date: DateADT) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn date_hash_extended(date: DateADT, seed: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn date_is_finite(date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn date_larger(date1: DateADT, date2: DateADT) -> DateADT;
+}
+extern "C" {
+    pub fn date_make(year: ::std::os::raw::c_int, mon: ::std::os::raw::c_int, mday: ::std::os::raw::c_int) -> DateADT;
+}
+extern "C" {
+    pub fn date_smaller(date1: DateADT, date2: DateADT) -> DateADT;
+}
+extern "C" {
+    pub fn date_time_to_timestamp(date: DateADT, time: TimeADT) -> Timestamp;
+}
+extern "C" {
+    pub fn date_to_timestamp(date: DateADT) -> Timestamp;
+}
+extern "C" {
+    pub fn date_to_timestamptz(date: DateADT) -> TimestampTz;
+}
+extern "C" {
+    pub fn eq_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn eq_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn eq_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn eq_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn eq_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn ge_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn ge_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn ge_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn ge_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn ge_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn gt_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn gt_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn gt_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn gt_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn gt_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn le_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn le_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn le_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn le_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn le_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn lt_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn lt_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn lt_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn lt_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn lt_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn minus_date_date(date1: DateADT, date2: DateADT) -> int32;
+}
+extern "C" {
+    pub fn minus_date_int(date: DateADT, days: int32) -> DateADT;
+}
+extern "C" {
+    pub fn minus_date_interval(date: DateADT, span: *mut Interval) -> DateADT;
+}
+extern "C" {
+    pub fn ne_date_date(date1: DateADT, date2: DateADT) -> bool;
+}
+extern "C" {
+    pub fn ne_date_timestamp(date: DateADT, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn ne_date_timestamptz(date: DateADT, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn ne_timestamp_date(ts: Timestamp, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn ne_timestamptz_date(tstz: TimestampTz, date: DateADT) -> bool;
+}
+extern "C" {
+    pub fn timestamp_to_date(ts: Timestamp) -> DateADT;
+}
+extern "C" {
+    pub fn timestamptz_to_date(tstz: TimestampTz) -> DateADT;
+}
+extern "C" {
+    pub fn add_float4_float4(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn add_float4_float8(num1: f32, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn add_float8_float4(num1: f64, num2: f32) -> f64;
+}
+extern "C" {
+    pub fn add_float8_float8(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn div_float4_float4(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn div_float4_float8(num1: f32, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn div_float8_float4(num1: f64, num2: f32) -> f64;
+}
+extern "C" {
+    pub fn div_float8_float8(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn eq_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn eq_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn eq_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn eq_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn float4_abs(num: f32) -> f32;
+}
+extern "C" {
+    pub fn float4_cmp(num1: f32, num2: f32) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn float4_hash(num: f32) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn float4_hash_extended(num: f32, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn float4_in(num: *const ::std::os::raw::c_char) -> f32;
+}
+extern "C" {
+    pub fn float4_larger(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn float4_out(num: f32) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn float4_smaller(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn float4_to_float8(num: f32) -> f64;
+}
+extern "C" {
+    pub fn float4_to_int16(num: f32) -> int16;
+}
+extern "C" {
+    pub fn float4_to_int32(num: f32) -> int32;
+}
+extern "C" {
+    pub fn float4_um(num: f32) -> f32;
+}
+extern "C" {
+    pub fn float4_up(num: f32) -> f32;
+}
+extern "C" {
+    pub fn float8_abs(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_acos(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_acosd(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_acosh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_asin(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_asind(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_asinh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_atan(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_atan2(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_atan2d(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_atand(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_atanh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cbrt(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_ceil(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cmp(num1: f64, num2: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn float8_cos(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cosd(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cosh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cot(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_cotd(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_degrees(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_exp(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_floor(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_gamma(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_hash(num: f64) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn float8_hash_extended(num: f64, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn float8_in(str_: *const ::std::os::raw::c_char) -> f64;
+}
+extern "C" {
+    pub fn float8_larger(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_lgamma(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_ln(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_log10(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_pi() -> f64;
+}
+extern "C" {
+    pub fn float8_pow(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_radians(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_rint(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_round(num: f64, maxdd: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn float8_sign(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_sin(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_sind(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_sinh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_smaller(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_sqrt(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_tan(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_tand(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_tanh(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_to_float4(num: f64) -> f32;
+}
+extern "C" {
+    pub fn float8_to_int16(num: f64) -> int16;
+}
+extern "C" {
+    pub fn float8_to_int32(num: f64) -> int32;
+}
+extern "C" {
+    pub fn float8_trunc(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_um(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_up(num: f64) -> f64;
+}
+extern "C" {
+    pub fn float8_width_bucket(num: f64, bound1: f64, bound2: f64, count: int32) -> int32;
+}
+extern "C" {
+    pub fn ge_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn ge_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn ge_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn ge_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn gt_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn gt_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn gt_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn gt_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn int16_to_float4(num: int16) -> f32;
+}
+extern "C" {
+    pub fn int16_to_float8(num: int16) -> f64;
+}
+extern "C" {
+    pub fn int32_to_float4(num: int32) -> f32;
+}
+extern "C" {
+    pub fn int32_to_float8(num: int32) -> f64;
+}
+extern "C" {
+    pub fn le_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn le_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn le_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn le_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn lt_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn lt_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn lt_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn lt_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn minus_float4_float4(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn minus_float4_float8(num1: f32, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn minus_float8_float4(num1: f64, num2: f32) -> f64;
+}
+extern "C" {
+    pub fn minus_float8_float8(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn mul_float4_float4(num1: f32, num2: f32) -> f32;
+}
+extern "C" {
+    pub fn mul_float4_float8(num1: f32, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn mul_float8_float4(num1: f64, num2: f32) -> f64;
+}
+extern "C" {
+    pub fn mul_float8_float8(num1: f64, num2: f64) -> f64;
+}
+extern "C" {
+    pub fn ne_float4_float4(num1: f32, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn ne_float4_float8(num1: f32, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn ne_float8_float4(num1: f64, num2: f32) -> bool;
+}
+extern "C" {
+    pub fn ne_float8_float8(num1: f64, num2: f64) -> bool;
+}
+extern "C" {
+    pub fn add_int16_int16(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn add_int16_int32(num1: int16, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn add_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn add_int32_int16(num1: int32, num2: int16) -> int32;
+}
+extern "C" {
+    pub fn add_int32_int32(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn add_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn add_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn add_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn add_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn bool_to_int32(b: bool) -> int32;
+}
+extern "C" {
+    pub fn div_int16_int16(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn div_int16_int32(num1: int16, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn div_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn div_int32_int16(num1: int32, num2: int16) -> int32;
+}
+extern "C" {
+    pub fn div_int32_int32(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn div_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn div_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn div_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn div_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn eq_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn eq_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn eq_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn eq_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn eq_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn eq_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn eq_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn eq_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn eq_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn float4_to_int64(num: f32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn float8_to_int64(num: f64) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn ge_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ge_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ge_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn ge_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ge_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ge_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn ge_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ge_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ge_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn gt_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn gt_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn gt_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn gt_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn gt_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn gt_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn gt_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn gt_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn gt_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn int16_abs(num: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_and(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_hash(val: int16) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn int16_hash_extended(val: int16, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn int16_in(str_: *const ::std::os::raw::c_char) -> int16;
+}
+extern "C" {
+    pub fn int16_larger(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_mod(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_not(num: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_or(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_out(num: int16) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn int16_shl(num1: int16, num2: int32) -> int16;
+}
+extern "C" {
+    pub fn int16_shr(num1: int16, num2: int32) -> int16;
+}
+extern "C" {
+    pub fn int16_smaller(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_to_int32(num: int16) -> int32;
+}
+extern "C" {
+    pub fn int16_to_int64(num: int16) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int16_uminus(num: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_uplus(num: int16) -> int16;
+}
+extern "C" {
+    pub fn int16_xor(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn int32_abs(num: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_and(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_cmp(l: int32, r: int32) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn int32_gcd(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_hash(val: int32) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn int32_hash_extended(val: int32, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn int32_in(str_: *const ::std::os::raw::c_char) -> int32;
+}
+extern "C" {
+    pub fn int32_inc(num: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_larger(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_lcm(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_mod(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_not(num: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_or(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_out(num: int32) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn int32_shl(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_shr(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_smaller(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_to_bool(num: int32) -> bool;
+}
+extern "C" {
+    pub fn int32_to_int16(num: int32) -> int16;
+}
+extern "C" {
+    pub fn int32_to_int64(num: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int32_uminus(num: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_uplus(num: int32) -> int32;
+}
+extern "C" {
+    pub fn int32_xor(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn int64_abs(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_and(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_cmp(l: ::std::os::raw::c_long, r: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn int64_dec(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_gcd(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_hash(num: ::std::os::raw::c_long) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn int64_hash_extended(num: ::std::os::raw::c_long, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn int64_in(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_inc(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_larger(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_lcm(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_mod(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_not(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_or(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_out(num: ::std::os::raw::c_long) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn int64_shl(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_shr(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_smaller(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_to_float4(num: ::std::os::raw::c_long) -> f32;
+}
+extern "C" {
+    pub fn int64_to_float8(num: ::std::os::raw::c_long) -> f64;
+}
+extern "C" {
+    pub fn int64_to_int16(num: ::std::os::raw::c_long) -> int16;
+}
+extern "C" {
+    pub fn int64_to_int32(num: ::std::os::raw::c_long) -> int32;
+}
+extern "C" {
+    pub fn int64_uminus(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_uplus(num: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn int64_xor(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn le_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn le_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn le_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn le_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn le_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn le_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn le_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn le_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn le_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn lt_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn lt_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn lt_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn lt_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn lt_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn lt_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn lt_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn lt_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn lt_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn minus_int16_int16(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn minus_int16_int32(num1: int16, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn minus_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn minus_int32_int16(num1: int32, num2: int16) -> int32;
+}
+extern "C" {
+    pub fn minus_int32_int32(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn minus_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn minus_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn minus_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn minus_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn mul_int16_int16(num1: int16, num2: int16) -> int16;
+}
+extern "C" {
+    pub fn mul_int16_int32(num1: int16, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn mul_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn mul_int32_int16(num1: int32, num2: int16) -> int32;
+}
+extern "C" {
+    pub fn mul_int32_int32(num1: int32, num2: int32) -> int32;
+}
+extern "C" {
+    pub fn mul_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn mul_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn mul_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn mul_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn ne_int16_int16(num1: int16, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ne_int16_int32(num1: int16, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ne_int16_int64(num1: int16, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn ne_int32_int16(num1: int32, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ne_int32_int32(num1: int32, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ne_int32_int64(num1: int32, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn ne_int64_int16(num1: ::std::os::raw::c_long, num2: int16) -> bool;
+}
+extern "C" {
+    pub fn ne_int64_int32(num1: ::std::os::raw::c_long, num2: int32) -> bool;
+}
+extern "C" {
+    pub fn ne_int64_int64(num1: ::std::os::raw::c_long, num2: ::std::os::raw::c_long) -> bool;
+}
+extern "C" {
+    pub fn add_interval_interval(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn div_interval_float8(interv: *const Interval, factor: f64) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_copy(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_eq(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_extract(interv: *const Interval, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn interval_ge(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_gt(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_hash(interv: *const Interval) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn interval_hash_extended(interv: *const Interval, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn interval_is_finite(interv: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_justify_days(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_justify_hours(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_justify_interval(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_larger(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_le(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_lt(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_make(years: int32, months: int32, weeks: int32, days: int32, hours: int32, mins: int32, secs: f64) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_ne(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn interval_negate(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_part(interv: *const Interval, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn interval_scale(interv: *const Interval, typmod: int32) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_smaller(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn interval_trunc(interv: *const Interval, units: *const text) -> *mut Interval;
+}
+extern "C" {
+    pub fn minus_interval_interval(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn mul_float8_interval(factor: f64, interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn mul_interval_float8(interv: *const Interval, factor: f64) -> *mut Interval;
+}
+extern "C" {
+    pub fn char_hash(c: ::std::os::raw::c_char) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn char_hash_extended(c: ::std::os::raw::c_char, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn icu_unicode_version() -> *mut text;
+}
+extern "C" {
+    pub fn int32_to_bin(num: int32) -> *mut text;
+}
+extern "C" {
+    pub fn int32_to_hex(num: int32) -> *mut text;
+}
+extern "C" {
+    pub fn int32_to_oct(num: int32) -> *mut text;
+}
+extern "C" {
+    pub fn int64_to_bin(num: ::std::os::raw::c_long) -> *mut text;
+}
+extern "C" {
+    pub fn int64_to_hex(num: ::std::os::raw::c_long) -> *mut text;
+}
+extern "C" {
+    pub fn int64_to_oct(num: ::std::os::raw::c_long) -> *mut text;
+}
+extern "C" {
+    pub fn text_cat(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_concat(textarr: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_concat_ws(textarr: *mut *mut text, count: ::std::os::raw::c_int, sep: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_eq(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_ge(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_gt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_hash(txt: *const text, collid: Oid) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn text_hash_extended(txt: *const text, seed: ::std::os::raw::c_ulong, collid: Oid) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn text_larger(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_le(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_left(txt: *const text, n: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_len(txt: *const text) -> int32;
+}
+extern "C" {
+    pub fn text_lt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_ne(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_octetlen(txt: *const text) -> int32;
+}
+extern "C" {
+    pub fn text_overlay(txt1: *const text, txt2: *const text, from: ::std::os::raw::c_int, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_overlay_no_len(txt1: *const text, txt2: *const text, from: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_pattern_ge(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_pattern_gt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_pattern_le(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_pattern_lt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_pos(txt: *const text, search: *const text) -> int32;
+}
+extern "C" {
+    pub fn text_replace(txt: *const text, from: *const text, to: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_reverse(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_right(txt: *const text, n: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_smaller(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn text_split_part(txt: *const text, sep: *const text, fldnum: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn text_starts_with(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn text_substr(txt: *const text, start: int32, length: int32) -> *mut text;
+}
+extern "C" {
+    pub fn text_substr_no_len(txt: *const text, start: int32) -> *mut text;
+}
+extern "C" {
+    pub fn unicode_assigned(txt: *const text) -> bool;
+}
+extern "C" {
+    pub fn unicode_is_normalized(txt: *const text, fmt: *const text) -> bool;
+}
+extern "C" {
+    pub fn unicode_normalize_func(txt: *const text, fmt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn unicode_version() -> *mut text;
+}
+extern "C" {
+    pub fn unistr(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn date_timetz_to_timestamptz(date: DateADT, timetz: *const TimeTzADT) -> TimestampTz;
+}
+extern "C" {
+    pub fn interval_to_time(interv: *const Interval) -> TimeADT;
+}
+extern "C" {
+    pub fn minus_time_interval(time: TimeADT, interv: *const Interval) -> TimeADT;
+}
+extern "C" {
+    pub fn minus_time_time(time1: TimeADT, time2: TimeADT) -> *mut Interval;
+}
+extern "C" {
+    pub fn minus_timetz_interval(timetz: *const TimeTzADT, interv: *const Interval) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn plus_time_interval(time: TimeADT, interv: *mut Interval) -> TimeADT;
+}
+extern "C" {
+    pub fn plus_timetz_interval(timetz: *const TimeTzADT, interv: *const Interval) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn time_cmp(time1: TimeADT, time2: TimeADT) -> int32;
+}
+extern "C" {
+    pub fn time_eq(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_extract(time: TimeADT, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn time_ge(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_gt(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_hash(time: TimeADT) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn time_hash_extended(time: TimeADT, seed: int32) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn time_larger(time1: TimeADT, time2: TimeADT) -> TimeADT;
+}
+extern "C" {
+    pub fn time_le(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_lt(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_make(tm_hour: ::std::os::raw::c_int, tm_min: ::std::os::raw::c_int, sec: f64) -> TimeADT;
+}
+extern "C" {
+    pub fn time_ne(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_overlaps(ts1: TimeADT, te1: TimeADT, ts2: TimeADT, te2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn time_part(time: TimeADT, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn time_scale(date: TimeADT, typmod: int32) -> TimeADT;
+}
+extern "C" {
+    pub fn time_smaller(time1: TimeADT, time2: TimeADT) -> TimeADT;
+}
+extern "C" {
+    pub fn time_to_interval(time: TimeADT) -> *mut Interval;
+}
+extern "C" {
+    pub fn time_to_timetz(time: TimeADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timestamp_to_time(ts: Timestamp) -> TimeADT;
+}
+extern "C" {
+    pub fn timestamptz_to_time(tztz: TimestampTz) -> TimeADT;
+}
+extern "C" {
+    pub fn timestamptz_to_timetz(tztz: TimestampTz) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_at_local(timetz: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_cmp(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> int32;
+}
+extern "C" {
+    pub fn timetz_eq(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_extract(timetz: *const TimeTzADT, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn timetz_ge(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_gt(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_hash(timetz: *const TimeTzADT) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn timetz_hash_extended(timetz: *const TimeTzADT, seed: ::std::os::raw::c_long) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn timetz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_izone(timetz: *const TimeTzADT, zone: *const Interval) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_larger(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_le(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_lt(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_ne(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_copy(timetz: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_out(timetz: *const TimeTzADT) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn timetz_overlaps(ts1: *const TimeTzADT, te1: *const TimeTzADT, ts2: *const TimeTzADT, te2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn timetz_part(timetz: *const TimeTzADT, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn timetz_scale(timetz: *const TimeTzADT, typmod: int32) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_smaller(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn timetz_to_time(timetz: *const TimeTzADT) -> TimeADT;
+}
+extern "C" {
+    pub fn timetz_zone(timetz: *const TimeTzADT, zone: *const text) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn add_timestamp_interval(ts: Timestamp, interv: *const Interval) -> Timestamp;
+}
+extern "C" {
+    pub fn add_timestamptz_interval(tstz: TimestampTz, interv: *const Interval) -> TimestampTz;
+}
+extern "C" {
+    pub fn add_timestamptz_interval_at_zone(tstz: TimestampTz, interv: *const Interval, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn cmp_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> int32;
+}
+extern "C" {
+    pub fn cmp_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> int32;
+}
+extern "C" {
+    pub fn cmp_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> int32;
+}
+extern "C" {
+    pub fn eq_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn eq_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn eq_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn eq_timestamptz_timestamptz(tstz1: TimestampTz, tstz2: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn float8_to_timestamptz(seconds: f64) -> TimestampTz;
+}
+extern "C" {
+    pub fn gt_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn gt_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn gt_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn ge_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn ge_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn ge_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn le_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn le_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn le_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn lt_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn lt_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn lt_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn minus_timestamp_interval(ts: Timestamp, interv: *const Interval) -> Timestamp;
+}
+extern "C" {
+    pub fn minus_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> *mut Interval;
+}
+extern "C" {
+    pub fn minus_timestamptz_interval(tstz: TimestampTz, interv: *const Interval) -> TimestampTz;
+}
+extern "C" {
+    pub fn minus_timestamptz_interval_at_zone(tstz: TimestampTz, interv: *const Interval, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn minus_timestamptz_timestamptz(tstz1: TimestampTz, tstz2: TimestampTz) -> *mut Interval;
+}
+extern "C" {
+    pub fn ne_timestamp_timestamp(ts1: Timestamp, ts2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn ne_timestamp_timestamptz(ts: Timestamp, tstz: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn ne_timestamptz_timestamp(tstz: TimestampTz, ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn timestamp_age(ts1: Timestamp, ts2: Timestamp) -> *mut Interval;
+}
+extern "C" {
+    pub fn timestamp_at_local(ts: Timestamp) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamp_bin(ts: Timestamp, stride: *const Interval, origin: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_extract(ts: Timestamp, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn timestamp_hash(ts: Timestamp) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn timestamp_hash_extended(tstz: TimestampTz, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn timestamp_is_finite(ts: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn timestamp_izone(ts: Timestamp, zone: *const Interval) -> TimestampTz;
+}
+extern "C" {
+    pub fn time_of_day() -> *mut text;
+}
+extern "C" {
+    pub fn timestamp_larger(ts1: Timestamp, ts2: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_make(year: int32, month: int32, mday: int32, hour: int32, min: int32, sec: f64) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_overlaps(ts1: Timestamp, te1: Timestamp, ts2: Timestamp, te2: Timestamp) -> bool;
+}
+extern "C" {
+    pub fn timestamp_part(ts: Timestamp, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn timestamp_scale(ts: Timestamp, typmod: int32) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_smaller(ts1: Timestamp, ts2: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_to_timestamptz(ts: Timestamp) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamp_trunc(ts: Timestamp, units: *const text) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamp_zone(ts: Timestamp, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_age(tstz1: TimestampTz, tstz2: TimestampTz) -> *mut Interval;
+}
+extern "C" {
+    pub fn timestamptz_at_local(tstz: TimestampTz) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_bin(tstz: TimestampTz, stride: *const Interval, origin: TimestampTz) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_extract(tstz: TimestampTz, units: *const text) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn timestamptz_hash(tstz: TimestampTz) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn timestamptz_hash_extended(tstz: TimestampTz, seed: ::std::os::raw::c_ulong) -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn timestamptz_izone(tstz: TimestampTz, zone: *const Interval) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamptz_make(year: int32, month: int32, day: int32, hour: int32, min: int32, sec: f64) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_make_at_timezone(year: int32, month: int32, day: int32, hour: int32, min: int32, sec: f64, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_overlaps(ts1: TimestampTz, te1: TimestampTz, ts2: TimestampTz, te2: TimestampTz) -> bool;
+}
+extern "C" {
+    pub fn timestamptz_part(tstz: TimestampTz, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn timestamptz_scale(tstz: TimestampTz, typmod: int32) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_shift(tstz: TimestampTz, interv: *const Interval) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_to_timestamp(tstz: TimestampTz) -> Timestamp;
+}
+extern "C" {
+    pub fn timestamptz_trunc(tstz: TimestampTz, units: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_trunc_zone(tstz: TimestampTz, units: *const text, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn timestamptz_zone(tstz: TimestampTz, zone: *const text) -> Timestamp;
+}
+extern "C" {
+    pub fn hash(h: *mut hashtable, k: *const ::std::os::raw::c_void) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn create_hashtable(minsize: ::std::os::raw::c_uint, hashfunction: *mut ::std::os::raw::c_void, key_eq_fn: *mut ::std::os::raw::c_void) -> *mut hashtable;
+}
+extern "C" {
+    pub fn create_string_hashtable() -> *mut hashtable;
+}
+extern "C" {
+    pub fn hashtable_insert(h: *mut hashtable, k: *mut ::std::os::raw::c_void, v: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn hashtable_search(h: *mut hashtable, k: *const ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn hashtable_remove(h: *mut hashtable, k: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn hashtable_count(h: *mut hashtable) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn hashtable_destroy(h: *mut hashtable, free_values: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn indexFor(tablelength: ::std::os::raw::c_uint, hashvalue: ::std::os::raw::c_uint) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pcalloc(size: size_t) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pcrealloc(mem: *mut ::std::os::raw::c_void, size: size_t) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pcfree(mem: *mut ::std::os::raw::c_void);
+}
+extern "C" {
+    pub fn pcerror(fmt: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn pcinfo(fmt: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn pcwarn(fmt: *const ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn pc_set_handlers(allocator: pc_allocator, reallocator: pc_reallocator, deallocator: pc_deallocator, error_handler: pc_message_handler, info_handler: pc_message_handler, warning_handler: pc_message_handler);
+}
+extern "C" {
+    pub fn pc_install_default_handlers();
+}
+extern "C" {
+    pub fn pc_bytes_from_hexbytes(hexbuf: *const ::std::os::raw::c_char, hexsize: size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_hexbytes_from_bytes(bytebuf: *const ::std::os::raw::c_uchar, bytesize: size_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pc_wkb_get_pcid(wkb: *const ::std::os::raw::c_uchar) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pc_dimstats_make(schema: *const PCSCHEMA) -> *mut PCDIMSTATS;
+}
+extern "C" {
+    pub fn pc_compression_name(num: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pc_schema_free(pcs: *mut PCSCHEMA);
+}
+extern "C" {
+    pub fn pc_schema_new(ndims: ::std::os::raw::c_uint) -> *mut PCSCHEMA;
+}
+extern "C" {
+    pub fn pc_interpretation_number(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_compression_number(str_: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_schema_from_xml(xmlstr: *const ::std::os::raw::c_char) -> *mut PCSCHEMA;
+}
+extern "C" {
+    pub fn pc_schema_to_json(pcs: *const PCSCHEMA) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pc_schema_get_dimension(s: *const PCSCHEMA, dim: ::std::os::raw::c_uint) -> *mut PCDIMENSION;
+}
+extern "C" {
+    pub fn pc_schema_get_dimension_by_name(s: *const PCSCHEMA, name: *const ::std::os::raw::c_char) -> *mut PCDIMENSION;
+}
+extern "C" {
+    pub fn pc_schema_is_valid(s: *const PCSCHEMA) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pc_schema_clone(s: *const PCSCHEMA) -> *mut PCSCHEMA;
+}
+extern "C" {
+    pub fn pc_schema_set_dimension(s: *mut PCSCHEMA, d: *mut PCDIMENSION);
+}
+extern "C" {
+    pub fn pc_schema_check_xyzm(s: *mut PCSCHEMA);
+}
+extern "C" {
+    pub fn pc_schema_get_size(s: *const PCSCHEMA) -> size_t;
+}
+extern "C" {
+    pub fn pc_schema_same_dimensions(s1: *const PCSCHEMA, s2: *const PCSCHEMA) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pc_schema_same_interpretations(s1: *const PCSCHEMA, s2: *const PCSCHEMA) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pc_pointlist_make(npoints: ::std::os::raw::c_uint) -> *mut PCPOINTLIST;
+}
+extern "C" {
+    pub fn pc_pointlist_free(pl: *mut PCPOINTLIST);
+}
+extern "C" {
+    pub fn pc_pointlist_add_point(pl: *mut PCPOINTLIST, pt: *mut PCPOINT);
+}
+extern "C" {
+    pub fn pc_pointlist_get_point(pl: *const PCPOINTLIST, i: ::std::os::raw::c_int) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_point_make(s: *const PCSCHEMA) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_point_from_data(s: *const PCSCHEMA, data: *const ::std::os::raw::c_uchar) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_point_from_double_array(s: *const PCSCHEMA, array: *mut f64, offset: ::std::os::raw::c_uint, stride: ::std::os::raw::c_uint) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_point_to_double_array(pt: *const PCPOINT) -> *mut f64;
+}
+extern "C" {
+    pub fn pc_point_free(pt: *mut PCPOINT);
+}
+extern "C" {
+    pub fn pc_point_get_double_by_name(pt: *const PCPOINT, name: *const ::std::os::raw::c_char, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_double_by_index(pt: *const PCPOINT, idx: ::std::os::raw::c_uint, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_double(pt: *const PCPOINT, dim: *const PCDIMENSION, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_double_by_name(pt: *mut PCPOINT, name: *const ::std::os::raw::c_char, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_double_by_index(pt: *mut PCPOINT, idx: ::std::os::raw::c_uint, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_double(pt: *mut PCPOINT, dim: *const PCDIMENSION, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_x(pt: *const PCPOINT, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_y(pt: *const PCPOINT, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_z(pt: *const PCPOINT, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_get_m(pt: *const PCPOINT, val: *mut f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_x(pt: *mut PCPOINT, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_y(pt: *mut PCPOINT, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_z(pt: *mut PCPOINT, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_set_m(pt: *mut PCPOINT, val: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_point_from_wkb(s: *const PCSCHEMA, wkb: *mut ::std::os::raw::c_uchar, wkbsize: size_t) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_point_to_wkb(pt: *const PCPOINT, wkbsize: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_point_to_string(pt: *const PCPOINT) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pc_point_to_geometry_wkb(pt: *const PCPOINT, wkbsize: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_patch_from_pointlist(ptl: *const PCPOINTLIST) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_pointlist_from_patch(patch: *const PCPATCH) -> *mut PCPOINTLIST;
+}
+extern "C" {
+    pub fn pc_patch_from_patchlist(palist: *mut *mut PCPATCH, numpatches: ::std::os::raw::c_int) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_free(patch: *mut PCPATCH);
+}
+extern "C" {
+    pub fn pc_patch_compress(patch: *const PCPATCH, userdata: *mut ::std::os::raw::c_void) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_uncompress(patch: *const PCPATCH) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_from_wkb(s: *const PCSCHEMA, wkb: *mut ::std::os::raw::c_uchar, wkbsize: size_t) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_to_wkb(patch: *const PCPATCH, wkbsize: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_patch_to_string(patch: *const PCPATCH) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pc_patch_dimensional_serialized_size(patch: *const PCPATCH_DIMENSIONAL) -> size_t;
+}
+extern "C" {
+    pub fn pc_bytes_serialized_size(pcb: *const PCBYTES) -> size_t;
+}
+extern "C" {
+    pub fn pc_bytes_serialize(pcb: *const PCBYTES, buf: *mut ::std::os::raw::c_uchar, size: *mut size_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_bytes_deserialize(buf: *const ::std::os::raw::c_uchar, dim: *const PCDIMENSION, pcb: *mut PCBYTES, readonly: ::std::os::raw::c_int, flip_endian: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_stats_new_from_data(schema: *const PCSCHEMA, mindata: *const ::std::os::raw::c_uchar, maxdata: *const ::std::os::raw::c_uchar, avgdata: *const ::std::os::raw::c_uchar) -> *mut PCSTATS;
+}
+extern "C" {
+    pub fn pc_stats_new(schema: *const PCSCHEMA) -> *mut PCSTATS;
+}
+extern "C" {
+    pub fn pc_stats_free(stats: *mut PCSTATS);
+}
+extern "C" {
+    pub fn pc_stats_size(schema: *const PCSCHEMA) -> size_t;
+}
+extern "C" {
+    pub fn pc_patch_compute_stats(patch: *mut PCPATCH) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_patch_compute_extent(patch: *mut PCPATCH) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_bounds_intersects(b1: *const PCBOUNDS, b2: *const PCBOUNDS) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pc_bounding_diagonal_wkb_from_bounds(bounds: *const PCBOUNDS, schema: *const PCSCHEMA, wkbsize: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_bounding_diagonal_wkb_from_stats(stats: *const PCSTATS, wkbsize: *mut size_t) -> *mut ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn pc_patch_filter_lt_by_name(pa: *const PCPATCH, name: *const ::std::os::raw::c_char, val: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_filter_gt_by_name(pa: *const PCPATCH, name: *const ::std::os::raw::c_char, val: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_filter_equal_by_name(pa: *const PCPATCH, name: *const ::std::os::raw::c_char, val: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_filter_between_by_name(pa: *const PCPATCH, name: *const ::std::os::raw::c_char, val1: f64, val2: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_pointn(patch: *const PCPATCH, n: ::std::os::raw::c_int) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn pc_patch_sort(pa: *const PCPATCH, name: *mut *const ::std::os::raw::c_char, ndims: ::std::os::raw::c_int) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_is_sorted(pa: *const PCPATCH, name: *mut *const ::std::os::raw::c_char, ndims: ::std::os::raw::c_int, strict: ::std::os::raw::c_char) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn pc_patch_range(pa: *const PCPATCH, first: ::std::os::raw::c_int, count: ::std::os::raw::c_int) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_set_schema(patch: *mut PCPATCH, schema: *const PCSCHEMA, def: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pc_patch_transform(patch: *const PCPATCH, schema: *const PCSCHEMA, def: f64) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn meos_pc_point_serialize(pcpt: *const PCPOINT) -> *mut SERIALIZED_POINT;
+}
+extern "C" {
+    pub fn meos_pc_point_deserialize(serpt: *const SERIALIZED_POINT, schema: *const PCSCHEMA) -> *mut PCPOINT;
+}
+extern "C" {
+    pub fn meos_pc_patch_serialized_size(patch: *const PCPATCH) -> size_t;
+}
+extern "C" {
+    pub fn meos_pc_patch_serialize(patch_in: *const PCPATCH, userdata: *mut ::std::os::raw::c_void) -> *mut SERIALIZED_PATCH;
+}
+extern "C" {
+    pub fn meos_pc_patch_serialize_to_uncompressed(patch_in: *const PCPATCH) -> *mut SERIALIZED_PATCH;
+}
+extern "C" {
+    pub fn meos_pc_patch_deserialize(serpatch: *const SERIALIZED_PATCH, schema: *const PCSCHEMA) -> *mut PCPATCH;
+}
+extern "C" {
+    pub fn pg_numeric_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_out(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_numeric_typmodin(tl: *mut int32, n: ::std::os::raw::c_int) -> int32;
+}
+extern "C" {
+    pub fn pg_numeric_typmodout(typmod: int32) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_numeric(num: *mut ::std::os::raw::c_void, typmod: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_abs(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_uplus(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_uminus(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_sign(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_round(num: *mut ::std::os::raw::c_void, scale: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_trunc(num: *mut ::std::os::raw::c_void, scale: int32) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_ceil(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_floor(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_cmp(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn pg_numeric_eq(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_ne(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_gt(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_ge(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_lt(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_le(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> bool;
+}
+extern "C" {
+    pub fn pg_numeric_add(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_sub(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_mul(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_div(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_div_trunc(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_mod(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_inc(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_smaller(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_larger(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_gcd(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_lcm(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_fac(num: int64) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_sqrt(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_exp(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_ln(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_log(num1: *mut ::std::os::raw::c_void, num2: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pg_numeric_scale(num: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn pg_numeric_min_scale(num: *mut ::std::os::raw::c_void) -> int32;
+}
+extern "C" {
+    pub fn pg_numeric_trim_scale(num: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn meos_strtod(str_: *const ::std::os::raw::c_char, endptr: *mut *mut ::std::os::raw::c_char) -> f64;
+}
+extern "C" {
+    pub fn pg_float4_cmp(a: f32, b: f32) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_float8_cmp(a: f64, b: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_cstring_to_text(str_: *const ::std::os::raw::c_char) -> *mut text;
+}
+extern "C" {
+    pub fn pg_icu_unicode_version() -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_concat(textarr: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_concat_ws(textarr: *mut *mut text, count: ::std::os::raw::c_int, sep: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_ge(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_gt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_larger(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_le(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_left(txt: *const text, n: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_lt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_pattern_ge(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_pattern_gt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_pattern_le(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_pattern_lt(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_reverse(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_right(txt: *const text, n: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_smaller(txt1: *const text, txt2: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_starts_with(txt1: *const text, txt2: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_text_substr(txt: *const text, start: int32, length: int32) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_substr_no_len(txt: *const text, start: int32) -> *mut text;
+}
+extern "C" {
+    pub fn pg_unicode_assigned(txt: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_unicode_is_normalized(txt: *const text, fmt: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_unicode_normalize_func(txt: *const text, fmt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_unicode_version() -> *mut text;
+}
+extern "C" {
+    pub fn pg_unistr(txt: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_text_to_cstring(txt: *const text) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn bytea_copy(ba: *const bytea) -> *mut bytea;
+}
+extern "C" {
+    pub fn pg_date_in(str_: *const ::std::os::raw::c_char) -> DateADT;
+}
+extern "C" {
+    pub fn pg_date_larger(date1: DateADT, date2: DateADT) -> DateADT;
+}
+extern "C" {
+    pub fn pg_date_make(year: ::std::os::raw::c_int, mon: ::std::os::raw::c_int, mday: ::std::os::raw::c_int) -> DateADT;
+}
+extern "C" {
+    pub fn pg_date_smaller(date1: DateADT, date2: DateADT) -> DateADT;
+}
+extern "C" {
+    pub fn pg_date_out(date: DateADT) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_time_cmp(time1: TimeADT, time2: TimeADT) -> int32;
+}
+extern "C" {
+    pub fn pg_time_eq(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_ge(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_gt(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_hash(time: TimeADT) -> uint32;
+}
+extern "C" {
+    pub fn pg_time_hash_extended(time: TimeADT, seed: int32) -> uint64;
+}
+extern "C" {
+    pub fn pg_time_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimeADT;
+}
+extern "C" {
+    pub fn pg_time_larger(time1: TimeADT, time2: TimeADT) -> TimeADT;
+}
+extern "C" {
+    pub fn pg_time_le(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_lt(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_ne(time1: TimeADT, time2: TimeADT) -> bool;
+}
+extern "C" {
+    pub fn pg_time_out(time: TimeADT) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_time_part(time: TimeADT, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn pg_time_scale(date: TimeADT, typmod: int32) -> TimeADT;
+}
+extern "C" {
+    pub fn pg_time_smaller(time1: TimeADT, time2: TimeADT) -> TimeADT;
+}
+extern "C" {
+    pub fn pg_timetz_at_local(timetz: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_cmp(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> int32;
+}
+extern "C" {
+    pub fn pg_timetz_eq(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_ge(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_gt(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_hash(timetz: *const TimeTzADT) -> uint32;
+}
+extern "C" {
+    pub fn pg_timetz_hash_extended(timetz: *const TimeTzADT, seed: int64) -> uint64;
+}
+extern "C" {
+    pub fn pg_timetz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_izone(timetz: *const TimeTzADT, zone: *const Interval) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_le(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_lt(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_ne(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> bool;
+}
+extern "C" {
+    pub fn pg_timetz_out(timetz: *const TimeTzADT) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_timetz_larger(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_part(timetz: *const TimeTzADT, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn pg_timetz_scale(timetz: *const TimeTzADT, typmod: int32) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_smaller(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_timetz_zone(timetz: *const TimeTzADT, zone: *const text) -> *mut TimeTzADT;
+}
+extern "C" {
+    pub fn pg_interval_justify_days(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_justify_hours(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_justify_interval(interv: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_timestamp_age(ts1: Timestamp, ts2: Timestamp) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_timestamp_at_local(ts: Timestamp) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamp_bin(ts: Timestamp, stride: *const Interval, origin: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_hash(ts: Timestamp) -> uint32;
+}
+extern "C" {
+    pub fn pg_timestamp_hash_extended(tstz: TimestampTz, seed: uint64) -> uint64;
+}
+extern "C" {
+    pub fn pg_timestamp_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_izone(ts: Timestamp, zone: *const Interval) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamp_larger(ts1: Timestamp, ts2: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_out(ts: Timestamp) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_timestamp_part(ts: Timestamp, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn pg_timestamp_scale(ts: Timestamp, typmod: int32) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_smaller(ts1: Timestamp, ts2: Timestamp) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_trunc(ts: Timestamp, units: *const text) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamp_zone(ts: Timestamp, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_age(tstz1: TimestampTz, tstz2: TimestampTz) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_timestamptz_bin(tstz: TimestampTz, stride: *const Interval, origin: TimestampTz) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_hash(tstz: TimestampTz) -> uint32;
+}
+extern "C" {
+    pub fn pg_timestamptz_hash_extended(tstz: TimestampTz, seed: uint64) -> uint64;
+}
+extern "C" {
+    pub fn pg_timestamptz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_izone(tstz: TimestampTz, zone: *const Interval) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamptz_out(tstz: TimestampTz) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_timestamptz_part(tstz: TimestampTz, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn pg_timestamptz_scale(tstz: TimestampTz, typmod: int32) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_trunc(tstz: TimestampTz, units: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_trunc_zone(tstz: TimestampTz, units: *const text, zone: *const text) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_timestamptz_zone(tstz: TimestampTz, zone: *const text) -> Timestamp;
+}
+extern "C" {
+    pub fn pg_timestamptz_at_local(tstz: TimestampTz) -> TimestampTz;
+}
+extern "C" {
+    pub fn pg_interval_cmp(interv1: *const Interval, interv2: *const Interval) -> int32;
+}
+extern "C" {
+    pub fn pg_interval_eq(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_ge(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_gt(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_hash(interv: *const Interval) -> uint32;
+}
+extern "C" {
+    pub fn pg_interval_hash_extended(interv: *const Interval, seed: uint64) -> uint64;
+}
+extern "C" {
+    pub fn pg_interval_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_larger(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_le(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_lt(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_ne(interv1: *const Interval, interv2: *const Interval) -> bool;
+}
+extern "C" {
+    pub fn pg_interval_out(interv: *const Interval) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_interval_part(interv: *const Interval, units: *const text) -> f64;
+}
+extern "C" {
+    pub fn pg_interval_scale(interv: *const Interval, typmod: int32) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_smaller(interv1: *const Interval, interv2: *const Interval) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_interval_trunc(interv: *const Interval, units: *const text) -> *mut Interval;
+}
+extern "C" {
+    pub fn pg_json_in(str_: *const ::std::os::raw::c_char) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_out(js: *const text) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_jsonb_from_text(txt: *const text, unique_keys: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_to_text(jb: *const Jsonb) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_out(jb: *const Jsonb) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_json_make(keyvalarr: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_make_two_arg(keys: *mut *mut text, values: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_copy(jb: *const Jsonb) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_make(keys_vals: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_make_two_arg(keys: *mut *mut text, values: *mut *mut text, count: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_json_array_elements(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_array_elements_text(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_array_length(js: *const text) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_json_each(js: *const text, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_each_text(js: *const text, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_object_keys(js: *const text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_typeof(js: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_array_elements(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_array_elements_text(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_array_length(jb: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_jsonb_cmp(jb1: *const Jsonb, jb2: *const Jsonb) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_jsonb_contained(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_contains(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_each(jb: *const Jsonb, values: *mut *mut *mut Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_each_text(jb: *const Jsonb, values: *mut *mut *mut text, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_eq(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_exists(jb: *const Jsonb, key: *const text) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_exists_array(jb: *const Jsonb, keys_elems: *mut *mut text, keys_len: ::std::os::raw::c_int, any: bool) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_ge(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_gt(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_hash(jb: *const Jsonb) -> uint32;
+}
+extern "C" {
+    pub fn pg_jsonb_hash_extended(jb: *const Jsonb, seed: uint64) -> uint64;
+}
+extern "C" {
+    pub fn pg_jsonb_object_keys(jb: *const Jsonb, count: *mut ::std::os::raw::c_int) -> *mut *mut text;
+}
+extern "C" {
+    pub fn pg_json_array_element(js: *const text, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_array_element_text(js: *const text, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_extract_path(js: *const text, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_extract_path_text(js: *const text, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_object_field(js: *const text, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_object_field_text(js: *const text, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_json_strip_nulls(js: *const text, strip_in_arrays: bool) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_array_element(jb: *const Jsonb, element: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_array_element_text(jb: *const Jsonb, element: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_concat(jb1: *const Jsonb, jb2: *const Jsonb) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_delete(jb: *const Jsonb, key: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_delete_array(jb: *const Jsonb, keys_elems: *mut *mut text, keys_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_delete_index(jb: *const Jsonb, idx: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_delete_path(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_extract_path(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_extract_path_text(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_insert(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, after: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_object_field(jb: *const Jsonb, key: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_object_field_text(jb: *const Jsonb, key: *const text) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_pretty(jb: *const Jsonb) -> *mut text;
+}
+extern "C" {
+    pub fn pg_jsonb_set(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_set_lax(jb: *const Jsonb, path_elems: *mut *mut text, path_len: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, handle_null: *const text) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_strip_nulls(jb: *const Jsonb, strip_in_arrays: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_le(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_lt(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_ne(jb1: *const Jsonb, jb2: *const Jsonb) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonpath_in(str_: *const ::std::os::raw::c_char) -> *mut JsonPath;
+}
+extern "C" {
+    pub fn pg_jsonpath_out(jp: *const JsonPath) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn pg_jsonpath_copy(jp: *const JsonPath) -> *mut JsonPath;
+}
+extern "C" {
+    pub fn pg_jsonb_path_exists(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pg_jsonb_path_match(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> bool;
+}
+extern "C" {
+    pub fn pg_jsonb_path_query_array(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_path_query_first(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Jsonb;
+}
+extern "C" {
+    pub fn pg_jsonb_path_query_all(jb: *const Jsonb, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
 }
