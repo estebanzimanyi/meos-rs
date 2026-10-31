@@ -61,6 +61,8 @@ impl Span for DateSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// # use chrono::naive::NaiveDate;
@@ -86,6 +88,8 @@ impl Span for DateSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// # use chrono::naive::NaiveDate;
@@ -114,6 +118,8 @@ impl Span for DateSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// use chrono::naive::NaiveDate;
@@ -140,6 +146,8 @@ impl Span for DateSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// use chrono::naive::NaiveDate;
@@ -167,6 +175,8 @@ impl Span for DateSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// use chrono::naive::NaiveDate;
@@ -335,6 +345,8 @@ impl cmp::PartialEq for DateSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// use chrono::naive::NaiveDate;
@@ -417,6 +429,8 @@ impl BitAnd for DateSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::DateSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;

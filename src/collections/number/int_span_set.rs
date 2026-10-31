@@ -58,6 +58,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -83,6 +85,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -109,6 +113,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -139,6 +145,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use meos::SpanSet;
     /// let span_set: IntSpanSet = [(2019..2023).into(), (2029..2030).into()].iter().collect();
@@ -159,6 +167,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use meos::SpanSet;
     /// # use meos::Span;
@@ -183,6 +193,8 @@ impl SpanSet for IntSpanSet {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use meos::SpanSet;
     /// # use meos::Span;
@@ -260,6 +272,8 @@ impl BitAnd<IntSpanSet> for IntSpanSet {
     /// ## Example
     ///
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;
@@ -291,6 +305,8 @@ impl BitOr for IntSpanSet {
     /// ## Example
     ///
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpanSet;
     /// # use std::str::FromStr;
     /// # use meos::SpanSet;

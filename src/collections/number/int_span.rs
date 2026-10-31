@@ -59,6 +59,8 @@ impl Span for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -76,6 +78,8 @@ impl Span for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -97,6 +101,8 @@ impl Span for IntSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -119,6 +125,8 @@ impl Span for IntSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -142,6 +150,8 @@ impl Span for IntSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -169,6 +179,8 @@ impl Span for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -191,6 +203,8 @@ impl Span for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     ///
@@ -237,6 +251,8 @@ impl std::str::FromStr for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;
@@ -264,6 +280,8 @@ impl cmp::PartialEq for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;
@@ -326,6 +344,8 @@ impl BitAnd for IntSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::IntSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;

@@ -169,7 +169,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_length`
     fn length(&self) -> f64 {
-        unsafe { meos_sys::tpoint_length(self.inner()) }
+        unsafe { meos_sys::tpoint_length(self.inner(), true) }
     }
 
     /// Returns the cumulative length of the trajectory.
@@ -182,7 +182,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_cumulative_length`
     fn cumulative_length(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_cumulative_length(self.inner()) })
+        factory::<TFloat>(unsafe { meos_sys::tpoint_cumulative_length(self.inner(), true) })
     }
 
     /// Returns the speed of the temporal point.
@@ -195,7 +195,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_speed`
     fn speed(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_speed(self.inner()) })
+        factory::<TFloat>(unsafe { meos_sys::tpoint_speed(self.inner(), true) })
     }
 
     /// Returns the x coordinate of the temporal point.
@@ -690,7 +690,7 @@ pub trait TGeoTrait: Temporal {
     fn is_spatially_contained_in_geometry(&self, container: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(container);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_geo_tgeo(geo, self.inner(), false, false)
+            meos_sys::tcontains_geo_tgeo(geo, self.inner())
         })
     }
 
@@ -710,7 +710,7 @@ pub trait TGeoTrait: Temporal {
     fn is_disjoint_to_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdisjoint_tgeo_geo(self.inner(), geo, false, false)
+            meos_sys::tdisjoint_tgeo_geo(self.inner(), geo)
         })
     }
 
@@ -730,7 +730,7 @@ pub trait TGeoTrait: Temporal {
     /// * `tdwithin_tgeo_geo`, `tdwithin_tgeo_tgeo`
     fn is_within_distance(&self, other: &Self::Enum, distance: f64) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdwithin_tgeo_tgeo(self.inner(), other.inner(), distance, false, false)
+            meos_sys::tdwithin_tgeo_tgeo(self.inner(), other.inner(), distance, true)
         })
     }
 
@@ -751,7 +751,7 @@ pub trait TGeoTrait: Temporal {
     fn within_distance_of_geometry(&self, geometry: &Geometry, distance: f64) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdwithin_tgeo_geo(self.inner(), geo, distance, false, false)
+            meos_sys::tdwithin_tgeo_geo(self.inner(), geo, distance, true)
         })
     }
 
@@ -771,7 +771,7 @@ pub trait TGeoTrait: Temporal {
     fn intersects_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tintersects_tgeo_geo(self.inner(), geo, false, false)
+            meos_sys::tintersects_tgeo_geo(self.inner(), geo)
         })
     }
 
@@ -791,7 +791,7 @@ pub trait TGeoTrait: Temporal {
     fn touches_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::ttouches_tgeo_geo(self.inner(), geo, false, false)
+            meos_sys::ttouches_tgeo_geo(self.inner(), geo)
         })
     }
 
@@ -809,7 +809,9 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `distance_tgeo_point`, `distance_tgeo_tgeo`
     fn distance(&self, other: &Self::Enum) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tdistance_tgeo_tgeo(self.inner(), other.inner()) })
+        factory::<TFloat>(unsafe {
+            meos_sys::tdistance_tgeo_tgeo(self.inner(), other.inner(), true)
+        })
     }
 
     /// Returns the temporal distance between the temporal point and `other`.
@@ -827,7 +829,7 @@ pub trait TGeoTrait: Temporal {
     /// * `distance_tgeo_point`, `distance_tgeo_tgeo`
     fn distance_to_point(&self, point: Point) -> TFloat {
         let point = Self::geo_to_gserialized(point);
-        factory::<TFloat>(unsafe { meos_sys::tdistance_tgeo_geo(self.inner(), point) })
+        factory::<TFloat>(unsafe { meos_sys::tdistance_tgeo_geo(self.inner(), point, true) })
     }
 
     /// Returns the nearest approach distance between the temporal point and `other`.
@@ -844,7 +846,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `nad_tgeo_geo`, `nad_tgeo_stbox`, `nad_tgeo_tgeo`
     fn nearest_approach_distance(&self, other: &Self::Enum) -> f64 {
-        unsafe { meos_sys::nad_tgeo_tgeo(self.inner(), other.inner()) }
+        unsafe { meos_sys::nad_tgeo_tgeo(self.inner(), other.inner(), true) }
     }
 
     /// Returns the nearest approach distance between the temporal point and `other`.
@@ -862,7 +864,7 @@ pub trait TGeoTrait: Temporal {
     /// * `nad_tgeo_geo`, `nad_tgeo_stbox`, `nad_tgeo_tgeo`
     fn nearest_approach_distance_to_geometry(&self, geometry: &Geometry) -> f64 {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::nad_tgeo_geo(self.inner(), geo) }
+        unsafe { meos_sys::nad_tgeo_geo(self.inner(), geo, true) }
     }
 
     /// Returns the nearest approach instant between the temporal point and `other`.
@@ -879,7 +881,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `nai_tgeo_geo`, `nai_tgeo_tgeo`
     fn nearest_approach_instant(&self, other: &Self::Enum) -> Self::TI {
-        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_tgeo(self.inner(), other.inner()) })
+        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_tgeo(self.inner(), other.inner(), true) })
     }
 
     /// Returns the nearest approach instant between the temporal point and `other`.
@@ -897,7 +899,7 @@ pub trait TGeoTrait: Temporal {
     /// * `nai_tgeo_geo`
     fn nearest_approach_instant_to_geometry(&self, geometry: &Geometry) -> Self::TI {
         let geo = geometry_to_gserialized(geometry);
-        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_geo(self.inner(), geo) })
+        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_geo(self.inner(), geo, true) })
     }
 
     /// Returns the shortest line between the temporal point and `other`.
@@ -914,7 +916,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `shortestline_tgeo_geo`, `shortestline_tgeo_tgeo`
     fn shortest_line(&self, other: &Self::Enum) -> Result<Geometry, geos::Error> {
-        let gs = unsafe { meos_sys::shortestline_tgeo_tgeo(self.inner(), other.inner()) };
+        let gs = unsafe { meos_sys::shortestline_tgeo_tgeo(self.inner(), other.inner(), true) };
         gserialized_to_geometry(gs)
     }
 
@@ -933,7 +935,7 @@ pub trait TGeoTrait: Temporal {
     /// * `shortestline_tgeo_geo`, `shortestline_tgeo_tgeo`
     fn shortest_line_to_geometry(&self, geometry: &Geometry) -> Result<Geometry, geos::Error> {
         let geo = geometry_to_gserialized(geometry);
-        let gs = unsafe { meos_sys::shortestline_tgeo_geo(self.inner(), geo) };
+        let gs = unsafe { meos_sys::shortestline_tgeo_geo(self.inner(), geo, true) };
         gserialized_to_geometry(gs)
     }
 
@@ -1094,12 +1096,12 @@ pub trait TGeoTrait: Temporal {
     /// Returns true if `self` is ever within `dist` of `geometry`. MEOS: `edwithin_tgeo_geo`
     fn ever_within_distance_of_geometry(&self, geometry: &Geometry, dist: f64) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::edwithin_tgeo_geo(self.inner(), geo, dist) == 1 }
+        unsafe { meos_sys::edwithin_tgeo_geo(self.inner(), geo, dist, true) == 1 }
     }
 
     /// Returns true if `self` is ever within `dist` of `other`. MEOS: `edwithin_tgeo_tgeo`
     fn ever_within_distance(&self, other: &Self::Enum, dist: f64) -> bool {
-        unsafe { meos_sys::edwithin_tgeo_tgeo(self.inner(), other.inner(), dist) == 1 }
+        unsafe { meos_sys::edwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true) == 1 }
     }
 
     /// Returns true if `self` always contains `geometry`. MEOS: `acontains_tgeo_geo`
@@ -1138,12 +1140,12 @@ pub trait TGeoTrait: Temporal {
     /// Returns true if `self` is always within `dist` of `geometry`. MEOS: `adwithin_tgeo_geo`
     fn always_within_distance_of_geometry(&self, geometry: &Geometry, dist: f64) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::adwithin_tgeo_geo(self.inner(), geo, dist) == 1 }
+        unsafe { meos_sys::adwithin_tgeo_geo(self.inner(), geo, dist, true) == 1 }
     }
 
     /// Returns true if `self` is always within `dist` of `other`. MEOS: `adwithin_tgeo_tgeo`
     fn always_within_distance(&self, other: &Self::Enum, dist: f64) -> bool {
-        unsafe { meos_sys::adwithin_tgeo_tgeo(self.inner(), other.inner(), dist) == 1 }
+        unsafe { meos_sys::adwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true) == 1 }
     }
 
     // ------------------------- Geometry restrictions -------------------------
@@ -1242,7 +1244,7 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the time-weighted centroid of `self` as a temporal point. MEOS: `tgeo_centroid`
     fn centroid(&self) -> Result<Geometry, geos::Error> {
-        gserialized_to_geometry(unsafe { meos_sys::tgeo_centroid(self.inner()).cast() })
+        gserialized_to_geometry(unsafe { meos_sys::tgeo_centroid(self.inner(), true).cast() })
     }
 
     /// Returns the convex hull of the trajectory of `self`. MEOS: `tgeo_convex_hull`
@@ -1262,7 +1264,7 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the nearest approach distance between `self` and `stbox`. MEOS: `nad_tgeo_stbox`
     fn nearest_approach_distance_to_stbox(&self, stbox: &STBox) -> f64 {
-        unsafe { meos_sys::nad_tgeo_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_sys::nad_tgeo_stbox(self.inner(), stbox.inner(), true) }
     }
 
     /// Returns the nth geometry value of `self` (1-based). MEOS: `tgeo_value_n`
@@ -1281,14 +1283,14 @@ pub trait TGeoTrait: Temporal {
     fn contains_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_tgeo_geo(self.inner(), geo, false, false)
+            meos_sys::tcontains_tgeo_geo(self.inner(), geo)
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally contains `other`. MEOS: `tcontains_tgeo_tgeo`
     fn contains(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_tgeo_tgeo(self.inner(), other.inner(), false, false)
+            meos_sys::tcontains_tgeo_tgeo(self.inner(), other.inner())
         })
     }
 
@@ -1296,28 +1298,28 @@ pub trait TGeoTrait: Temporal {
     fn covers_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcovers_tgeo_geo(self.inner(), geo, false, false)
+            meos_sys::tcovers_tgeo_geo(self.inner(), geo)
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally covers `other`. MEOS: `tcovers_tgeo_tgeo`
     fn covers(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcovers_tgeo_tgeo(self.inner(), other.inner(), false, false)
+            meos_sys::tcovers_tgeo_tgeo(self.inner(), other.inner())
         })
     }
 
     /// Returns a `TBool` indicating whether `self` is temporally disjoint from `other`. MEOS: `tdisjoint_tgeo_tgeo`
     fn disjoint(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdisjoint_tgeo_tgeo(self.inner(), other.inner(), false, false)
+            meos_sys::tdisjoint_tgeo_tgeo(self.inner(), other.inner())
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally touches `other`. MEOS: `ttouches_tgeo_tgeo`
     fn touches(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::ttouches_tgeo_tgeo(self.inner(), other.inner(), false, false)
+            meos_sys::ttouches_tgeo_tgeo(self.inner(), other.inner())
         })
     }
 

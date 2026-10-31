@@ -59,6 +59,8 @@ impl Span for FloatSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     ///
@@ -76,6 +78,8 @@ impl Span for FloatSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     ///
@@ -97,6 +101,8 @@ impl Span for FloatSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     ///
@@ -119,6 +125,8 @@ impl Span for FloatSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     ///
@@ -142,6 +150,8 @@ impl Span for FloatSpan {
     ///
     /// # Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     ///
@@ -200,6 +210,8 @@ impl std::str::FromStr for FloatSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;
@@ -227,6 +239,8 @@ impl cmp::PartialEq for FloatSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;
@@ -303,6 +317,8 @@ impl BitAnd for FloatSpan {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::FloatSpan;
     /// # use meos::Span;
     /// # use std::str::FromStr;

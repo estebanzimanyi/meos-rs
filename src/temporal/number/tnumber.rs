@@ -87,7 +87,7 @@ pub trait TNumber: Temporal<TBB = TBox> {
     /// * `other` - A temporal number to multiplicate by the value(s) of `self`.
     fn multiplicate(&self, other: &Self) -> Self {
         Self::from_inner_as_temporal(unsafe {
-            meos_sys::mult_tnumber_tnumber(self.inner(), other.inner())
+            meos_sys::mul_tnumber_tnumber(self.inner(), other.inner())
         })
     }
 

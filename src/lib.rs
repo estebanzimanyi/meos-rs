@@ -211,7 +211,7 @@ pub trait MeosEnum: Debug + Sized + Temporal {
         let out_str = unsafe {
             meos_sys::temporal_as_mfjson(
                 self.inner(),
-                with_bbox,
+                i32::from(with_bbox),
                 variant as i32,
                 precision,
                 srs.as_ptr(),

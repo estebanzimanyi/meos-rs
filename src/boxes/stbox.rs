@@ -54,6 +54,8 @@ impl MeosBox for STBox {
     ///
     /// ## Example
     /// ```
+    /// # use meos::meos_initialize;
+    /// # meos_initialize();
     /// # use meos::STBox;
     /// use meos::Box;
     /// use chrono::{Utc, TimeZone};
@@ -199,7 +201,13 @@ impl MeosBox for STBox {
             }
         };
 
-        let modified = unsafe { meos_sys::stbox_shift_scale_time(self.inner(), d, w) };
+        let modified = unsafe {
+            match (delta, width) {
+                (Some(_), None) => meos_sys::stbox_shift_time(self.inner(), d),
+                (None, Some(_)) => meos_sys::stbox_scale_time(self.inner(), w),
+                _ => meos_sys::stbox_shift_scale_time(self.inner(), d, w),
+            }
+        };
         STBox::from_inner(modified)
     }
 
@@ -231,7 +239,7 @@ impl MeosBox for STBox {
     // ------------------------- Distance Operations --------------------------------
 
     fn nearest_approach_distance(&self, other: &STBox) -> f64 {
-        unsafe { meos_sys::nad_stbox_stbox(self.inner(), other.inner()) }
+        unsafe { meos_sys::nad_stbox_stbox(self.inner(), other.inner(), true) }
     }
 }
 

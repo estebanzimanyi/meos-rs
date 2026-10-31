@@ -368,7 +368,7 @@ pub trait Temporal: Collection + Hash {
     /// Converts `self` into a `TInstant`.
     #[doc(alias = "temporal_to_instant")]
     fn to_instant(&self) -> Self::TI {
-        TInstant::from_inner(unsafe { meos_sys::temporal_to_tinstant(self.inner()) })
+        TInstant::from_inner(unsafe { meos_sys::temporal_as_tinstant(self.inner()) })
     }
 
     /// Converts `self` into a `TSequence`.
@@ -378,7 +378,7 @@ pub trait Temporal: Collection + Hash {
     #[doc(alias = "temporal_to_tsequence")]
     fn to_sequence(&self, interpolation: TInterpolation) -> Self::TS {
         TSequence::from_inner(unsafe {
-            meos_sys::temporal_to_tsequence(self.inner(), interpolation as u32)
+            meos_sys::temporal_tsequence(self.inner(), interpolation as u32)
         })
     }
 
@@ -389,7 +389,7 @@ pub trait Temporal: Collection + Hash {
     #[doc(alias = "temporal_to_tsequenceset")]
     fn to_sequence_set(&self, interpolation: TInterpolation) -> Self::TSS {
         TSequenceSet::from_inner(unsafe {
-            meos_sys::temporal_to_tsequenceset(self.inner(), interpolation as u32)
+            meos_sys::temporal_tsequenceset(self.inner(), interpolation as u32)
         })
     }
 
@@ -761,7 +761,7 @@ pub trait Temporal: Collection + Hash {
     /// A float with the Frechet distance.
     #[doc(alias = "temporal_frechet_distance")]
     fn frechet_distance(&self, other: Self) -> f64 {
-        unsafe { meos_sys::temporal_frechet_distance(self.inner(), other.inner()) }
+        unsafe { meos_sys::temporal_frechet_distance(self.inner(), other.inner(), true) }
     }
 
     /// Returns the Dynamic Time Warp distance between `self` and `other`.
@@ -773,7 +773,7 @@ pub trait Temporal: Collection + Hash {
     /// A float with the Dynamic Time Warp distance.
     #[doc(alias = "temporal_dyntimewarp_distance")]
     fn dyntimewarp_distance(&self, other: Self) -> f64 {
-        unsafe { meos_sys::temporal_dyntimewarp_distance(self.inner(), other.inner()) }
+        unsafe { meos_sys::temporal_dyntimewarp_distance(self.inner(), other.inner(), true) }
     }
 
     /// Returns the Hausdorff distance between `self` and `other`.
@@ -785,7 +785,7 @@ pub trait Temporal: Collection + Hash {
     /// A float with the Hausdorff distance.
     #[doc(alias = "temporal_hausdorff_distance")]
     fn hausdorff_distance(&self, other: Self) -> f64 {
-        unsafe { meos_sys::temporal_hausdorff_distance(self.inner(), other.inner()) }
+        unsafe { meos_sys::temporal_hausdorff_distance(self.inner(), other.inner(), true) }
     }
 
     // ------------------------- Split Operations ------------------------------
@@ -808,6 +808,7 @@ pub trait Temporal: Collection + Hash {
                 self.inner(),
                 ptr::addr_of!(duration),
                 start,
+                true,
                 _buckets.as_mut_ptr(),
                 ptr::addr_of_mut!(count),
             );

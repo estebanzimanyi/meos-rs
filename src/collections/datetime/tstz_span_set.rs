@@ -15,6 +15,7 @@ use crate::utils::to_meos_timestamp;
 
 use super::tstz_span::TsTzSpan;
 use crate::utils::create_interval;
+use crate::utils::from_owned_interval;
 
 pub struct TsTzSpanSet {
     _inner: ptr::NonNull<meos_sys::SpanSet>,
@@ -147,7 +148,13 @@ impl SpanSet for TsTzSpanSet {
             }
         };
 
-        let modified = unsafe { meos_sys::tstzspanset_shift_scale(self.inner(), d, w) };
+        let modified = unsafe {
+            match (delta, width) {
+                (Some(_), None) => meos_sys::tstzspanset_shift(self.inner(), d),
+                (None, Some(_)) => meos_sys::tstzspanset_scale(self.inner(), w),
+                _ => meos_sys::tstzspanset_shift_scale(self.inner(), d, w),
+            }
+        };
         TsTzSpanSet::from_inner(modified)
     }
 
@@ -174,10 +181,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_value(&self, value: &DateTime<Utc>) -> TimeDelta {
         unsafe {
-            TimeDelta::seconds(
-                meos_sys::distance_spanset_timestamptz(self.inner(), to_meos_timestamp(value))
-                    as i64, // It returns the number of seconds: https://github.com/MobilityDB/MobilityDB/blob/6b60876817b53bc33967f7df50ab8e1f482b0133/meos/src/general/span_ops.c#L2292
-            )
+            from_owned_interval(meos_sys::distance_spanset_timestamptz(
+                self.inner(),
+                to_meos_timestamp(value),
+            ))
         }
     }
 
@@ -204,10 +211,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_span_set(&self, other: &Self) -> TimeDelta {
         unsafe {
-            TimeDelta::seconds(meos_sys::distance_tstzspanset_tstzspanset(
+            from_owned_interval(meos_sys::distance_tstzspanset_tstzspanset(
                 self.inner(),
                 other.inner(),
-            ) as i64)
+            ))
         }
     }
 
@@ -236,9 +243,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_span(&self, span: &Self::SpanType) -> Self::SubsetType {
         unsafe {
-            TimeDelta::seconds(
-                meos_sys::distance_tstzspanset_tstzspan(self.inner(), span.inner()) as i64,
-            )
+            from_owned_interval(meos_sys::distance_tstzspanset_tstzspan(
+                self.inner(),
+                span.inner(),
+            ))
         }
     }
 }
