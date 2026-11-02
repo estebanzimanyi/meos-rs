@@ -29,7 +29,7 @@ impl Collection for FloatSpanSet {
     impl_collection!(spanset, f64);
 
     fn contains(&self, content: &f64) -> bool {
-        unsafe { meos_sys::contains_spanset_float(self.inner(), *content) }
+        unsafe { meos_call!(meos_sys::contains_spanset_float(self.inner(), *content)) }
     }
 }
 
@@ -47,7 +47,7 @@ impl SpanSet for FloatSpanSet {
     }
 
     fn width(&self, ignore_gaps: bool) -> Self::Type {
-        unsafe { meos_sys::floatspanset_width(self.inner(), ignore_gaps) }
+        unsafe { meos_call!(meos_sys::floatspanset_width(self.inner(), ignore_gaps)) }
     }
 
     /// Return a new `FloatSpanSet` with the lower and upper bounds shifted by `delta`.
@@ -132,7 +132,7 @@ impl SpanSet for FloatSpanSet {
         let d = delta.unwrap_or(0.0);
         let w = width.unwrap_or(0.0);
         let modified = unsafe {
-            meos_sys::floatspanset_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some())
+            meos_call!(meos_sys::floatspanset_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some()))
         };
         FloatSpanSet::from_inner(modified)
     }
@@ -156,7 +156,7 @@ impl SpanSet for FloatSpanSet {
     /// assert_eq!(distance, 2.0);
     /// ```
     fn distance_to_value(&self, other: &Self::Type) -> f64 {
-        unsafe { meos_sys::distance_spanset_float(self.inner(), *other) }
+        unsafe { meos_call!(meos_sys::distance_spanset_float(self.inner(), *other)) }
     }
 
     /// Calculates the distance between this `FloatSpanSet` and another `FloatSpanSet`.
@@ -182,7 +182,7 @@ impl SpanSet for FloatSpanSet {
     /// assert_eq!(distance, 18.5);
     /// ```
     fn distance_to_span_set(&self, other: &Self) -> f64 {
-        unsafe { meos_sys::distance_floatspanset_floatspanset(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::distance_floatspanset_floatspanset(self.inner(), other.inner())) }
     }
 
     /// Calculates the distance between this `FloatSpanSet` and a `FloatSpan`.
@@ -209,7 +209,7 @@ impl SpanSet for FloatSpanSet {
     /// assert_eq!(distance, 5.5);
     /// ```
     fn distance_to_span(&self, span: &Self::SpanType) -> Self::SubsetType {
-        unsafe { meos_sys::distance_floatspanset_floatspan(self.inner(), span.inner()) }
+        unsafe { meos_call!(meos_sys::distance_floatspanset_floatspan(self.inner(), span.inner())) }
     }
 }
 
@@ -225,7 +225,7 @@ impl_iterator!(FloatSpanSet);
 
 impl Hash for FloatSpanSet {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash = unsafe { meos_sys::spanset_hash(self.inner()) };
+        let hash = unsafe { meos_call!(meos_sys::spanset_hash(self.inner())) };
         state.write_u32(hash);
 
         let _ = state.finish();
@@ -236,7 +236,7 @@ impl std::str::FromStr for FloatSpanSet {
     type Err = ParseError;
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::floatspanset_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::floatspanset_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -244,13 +244,13 @@ impl std::str::FromStr for FloatSpanSet {
 
 impl std::cmp::PartialEq for FloatSpanSet {
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::spanset_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::spanset_eq(self.inner(), other.inner())) }
     }
 }
 
 impl Debug for FloatSpanSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::floatspanset_out(self.inner(), 3) };
+        let out_str = unsafe { meos_call!(meos_sys::floatspanset_out(self.inner(), 3)) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);

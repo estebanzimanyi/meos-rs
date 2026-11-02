@@ -32,7 +32,7 @@ impl Collection for TsTzSpan {
     impl_collection!(span, DateTime<Utc>);
 
     fn contains(&self, content: &DateTime<Utc>) -> bool {
-        unsafe { meos_sys::contains_span_date(self.inner(), content.num_days_from_ce()) }
+        unsafe { meos_call!(meos_sys::contains_span_date(self.inner(), content.num_days_from_ce())) }
     }
 }
 
@@ -77,7 +77,7 @@ impl Span for TsTzSpan {
     /// assert_eq!(lower, from_ymd_opt(2023, 1, 1));
     /// ```
     fn lower(&self) -> Self::Type {
-        let timestamp = unsafe { meos_sys::tstzspan_lower(self.inner()) };
+        let timestamp = unsafe { meos_call!(meos_sys::tstzspan_lower(self.inner())) };
         from_meos_timestamp(timestamp)
     }
 
@@ -103,7 +103,7 @@ impl Span for TsTzSpan {
     /// assert_eq!(upper, from_ymd_opt(2023, 1, 15));
     /// ```
     fn upper(&self) -> Self::Type {
-        let timestamp = unsafe { meos_sys::tstzspan_upper(self.inner()) };
+        let timestamp = unsafe { meos_call!(meos_sys::tstzspan_upper(self.inner())) };
         from_meos_timestamp(timestamp)
     }
 
@@ -212,9 +212,9 @@ impl Span for TsTzSpan {
 
         let modified = unsafe {
             match (delta, width) {
-                (Some(_), None) => meos_sys::tstzspan_shift(self.inner(), d),
-                (None, Some(_)) => meos_sys::tstzspan_scale(self.inner(), w),
-                _ => meos_sys::tstzspan_shift_scale(self.inner(), d, w),
+                (Some(_), None) => meos_call!(meos_sys::tstzspan_shift(self.inner(), d)),
+                (None, Some(_)) => meos_call!(meos_sys::tstzspan_scale(self.inner(), w)),
+                _ => meos_call!(meos_sys::tstzspan_shift_scale(self.inner(), d, w)),
             }
         };
         TsTzSpan::from_inner(modified)
@@ -242,10 +242,10 @@ impl Span for TsTzSpan {
     /// ```
     fn distance_to_value(&self, value: &Self::Type) -> TimeDelta {
         unsafe {
-            from_owned_interval(meos_sys::distance_span_timestamptz(
+            from_owned_interval(meos_call!(meos_sys::distance_span_timestamptz(
                 self.inner(),
                 to_meos_timestamp(value),
-            ))
+            )))
         }
     }
 
@@ -272,17 +272,17 @@ impl Span for TsTzSpan {
     /// ```
     fn distance_to_span(&self, other: &Self) -> TimeDelta {
         unsafe {
-            from_owned_interval(meos_sys::distance_tstzspan_tstzspan(
+            from_owned_interval(meos_call!(meos_sys::distance_tstzspan_tstzspan(
                 self.inner(),
                 other.inner(),
-            ))
+            )))
         }
     }
 }
 
 impl TsTzSpan {
     pub fn duration(&self) -> TimeDelta {
-        from_interval(unsafe { meos_sys::tstzspan_duration(self.inner()).read() })
+        from_interval(unsafe { meos_call!(meos_sys::tstzspan_duration(self.inner())).read() })
     }
 }
 
@@ -290,13 +290,13 @@ impl BoundingBox for TsTzSpan {}
 
 impl Clone for TsTzSpan {
     fn clone(&self) -> Self {
-        unsafe { Self::from_inner(meos_sys::span_copy(self.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::span_copy(self.inner()))) }
     }
 }
 
 impl Hash for TsTzSpan {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash = unsafe { meos_sys::span_hash(self.inner()) };
+        let hash = unsafe { meos_call!(meos_sys::span_hash(self.inner())) };
         state.write_u32(hash);
 
         let _ = state.finish();
@@ -335,7 +335,7 @@ impl std::str::FromStr for TsTzSpan {
     /// ```
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::tstzspan_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::tstzspan_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -367,7 +367,7 @@ impl cmp::PartialEq for TsTzSpan {
     /// assert_eq!(span1, span2);
     /// ```
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::span_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::span_eq(self.inner(), other.inner())) }
     }
 }
 
@@ -376,12 +376,12 @@ impl cmp::Eq for TsTzSpan {}
 impl<Tz: TimeZone> From<Range<DateTime<Tz>>> for TsTzSpan {
     fn from(Range { start, end }: Range<DateTime<Tz>>) -> Self {
         let inner = unsafe {
-            meos_sys::tstzspan_make(
+            meos_call!(meos_sys::tstzspan_make(
                 to_meos_timestamp(&start),
                 to_meos_timestamp(&end),
                 true,
                 false,
-            )
+            ))
         };
         Self::from_inner(inner)
     }
@@ -390,12 +390,12 @@ impl<Tz: TimeZone> From<Range<DateTime<Tz>>> for TsTzSpan {
 impl<Tz: TimeZone> From<RangeInclusive<DateTime<Tz>>> for TsTzSpan {
     fn from(range: RangeInclusive<DateTime<Tz>>) -> Self {
         let inner = unsafe {
-            meos_sys::tstzspan_make(
+            meos_call!(meos_sys::tstzspan_make(
                 to_meos_timestamp(range.start()),
                 to_meos_timestamp(range.end()),
                 true,
                 true,
-            )
+            ))
         };
         Self::from_inner(inner)
     }
@@ -403,7 +403,7 @@ impl<Tz: TimeZone> From<RangeInclusive<DateTime<Tz>>> for TsTzSpan {
 
 impl Debug for TsTzSpan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::tstzspan_out(self.inner()) };
+        let out_str = unsafe { meos_call!(meos_sys::tstzspan_out(self.inner())) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);
@@ -444,7 +444,7 @@ impl BitAnd for TsTzSpan {
     /// ```
     fn bitand(self, other: Self) -> Self::Output {
         // Replace with actual function call or logic
-        let result = unsafe { meos_sys::intersection_span_span(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::intersection_span_span(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -455,7 +455,7 @@ impl BitAnd for TsTzSpan {
 
 impl PartialOrd for TsTzSpan {
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        let cmp = unsafe { meos_sys::span_cmp(self.inner(), other.inner()) };
+        let cmp = unsafe { meos_call!(meos_sys::span_cmp(self.inner(), other.inner())) };
         match cmp {
             -1 => Some(cmp::Ordering::Less),
             0 => Some(cmp::Ordering::Equal),

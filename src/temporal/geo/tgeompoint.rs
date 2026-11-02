@@ -31,7 +31,7 @@ impl_tgeo_type!(TGeomPoint, false, tpointinst_make, tgeompoint_in, tgeompoint_fr
 impl TGeomPointSequence {
     pub fn direction(&self) -> f64 {
         let mut result = 0.;
-        unsafe { meos_sys::tpoint_direction(self.inner(), ptr::addr_of_mut!(result)) };
+        unsafe { meos_call!(meos_sys::tpoint_direction(self.inner(), ptr::addr_of_mut!(result))) };
         result
     }
 }
@@ -39,7 +39,7 @@ impl TGeomPointSequence {
 impl TGeomPointSequenceSet {
     pub fn direction(&self) -> f64 {
         let mut result = 0.;
-        unsafe { meos_sys::tpoint_direction(self.inner(), ptr::addr_of_mut!(result)) };
+        unsafe { meos_call!(meos_sys::tpoint_direction(self.inner(), ptr::addr_of_mut!(result))) };
         result
     }
 }

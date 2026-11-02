@@ -107,31 +107,31 @@ macro_rules! impl_collection {
         type Type = $subtype_type;
         paste::paste! {
             fn is_contained_in(&self, container: &Self) -> bool {
-                unsafe { meos_sys::[<contained _ $type _ $type>](self.inner(), container.inner()) }
+                unsafe { meos_call!(meos_sys::[<contained _ $type _ $type>](self.inner(), container.inner())) }
             }
 
             fn overlaps(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<overlaps _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<overlaps _ $type _ $type>](self.inner(), other.inner())) }
             }
 
             fn is_left(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<left _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<left _ $type _ $type>](self.inner(), other.inner())) }
             }
 
             fn is_over_or_left(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<overleft _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<overleft _ $type _ $type>](self.inner(), other.inner())) }
             }
 
             fn is_over_or_right(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<overright _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<overright _ $type _ $type>](self.inner(), other.inner())) }
             }
 
             fn is_right(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<right _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<right _ $type _ $type>](self.inner(), other.inner())) }
             }
 
             fn is_adjacent(&self, other: &Self) -> bool {
-                unsafe { meos_sys::[<adjacent _ $type _ $type>](self.inner(), other.inner()) }
+                unsafe { meos_call!(meos_sys::[<adjacent _ $type _ $type>](self.inner(), other.inner())) }
             }
         }
     };

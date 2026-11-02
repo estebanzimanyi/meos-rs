@@ -37,7 +37,7 @@ macro_rules! impl_debug {
     ($type:ty) => {
         impl Debug for $type {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let out_str = unsafe { meos_sys::tfloat_out(self.inner(), 5) };
+                let out_str = unsafe { meos_call!(meos_sys::tfloat_out(self.inner(), 5)) };
                 let c_str = unsafe { CStr::from_ptr(out_str) };
                 let string = c_str.to_str().map_err(|_| std::fmt::Error)?;
                 let result = f.write_str(string);
@@ -78,7 +78,7 @@ impl MeosEnum for TFloat {
 
     fn from_mfjson(mfjson: &str) -> Self {
         let cstr = CString::new(mfjson).unwrap();
-        factory::<Self>(unsafe { meos_sys::tfloat_from_mfjson(cstr.as_ptr()) })
+        factory::<Self>(unsafe { meos_call!(meos_sys::tfloat_from_mfjson(cstr.as_ptr())) })
     }
 }
 
@@ -99,7 +99,7 @@ pub trait TFloatTrait:
     fn shift_scale_value(&self, shift: Option<Self::Type>, width: Option<Self::Type>) -> Self {
         let d = shift.unwrap_or_default();
         let w = width.unwrap_or_default();
-        let modified = unsafe { meos_sys::tfloat_shift_scale_value(self.inner(), d, w) };
+        let modified = unsafe { meos_call!(meos_sys::tfloat_shift_scale_value(self.inner(), d, w)) };
         Self::from_inner_as_temporal(modified)
     }
 }
@@ -120,7 +120,7 @@ impl TInstant for TFloatInstant {
     }
 
     fn from_value_and_timestamp<Tz: TimeZone>(value: Self::Type, timestamp: DateTime<Tz>) -> Self {
-        Self::from_inner(unsafe { meos_sys::tfloatinst_make(value, to_meos_timestamp(&timestamp)) })
+        Self::from_inner(unsafe { meos_call!(meos_sys::tfloatinst_make(value, to_meos_timestamp(&timestamp))) })
     }
 }
 
@@ -155,7 +155,7 @@ impl TFloatSequence {
         interpolation: TInterpolation,
     ) -> Self {
         Self::from_inner(unsafe {
-            meos_sys::tfloatseq_from_base_tstzspan(value, time_span.inner(), interpolation as u32)
+            meos_call!(meos_sys::tfloatseq_from_base_tstzspan(value, time_span.inner(), interpolation as u32))
         })
     }
 }
@@ -211,11 +211,11 @@ impl TFloatSequenceSet {
         interpolation: TInterpolation,
     ) -> Self {
         Self::from_inner(unsafe {
-            meos_sys::tfloatseqset_from_base_tstzspanset(
+            meos_call!(meos_sys::tfloatseqset_from_base_tstzspanset(
                 value,
                 time_span_set.inner(),
                 interpolation as u32,
-            )
+            ))
         })
     }
 }

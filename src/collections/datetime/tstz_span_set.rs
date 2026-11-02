@@ -32,7 +32,7 @@ impl Drop for TsTzSpanSet {
 impl Collection for TsTzSpanSet {
     impl_collection!(spanset, DateTime<Utc>);
     fn contains(&self, content: &DateTime<Utc>) -> bool {
-        unsafe { meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce()) }
+        unsafe { meos_call!(meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce())) }
     }
 }
 
@@ -150,9 +150,9 @@ impl SpanSet for TsTzSpanSet {
 
         let modified = unsafe {
             match (delta, width) {
-                (Some(_), None) => meos_sys::tstzspanset_shift(self.inner(), d),
-                (None, Some(_)) => meos_sys::tstzspanset_scale(self.inner(), w),
-                _ => meos_sys::tstzspanset_shift_scale(self.inner(), d, w),
+                (Some(_), None) => meos_call!(meos_sys::tstzspanset_shift(self.inner(), d)),
+                (None, Some(_)) => meos_call!(meos_sys::tstzspanset_scale(self.inner(), w)),
+                _ => meos_call!(meos_sys::tstzspanset_shift_scale(self.inner(), d, w)),
             }
         };
         TsTzSpanSet::from_inner(modified)
@@ -181,10 +181,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_value(&self, value: &DateTime<Utc>) -> TimeDelta {
         unsafe {
-            from_owned_interval(meos_sys::distance_spanset_timestamptz(
+            from_owned_interval(meos_call!(meos_sys::distance_spanset_timestamptz(
                 self.inner(),
                 to_meos_timestamp(value),
-            ))
+            )))
         }
     }
 
@@ -211,10 +211,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_span_set(&self, other: &Self) -> TimeDelta {
         unsafe {
-            from_owned_interval(meos_sys::distance_tstzspanset_tstzspanset(
+            from_owned_interval(meos_call!(meos_sys::distance_tstzspanset_tstzspanset(
                 self.inner(),
                 other.inner(),
-            ))
+            )))
         }
     }
 
@@ -243,10 +243,10 @@ impl SpanSet for TsTzSpanSet {
     /// ```
     fn distance_to_span(&self, span: &Self::SpanType) -> Self::SubsetType {
         unsafe {
-            from_owned_interval(meos_sys::distance_tstzspanset_tstzspan(
+            from_owned_interval(meos_call!(meos_sys::distance_tstzspanset_tstzspan(
                 self.inner(),
                 span.inner(),
-            ))
+            )))
         }
     }
 }
@@ -261,7 +261,7 @@ impl_iterator!(TsTzSpanSet);
 
 impl Hash for TsTzSpanSet {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash = unsafe { meos_sys::spanset_hash(self.inner()) };
+        let hash = unsafe { meos_call!(meos_sys::spanset_hash(self.inner())) };
         state.write_u32(hash);
 
         let _ = state.finish();
@@ -272,7 +272,7 @@ impl std::str::FromStr for TsTzSpanSet {
     type Err = ParseError;
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::tstzspanset_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::tstzspanset_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -280,13 +280,13 @@ impl std::str::FromStr for TsTzSpanSet {
 
 impl std::cmp::PartialEq for TsTzSpanSet {
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::spanset_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::spanset_eq(self.inner(), other.inner())) }
     }
 }
 
 impl Debug for TsTzSpanSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::tstzspanset_out(self.inner()) };
+        let out_str = unsafe { meos_call!(meos_sys::tstzspanset_out(self.inner())) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);
