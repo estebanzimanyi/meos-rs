@@ -5,7 +5,7 @@
 
 **meos-rs** is a Rust library providing bindings for the [MEOS](https://libmeos.org/) C library, designed for spatiotemporal data management and analysis. It enables handling of temporal and spatial data, making it ideal for applications that need to work with moving objects, trajectories, and time-varying geographical data.
 
-It supports MEOS version >= 1.2
+It supports MEOS 1.4
 
 ## Overview
 
@@ -28,7 +28,7 @@ Add the following dependency to your `Cargo.toml`:
 meos = "0.3"
 ```
 
-This requires MEOS 1.3 to be installed on your system. Follow the [installation instructions](https://github.com/MobilityDB/MobilityDB/?tab=readme-ov-file#requirements) on the MEOS website.
+This requires MEOS 1.4 to be installed on your system. Follow the [installation instructions](https://github.com/MobilityDB/MobilityDB/?tab=readme-ov-file#requirements) on the MEOS website.
 
 Alternatively, enable the `bundled` feature to build MEOS and its dependencies from source:
 
@@ -36,11 +36,12 @@ Alternatively, enable the `bundled` feature to build MEOS and its dependencies f
 meos = { version = "0.3", features = ["bundled"] }
 ```
 
-This requires the following build tools:
+This requires the following build tools and libraries, and a GDAL built without GEOS
+(see [sys/README.md](./sys/README.md)):
 
 ```bash
 # Debian/Ubuntu
-apt-get install cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev
+apt-get install cmake pkg-config sqlite3 libsqlite3-dev libproj-dev libxml2-dev zlib1g-dev
 ```
 
 And the git submodules must be initialized:

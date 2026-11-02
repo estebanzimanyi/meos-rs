@@ -17,19 +17,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # libmeos and its catalog from MobilityDB master with every family, as MobilityDB's own
+    # CI builds MEOS, through the shared provision-meos action pinned to a MEOS-API commit.
+    # The action installs libmeos and a GDAL built without GEOS under /usr/local.
+    - name: Provision MEOS (master, every family)
+      id: provision
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@1c9a7aa200c7f673f7a130efdc1db268396ee029
+      with:
+        mobilitydb-ref: master
+        build-libmeos: "true"
+
+    # The geos crate is the object layer's geometry type, so its library stays.
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y --fix-missing libgeos-dev proj-bin libproj-dev proj-data libjson-c-dev libgsl-dev
-
-    - name: Install MEOS
-      run: |
-        git clone --branch stable-1.3 https://github.com/MobilityDB/MobilityDB.git
-        mkdir MobilityDB/build
-        cd MobilityDB/build
-        cmake .. -DMEOS=on
-        make -j
-        sudo make install
+        sudo apt-get install -y --fix-missing libgeos-dev
 
     - name: Add library to LDPATH
       run: echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> $GITHUB_ENV
@@ -57,21 +59,19 @@ jobs:
   codegen-drift:
     name: FFI generated from the catalog (no drift)
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
 
-    # Derive the MEOS catalog from the stable-1.3 line the crate pins (the 1.3 family set has
-    # no -DALL). meos-sys is a projection of it: sys/src/generated.rs must equal what codegen.py
-    # emits from the current catalog, so a MEOS API change surfaces here instead of silently
-    # rotting the committed FFI.
-    - name: Provision the MEOS catalog (stable-1.3)
+    - name: Provision MEOS (master, every family)
       id: provision
-      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@master
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@1c9a7aa200c7f673f7a130efdc1db268396ee029
       with:
-        mobilitydb-ref: stable-1.3
+        mobilitydb-ref: master
         build-libmeos: "true"
-        families: "-DCBUFFER=ON -DNPOINT=ON -DPOSE=ON"
 
+    # meos-sys is a projection of the catalog: the committed FFI must be what codegen.py
+    # writes from it, so a MEOS change the FFI has not taken surfaces here.
     - name: Regenerate the FFI from the catalog
       run: python3 sys/codegen.py "${{ steps.provision.outputs.catalog-path }}" sys/src/generated.rs
 
@@ -87,8 +87,27 @@ jobs:
       with:
         submodules: recursive
 
+    # The libraries a MEOS build with every family finds on the system beside the ones
+    # meos-src builds: libxml2 and zlib, and PROJ and SQLite for the GDAL below.
     - name: Install build tools
-      run: sudo apt-get install -y cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake pkg-config sqlite3 libsqlite3-dev libproj-dev libxml2-dev zlib1g-dev
+
+    # The RASTER family links GDAL, built without GEOS by the script MEOS-API's
+    # provision-meos action builds it with, at the commit the system job pins.
+    - name: Fetch MEOS-API
+      uses: actions/checkout@v4
+      with:
+        repository: MobilityDB/MEOS-API
+        ref: 1c9a7aa200c7f673f7a130efdc1db268396ee029
+        path: _meos_api
+
+    - name: Build GDAL without GEOS
+      run: |
+        bash _meos_api/.github/actions/provision-meos/build-gdal.sh "$RUNNER_TEMP/gdal-prefix"
+        sudo cp -a "$RUNNER_TEMP/gdal-prefix/." /usr/local/
+        sudo ldconfig
 
     - name: Build
       run: cargo build --verbose --features bundled

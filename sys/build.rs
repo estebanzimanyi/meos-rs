@@ -1,7 +1,4 @@
-use std::env;
-use std::ffi::OsString;
-
-const MINIMUM_MEOS_VERSION: &str = "1.1.0";
+const MINIMUM_MEOS_VERSION: &str = "1.4";
 
 /// Detect MEOS config parameters using pkg-config (not available for all MEOS
 /// versions)
@@ -13,11 +10,14 @@ fn detect_meos_via_pkg_config() -> Result<pkg_config::Library, pkg_config::Error
         .probe("meos")
 }
 
+/// Locate and link libmeos: the one meos-src builds under `bundled`, or the system one
+/// #detect_meos_via_pkg_config finds. The FFI is generated from the MEOS-API catalog by
+/// `codegen.py` and committed as `src/generated.rs`, so no header is read here.
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
     // If `bundled` is on, use the git submodule to build MEOS from scratch
-    let include_path = if cfg!(feature = "bundled") {
+    if cfg!(feature = "bundled") {
         // Defined in `meos-src` build.rs file
         let meos_path = std::env::var("DEP_MEOSSRC_SEARCH").unwrap();
 
@@ -25,50 +25,22 @@ fn main() {
         println!("cargo:rustc-link-search=native={meos_path}/lib");
         println!("cargo:rustc-link-lib=static=meos");
 
+        // The libraries libmeos.a needs, after it: the static ones meos-src builds and the
+        // system ones it finds
         println!("cargo:rustc-link-lib=static=json-c");
-        println!("cargo:rustc-link-lib=static=gsl");
-        println!("cargo:rustc-link-lib=static=gslcblas");
+        println!("cargo:rustc-link-lib=static=h3");
+        println!("cargo:rustc-link-lib=dylib=gdal");
+        println!("cargo:rustc-link-lib=dylib=xml2");
+        println!("cargo:rustc-link-lib=dylib=z");
 
         // Expose the path to spatial_ref_sys.csv for use in meos_initialize
         let csv_path = std::path::Path::new(&meos_path).join("share/spatial_ref_sys.csv");
         println!("cargo:SPATIAL_REF_SYS_CSV={}", csv_path.display());
-
-        format!("{meos_path}/include")
-    } else {
-        let pk = detect_meos_via_pkg_config();
-
-        match pk {
-            Ok(meos) => meos.include_paths[0].clone().display().to_string(),
-            Err(pkg_config_err) => {
-                if matches!(pkg_config_err, pkg_config::Error::Command { cause, .. } if cause.kind() == std::io::ErrorKind::NotFound)
-                {
-                    panic!("Could not find `pkg-config` in your path. Please install it before running meos-sys-bind.");
-                }
-                // As a fallback, since pkg-config was not configured in meos until 1.2, we will try a default path.
-                if cfg!(feature = "v1_1") {
-                    let default_lib_path = String::from("/usr/local/lib/");
-                    let lib_dir_env = env::var_os("MEOS_LIB_DIR")
-                        .map(OsString::into_string)
-                        .transpose()
-                        .ok()
-                        .flatten()
-                        .unwrap_or(default_lib_path);
-
-                    // Tell cargo to look for shared libraries in the specified directory
-                    println!("cargo:rustc-link-search={lib_dir_env}");
-
-                    // Tell cargo to tell rustc to link the system meos shared library.
-                    println!("cargo:rustc-link-lib=dylib=meos");
-                    String::from("/usr/local/include/")
-                } else {
-                    panic!("Could not detect MEOS using pkg-config.");
-                }
-            }
+    } else if let Err(pkg_config_err) = detect_meos_via_pkg_config() {
+        if matches!(pkg_config_err, pkg_config::Error::Command { ref cause, .. } if cause.kind() == std::io::ErrorKind::NotFound)
+        {
+            panic!("Could not find `pkg-config` in your path. Please install it before running meos-sys-bind.");
         }
-    };
-
-    // The FFI bindings are generated from the MEOS-API catalog (see
-    // `codegen.py`) and committed as `src/generated.rs`; the build only needs
-    // to locate and link libmeos.
-    let _ = include_path;
+        panic!("Could not detect MEOS {MINIMUM_MEOS_VERSION} using pkg-config: {pkg_config_err}");
+    }
 }

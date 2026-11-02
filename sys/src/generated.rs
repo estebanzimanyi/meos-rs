@@ -6228,7 +6228,10 @@ extern "C" {
     pub fn geo_scale(gs: *const GSERIALIZED, xfactor: f64, yfactor: f64, zfactor: f64) -> *mut GSERIALIZED;
 }
 extern "C" {
-    pub fn geo_scale_geo(gs: *const GSERIALIZED, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut GSERIALIZED;
+    pub fn geo_scale_geo(gs: *const GSERIALIZED, scale: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
+    pub fn geo_scale_geo_origin(gs: *const GSERIALIZED, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 extern "C" {
     pub fn geo_segmentize(gs: *const GSERIALIZED, max_seg_length: f64) -> *mut GSERIALIZED;
@@ -6882,6 +6885,9 @@ extern "C" {
     pub fn tpoint_tfloat_to_geomeas(tpoint: *const Temporal, measure: *const Temporal, segmentize: bool, result: *mut *mut GSERIALIZED) -> bool;
 }
 extern "C" {
+    pub fn tpoint_to_geomeas(tpoint: *const Temporal, segmentize: bool) -> *mut GSERIALIZED;
+}
+extern "C" {
     pub fn tspatial_to_stbox(temp: *const Temporal) -> *mut STBox;
 }
 extern "C" {
@@ -6981,7 +6987,10 @@ extern "C" {
     pub fn tgeo_scale(temp: *const Temporal, xfactor: f64, yfactor: f64, zfactor: f64) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tgeo_scale_geo(temp: *const Temporal, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut Temporal;
+    pub fn tgeo_scale_geo(temp: *const Temporal, scale: *const GSERIALIZED) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tgeo_scale_geo_origin(temp: *const Temporal, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tgeo_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
@@ -10182,6 +10191,9 @@ extern "C" {
     pub fn point_round(gs: *const GSERIALIZED, maxdd: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 extern "C" {
+    pub fn geo_scale_geo_intl(gs: *const GSERIALIZED, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+extern "C" {
     pub fn stbox_set(hasx: bool, hasz: bool, geodetic: bool, srid: int32, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, s: *const Span, result: *mut STBox);
 }
 extern "C" {
@@ -10375,6 +10387,12 @@ extern "C" {
 }
 extern "C" {
     pub fn tgeometryseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+extern "C" {
+    pub fn tpoint_tfloat_to_geomeas_intl(tpoint: *const Temporal, meas: *const Temporal, segmentize: bool, result: *mut *mut GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn tgeo_scale_geo_intl(temp: *const Temporal, scale: *const GSERIALIZED, sorigin: *const GSERIALIZED) -> *mut Temporal;
 }
 extern "C" {
     pub fn tspatial_set_stbox(temp: *const Temporal, result: *mut STBox);
@@ -11022,7 +11040,10 @@ extern "C" {
     pub fn jsonbset_exists_array(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, any: bool, rescount: *mut ::std::os::raw::c_int) -> *mut bool;
 }
 extern "C" {
-    pub fn jsonbset_set(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text, lax: bool) -> *mut Set;
+    pub fn jsonbset_set(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_set_lax(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text) -> *mut Set;
 }
 extern "C" {
     pub fn jsonbset_to_alphanumset(set: *const Set, key: *const ::std::os::raw::c_char, settype: MeosType, null_handle: nullHandleType) -> *mut Set;
@@ -11077,6 +11098,15 @@ extern "C" {
 }
 extern "C" {
     pub fn jsonbset_object_field_common(set: *const Set, key: *const text, astext: bool, null_handle: nullHandleType) -> *mut Set;
+}
+extern "C" {
+    pub fn jsonbset_path_exists_intl(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_path_match_intl(set: *const Set, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool, count: *mut ::std::os::raw::c_int) -> *mut bool;
+}
+extern "C" {
+    pub fn jsonbset_set_intl(set: *const Set, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text, lax: bool) -> *mut Set;
 }
 extern "C" {
     pub fn contained_jsonb_set(jb: *const Jsonb, s: *const Set) -> bool;
@@ -11259,7 +11289,10 @@ extern "C" {
     pub fn tjsonb_pretty(temp: *const Temporal) -> *mut Temporal;
 }
 extern "C" {
-    pub fn tjsonb_set(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, handle_null: *const text, lax: bool) -> *mut Temporal;
+    pub fn tjsonb_set(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_set_lax(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text) -> *mut Temporal;
 }
 extern "C" {
     pub fn tjsonb_strip_nulls(temp: *const Temporal, strip_in_arrays: bool) -> *mut Temporal;
@@ -11302,6 +11335,15 @@ extern "C" {
 }
 extern "C" {
     pub fn tjsonb_object_field_common(temp: *const Temporal, key: *const text, astext: bool, null_handle: nullHandleType) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_exists_intl(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_path_match_intl(temp: *const Temporal, jp: *const JsonPath, vars: *const Jsonb, silent: bool, tz: bool) -> *mut Temporal;
+}
+extern "C" {
+    pub fn tjsonb_set_intl(temp: *const Temporal, keys: *mut *mut text, count: ::std::os::raw::c_int, newjb: *const Jsonb, create: bool, null_handle: *const text, lax: bool) -> *mut Temporal;
 }
 extern "C" {
     pub fn tjsonb_at_value(temp: *const Temporal, jsb: *const Jsonb) -> *mut Temporal;
@@ -12144,7 +12186,7 @@ extern "C" {
     pub fn tpcbox_out(box_: *const TPCBox, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn tpcbox_make(hasx: bool, hasz: bool, hast: bool, geodetic: bool, pcid: ::std::os::raw::c_uint, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, period: *const Span) -> *mut TPCBox;
+    pub fn tpcbox_make(hasx: bool, hasz: bool, geodetic: bool, pcid: ::std::os::raw::c_uint, xmin: f64, xmax: f64, ymin: f64, ymax: f64, zmin: f64, zmax: f64, period: *const Span) -> *mut TPCBox;
 }
 extern "C" {
     pub fn tpcbox_copy(box_: *const TPCBox) -> *mut TPCBox;
@@ -14347,6 +14389,9 @@ extern "C" {
 }
 extern "C" {
     pub fn trgeometry_value_n(temp: *const Temporal, n: ::std::os::raw::c_int, result: *mut *mut GSERIALIZED) -> bool;
+}
+extern "C" {
+    pub fn trgeometry_value_at_timestamptz(temp: *const Temporal, t: TimestampTz, strict: bool, result: *mut *mut GSERIALIZED) -> bool;
 }
 extern "C" {
     pub fn trgeometry_traversed_area(temp: *const Temporal, unary_union: bool) -> *mut GSERIALIZED;

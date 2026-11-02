@@ -1,4 +1,4 @@
-//! Low level [MEOS](https://libmeos.org/) C API bindings for MEOS >= 1.1.
+//! Low level [MEOS](https://libmeos.org/) C API bindings for MEOS 1.4.
 //!
 //! It provides C-interface as is. If you want to use a more Rust-friendly crate,
 //! use the [meos](https://github.com/MobilityDB/meos-rs) crate.
@@ -7,7 +7,7 @@
 //!
 //! The build will use system-installed MEOS if available.
 //!
-//! This documentation is generated based on MEOS >= 1.1.
+//! This documentation is generated based on MEOS 1.4.
 
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
@@ -15,7 +15,5 @@
 
 include!("generated.rs");
 
-#[cfg(feature = "bundled")]
-extern crate geos_sys;
 #[cfg(feature = "bundled")]
 extern crate proj_sys;
