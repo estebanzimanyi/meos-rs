@@ -2,12 +2,12 @@
 
 Low level [MEOS](https://libmeos.org/) C API bindings for MEOS.
 
-It provides C-interface as is. If you want to use a more Rust-friendly crate,
-use the [meos](https://github.com/MobilityDB/meos-rs) crate.
+It provides the C interface as is; the [meos](https://github.com/MobilityDB/meos-rs)
+crate is its Rust-friendly layer.
 
 You can also find it on [crates.io](https://crates.io/crates/meos).
 
-Versions >= 1.1 are supported.
+MEOS 1.4 is supported.
 
 ## Usage
 
@@ -15,55 +15,59 @@ Select a feature depending on your setup:
 
 | Feature    | Description |
 |------------|-------------|
-| `v1_1`     | Use prebuilt bindings for MEOS 1.1. Requires MEOS 1.1 installed on your system. |
-| `v1_2`     | Use prebuilt bindings for MEOS 1.2. Requires MEOS 1.2 installed on your system. |
-| `v1_3`     | Use prebuilt bindings for MEOS 1.3. Requires MEOS 1.3 installed on your system. |
-| `bundled`  | Build MEOS 1.3 from source. No system MEOS required. Implies `bindgen`. |
-| `bindgen`  | Generate bindings at build time from your system-installed MEOS headers. |
+| (none)     | Use the prebuilt bindings for MEOS 1.4. Requires MEOS 1.4 installed on your system. |
+| `bundled`  | Build MEOS 1.4 from source. No system MEOS required. Implies `bindgen`. |
+| `bindgen`  | Generate the bindings at build time from the MEOS headers. |
 
 ```toml
 # Cargo.toml
 
-# Use system-installed MEOS 1.3 with prebuilt bindings
-meos-sys = { version = "0.1.9", features = ["v1_3"] }
+# Use system-installed MEOS 1.4 with prebuilt bindings
+meos-sys = { version = "0.2.0" }
 
-# Build MEOS from source (no system dependency needed)
-meos-sys = { version = "0.1.9", features = ["bundled"] }
+# Build MEOS from source (no system MEOS needed)
+meos-sys = { version = "0.2.0", features = ["bundled"] }
 
 # Generate bindings from your system MEOS headers at build time
-meos-sys = { version = "0.1.9", features = ["v1_3", "bindgen"] }
+meos-sys = { version = "0.2.0", features = ["bindgen"] }
 ```
 
 ## Build
 
-### System-installed MEOS (`v1_1`, `v1_2`, `v1_3`)
+### System-installed MEOS
 
-`pkg-config` is used to detect MEOS automatically. For MEOS 1.1 (which predates
-pkg-config support), set `MEOS_LIB_DIR` to point to the library directory:
+`pkg-config` detects MEOS 1.4:
 
 ```bash
 # Linux
-LD_LIBRARY_PATH=<path>/lib MEOS_LIB_DIR=<path>/lib cargo build
+PKG_CONFIG_PATH=<path>/lib/pkgconfig LD_LIBRARY_PATH=<path>/lib cargo build
 ```
 
 ### Bundled (`bundled`)
 
-Builds MEOS 1.3 and all its dependencies (GEOS, PROJ, JSON-C, GSL) from the
-bundled source as static libraries. No system MEOS installation required.
+Builds MEOS 1.4 with every family, as MobilityDB's CI builds it (`-DALL=ON`),
+from the bundled source as a static library, with JSON-C and H3 from their
+submodules and PROJ through `proj-sys`. No system MEOS installation required.
+
+The RASTER family links GDAL, which comes from the system and must be built
+without GEOS, since MEOS 1.4 links no GEOS; a GDAL other than the system's is
+named by `GDAL_ROOT`, as CMake's FindGDAL reads it. MEOS-API's `provision-meos`
+action builds one with its `build-gdal.sh`.
 
 The following system packages are required to compile:
 
-- `cmake` — build system used to compile MEOS and its dependencies (GEOS, PROJ, JSON-C, GSL)
+- `cmake` — the build system compiling MEOS and its dependencies
 - `clang` / `libclang-dev` — required by `bindgen` to parse the MEOS C headers and generate Rust bindings
-- `pkg-config` — used to locate system libraries during the build
+- `pkg-config` — locates system libraries during the build
 - `sqlite3` / `libsqlite3-dev` — required by PROJ, which uses SQLite to store its coordinate reference system database
+- `libproj-dev`, `libxml2-dev`, `zlib1g-dev` — libraries MEOS and GDAL link
 
 ```bash
 # Debian/Ubuntu
-apt-get install cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev
+apt-get install cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev libproj-dev libxml2-dev zlib1g-dev
 ```
 
-Additionally, the git submodules (JSON-C, GSL) must be initialized before building, as they are bundled as git submodules rather than downloaded at build time:
+Additionally, the git submodules (MobilityDB, JSON-C, H3) must be initialized before building, as they are bundled as git submodules rather than downloaded at build time:
 
 ```bash
 git submodule update --init --recursive
@@ -77,5 +81,10 @@ Compilation will take longer due to building all dependencies from source.
 
 ### Bindgen (`bindgen`)
 
-Generates bindings at build time from your system-installed MEOS headers instead
-of using the prebuilt ones.
+Generates the bindings at build time with bindgen over the MEOS headers instead
+of using the prebuilt ones, keeping only the names `allowlist.txt` lists: one per
+function, type and constant of the [MEOS-API](https://github.com/MobilityDB/MEOS-API)
+catalog `meos-idl.json`. `regenerate.sh` rewrites the prebuilt bindings,
+`allowlist.txt` and `wrapper.h` from a catalog and an installed MEOS, and
+`check_drift.py` checks that every bound function is a catalog function of the
+same arity.

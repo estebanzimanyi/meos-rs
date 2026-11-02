@@ -12,21 +12,17 @@ exclude = [
   "source/mobilitydb",
   "source/meos/examples",
   "source/doc/images",
-  "gsl/doc/*.info",
-  "gsl/doc/*.pdf",
-  "gsl/doc/*.png",
-  "gsl/doc/images",
-  "gsl/ampl",
+  "h3/tests",
+  "h3/website",
+  "h3/dev-docs",
   "json-c/tests",
 ]
 
 [dependencies]
-geos-sys = "2.0"
 proj-sys = "0.27"
-geos-src = "0.2"
 
 [features]
-bundled = ["geos-sys/static", "proj-sys/bundled_proj"]
+bundled = ["proj-sys/bundled_proj"]
 
 [build-dependencies]
 cmake = "0.1"

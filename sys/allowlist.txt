@@ -1267,6 +1267,8 @@ function geo_round
 function geo_same
 function geo_scale
 function geo_scale_geo
+function geo_scale_geo_intl
+function geo_scale_geo_origin
 function geo_segmentize
 function geo_set_srid
 function geo_set_stbox
@@ -1770,11 +1772,15 @@ function jsonbset_object_field_common
 function jsonbset_object_field_text
 function jsonbset_out
 function jsonbset_path_exists
+function jsonbset_path_exists_intl
 function jsonbset_path_match
+function jsonbset_path_match_intl
 function jsonbset_path_query_array
 function jsonbset_path_query_first
 function jsonbset_pretty
 function jsonbset_set
+function jsonbset_set_intl
+function jsonbset_set_lax
 function jsonbset_start_value
 function jsonbset_strip_nulls
 function jsonbset_to_alphanumset
@@ -4208,6 +4214,8 @@ function tgeo_rotate_y
 function tgeo_rotate_z
 function tgeo_scale
 function tgeo_scale_geo
+function tgeo_scale_geo_intl
+function tgeo_scale_geo_origin
 function tgeo_space_boxes
 function tgeo_space_split
 function tgeo_space_time_boxes
@@ -4588,11 +4596,15 @@ function tjsonb_object_field_common
 function tjsonb_object_field_text
 function tjsonb_out
 function tjsonb_path_exists
+function tjsonb_path_exists_intl
 function tjsonb_path_match
+function tjsonb_path_match_intl
 function tjsonb_path_query_array
 function tjsonb_path_query_first
 function tjsonb_pretty
 function tjsonb_set
+function tjsonb_set_intl
+function tjsonb_set_lax
 function tjsonb_start_value
 function tjsonb_strip_nulls
 function tjsonb_to_tbigint
@@ -4903,6 +4915,8 @@ function tpoint_tcentroid_combinefn
 function tpoint_tcentroid_finalfn
 function tpoint_tcentroid_transfn
 function tpoint_tfloat_to_geomeas
+function tpoint_tfloat_to_geomeas_intl
+function tpoint_to_geomeas
 function tpoint_trajectory
 function tpoint_twcentroid
 function tpoint_type
@@ -5103,6 +5117,7 @@ function trgeometry_traversed_area
 function trgeometry_twcentroid
 function trgeometry_unnest
 function trgeometry_value
+function trgeometry_value_at_timestamptz
 function trgeometry_value_n
 function trgeometry_values
 function trgeometry_yaw

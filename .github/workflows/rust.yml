@@ -94,8 +94,27 @@ jobs:
       with:
         submodules: recursive
 
+    # The libraries a MEOS build with every family finds on the system beside the ones
+    # meos-src builds: libxml2 and zlib, and PROJ and SQLite for the GDAL below.
     - name: Install build tools
-      run: sudo apt-get install -y cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake clang libclang-dev pkg-config sqlite3 libsqlite3-dev libproj-dev libxml2-dev zlib1g-dev
+
+    # The RASTER family links GDAL, built without GEOS by the script MEOS-API's
+    # provision-meos action builds it with, at the commit the system job pins.
+    - name: Fetch MEOS-API
+      uses: actions/checkout@v4
+      with:
+        repository: MobilityDB/MEOS-API
+        ref: 1c9a7aa200c7f673f7a130efdc1db268396ee029
+        path: _meos_api
+
+    - name: Build GDAL without GEOS
+      run: |
+        bash _meos_api/.github/actions/provision-meos/build-gdal.sh "$RUNNER_TEMP/gdal-prefix"
+        sudo cp -a "$RUNNER_TEMP/gdal-prefix/." /usr/local/
+        sudo ldconfig
 
     - name: Build
       run: cargo build --verbose --features bundled

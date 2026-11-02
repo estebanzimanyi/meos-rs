@@ -21,6 +21,4 @@ include!("../prebuilt-bindings/meos.rs");
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 #[cfg(feature = "bundled")]
-extern crate geos_sys;
-#[cfg(feature = "bundled")]
 extern crate proj_sys;

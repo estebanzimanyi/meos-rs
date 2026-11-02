@@ -7208,7 +7208,10 @@ unsafe extern "C" {
     ) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
-    pub fn geo_scale_geo(
+    pub fn geo_scale_geo(gs: *const GSERIALIZED, scale: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    pub fn geo_scale_geo_origin(
         gs: *const GSERIALIZED,
         scale: *const GSERIALIZED,
         sorigin: *const GSERIALIZED,
@@ -8079,6 +8082,9 @@ unsafe extern "C" {
     ) -> bool;
 }
 unsafe extern "C" {
+    pub fn tpoint_to_geomeas(tpoint: *const Temporal, segmentize: bool) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
     pub fn tspatial_to_stbox(temp: *const Temporal) -> *mut STBox;
 }
 unsafe extern "C" {
@@ -8225,7 +8231,10 @@ unsafe extern "C" {
     ) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tgeo_scale_geo(
+    pub fn tgeo_scale_geo(temp: *const Temporal, scale: *const GSERIALIZED) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tgeo_scale_geo_origin(
         temp: *const Temporal,
         scale: *const GSERIALIZED,
         sorigin: *const GSERIALIZED,
@@ -13779,6 +13788,14 @@ unsafe extern "C" {
     pub fn point_round(gs: *const GSERIALIZED, maxdd: ::std::os::raw::c_int) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
+    #[doc = " Transformation functions"]
+    pub fn geo_scale_geo_intl(
+        gs: *const GSERIALIZED,
+        scale: *const GSERIALIZED,
+        sorigin: *const GSERIALIZED,
+    ) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
     #[doc = " Functions for box types"]
     pub fn stbox_set(
         hasx: bool,
@@ -14035,6 +14052,21 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn tgeometryseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
+}
+unsafe extern "C" {
+    pub fn tpoint_tfloat_to_geomeas_intl(
+        tpoint: *const Temporal,
+        meas: *const Temporal,
+        segmentize: bool,
+        result: *mut *mut GSERIALIZED,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn tgeo_scale_geo_intl(
+        temp: *const Temporal,
+        scale: *const GSERIALIZED,
+        sorigin: *const GSERIALIZED,
+    ) -> *mut Temporal;
 }
 unsafe extern "C" {
     pub fn tspatial_set_stbox(temp: *const Temporal, result: *mut STBox);
@@ -14957,8 +14989,16 @@ unsafe extern "C" {
         count: ::std::os::raw::c_int,
         newjb: *const Jsonb,
         create: bool,
+    ) -> *mut Set;
+}
+unsafe extern "C" {
+    pub fn jsonbset_set_lax(
+        set: *const Set,
+        keys: *mut *mut text,
+        count: ::std::os::raw::c_int,
+        newjb: *const Jsonb,
+        create: bool,
         null_handle: *const text,
-        lax: bool,
     ) -> *mut Set;
 }
 unsafe extern "C" {
@@ -15096,6 +15136,37 @@ unsafe extern "C" {
         key: *const text,
         astext: bool,
         null_handle: nullHandleType,
+    ) -> *mut Set;
+}
+unsafe extern "C" {
+    pub fn jsonbset_path_exists_intl(
+        set: *const Set,
+        jp: *const JsonPath,
+        vars: *const Jsonb,
+        silent: bool,
+        tz: bool,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut bool;
+}
+unsafe extern "C" {
+    pub fn jsonbset_path_match_intl(
+        set: *const Set,
+        jp: *const JsonPath,
+        vars: *const Jsonb,
+        silent: bool,
+        tz: bool,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut bool;
+}
+unsafe extern "C" {
+    pub fn jsonbset_set_intl(
+        set: *const Set,
+        keys: *mut *mut text,
+        count: ::std::os::raw::c_int,
+        newjb: *const Jsonb,
+        create: bool,
+        null_handle: *const text,
+        lax: bool,
     ) -> *mut Set;
 }
 unsafe extern "C" {
@@ -15407,8 +15478,16 @@ unsafe extern "C" {
         count: ::std::os::raw::c_int,
         newjb: *const Jsonb,
         create: bool,
-        handle_null: *const text,
-        lax: bool,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tjsonb_set_lax(
+        temp: *const Temporal,
+        keys: *mut *mut text,
+        count: ::std::os::raw::c_int,
+        newjb: *const Jsonb,
+        create: bool,
+        null_handle: *const text,
     ) -> *mut Temporal;
 }
 unsafe extern "C" {
@@ -15511,6 +15590,35 @@ unsafe extern "C" {
         key: *const text,
         astext: bool,
         null_handle: nullHandleType,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tjsonb_path_exists_intl(
+        temp: *const Temporal,
+        jp: *const JsonPath,
+        vars: *const Jsonb,
+        silent: bool,
+        tz: bool,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tjsonb_path_match_intl(
+        temp: *const Temporal,
+        jp: *const JsonPath,
+        vars: *const Jsonb,
+        silent: bool,
+        tz: bool,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tjsonb_set_intl(
+        temp: *const Temporal,
+        keys: *mut *mut text,
+        count: ::std::os::raw::c_int,
+        newjb: *const Jsonb,
+        create: bool,
+        null_handle: *const text,
+        lax: bool,
     ) -> *mut Temporal;
 }
 unsafe extern "C" {
@@ -16664,7 +16772,6 @@ unsafe extern "C" {
     pub fn tpcbox_make(
         hasx: bool,
         hasz: bool,
-        hast: bool,
         geodetic: bool,
         pcid: u32,
         xmin: f64,
@@ -19995,6 +20102,14 @@ unsafe extern "C" {
     pub fn trgeometry_value_n(
         temp: *const Temporal,
         n: ::std::os::raw::c_int,
+        result: *mut *mut GSERIALIZED,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn trgeometry_value_at_timestamptz(
+        temp: *const Temporal,
+        t: TimestampTz,
+        strict: bool,
         result: *mut *mut GSERIALIZED,
     ) -> bool;
 }

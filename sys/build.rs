@@ -23,9 +23,13 @@ fn main() {
         println!("cargo:rustc-link-search=native={meos_path}/lib");
         println!("cargo:rustc-link-lib=static=meos");
 
+        // The libraries libmeos.a needs, after it: the static ones meos-src builds and the
+        // system ones it finds
         println!("cargo:rustc-link-lib=static=json-c");
-        println!("cargo:rustc-link-lib=static=gsl");
-        println!("cargo:rustc-link-lib=static=gslcblas");
+        println!("cargo:rustc-link-lib=static=h3");
+        println!("cargo:rustc-link-lib=dylib=gdal");
+        println!("cargo:rustc-link-lib=dylib=xml2");
+        println!("cargo:rustc-link-lib=dylib=z");
 
         // Expose the path to spatial_ref_sys.csv for use in meos_initialize
         let csv_path = std::path::Path::new(&meos_path).join("share/spatial_ref_sys.csv");
