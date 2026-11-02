@@ -58,7 +58,7 @@ impl MeosEnum for TInt {
 
     fn from_mfjson(mfjson: &str) -> Self {
         let cstr = CString::new(mfjson).unwrap();
-        factory::<Self>(unsafe { meos_sys::tint_from_mfjson(cstr.as_ptr()) })
+        factory::<Self>(unsafe { meos_call!(meos_sys::tint_from_mfjson(cstr.as_ptr())) })
     }
 }
 
@@ -86,7 +86,7 @@ pub trait TIntTrait:
     fn shift_scale_value(&self, shift: Option<Self::Type>, width: Option<Self::Type>) -> Self {
         let d = shift.unwrap_or_default();
         let w = width.unwrap_or_default();
-        let modified = unsafe { meos_sys::tint_shift_scale_value(self.inner(), d, w) };
+        let modified = unsafe { meos_call!(meos_sys::tint_shift_scale_value(self.inner(), d, w)) };
         Self::from_inner_as_temporal(modified)
     }
 }
@@ -95,7 +95,7 @@ macro_rules! impl_debug {
     ($type:ty) => {
         impl Debug for $type {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let out_str = unsafe { meos_sys::tint_out(self.inner()) };
+                let out_str = unsafe { meos_call!(meos_sys::tint_out(self.inner())) };
                 let c_str = unsafe { CStr::from_ptr(out_str) };
                 let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
                 let result = f.write_str(str);
@@ -122,7 +122,7 @@ impl TInstant for TIntInstant {
     }
 
     fn from_value_and_timestamp<Tz: TimeZone>(value: Self::Type, timestamp: DateTime<Tz>) -> Self {
-        Self::from_inner(unsafe { meos_sys::tintinst_make(value, to_meos_timestamp(&timestamp)) })
+        Self::from_inner(unsafe { meos_call!(meos_sys::tintinst_make(value, to_meos_timestamp(&timestamp))) })
     }
 }
 
@@ -150,7 +150,7 @@ impl TIntSequence {
     /// ## Returns
     /// A new temporal object.
     pub fn from_value_and_tstz_span<Tz: TimeZone>(value: i32, time_span: &TsTzSpan) -> Self {
-        Self::from_inner(unsafe { meos_sys::tintseq_from_base_tstzspan(value, time_span.inner()) })
+        Self::from_inner(unsafe { meos_call!(meos_sys::tintseq_from_base_tstzspan(value, time_span.inner())) })
     }
 }
 
@@ -209,7 +209,7 @@ impl TIntSequenceSet {
         time_span_set: &TsTzSpanSet,
     ) -> Self {
         Self::from_inner(unsafe {
-            meos_sys::tintseqset_from_base_tstzspanset(value, time_span_set.inner())
+            meos_call!(meos_sys::tintseqset_from_base_tstzspanset(value, time_span_set.inner()))
         })
     }
 }
@@ -231,7 +231,7 @@ impl FromIterator<TIntSequence> for TIntSequenceSet {
             .collect();
 
         let result = unsafe {
-            meos_sys::tsequenceset_make(vec_ptr.as_mut_ptr(), vec_ptr.len() as i32, true)
+            meos_call!(meos_sys::tsequenceset_make(vec_ptr.as_mut_ptr(), vec_ptr.len() as i32, true))
         };
         TIntSequenceSet::from_inner(result)
     }

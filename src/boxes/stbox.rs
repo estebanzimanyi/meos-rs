@@ -29,19 +29,19 @@ pub struct STBox {
 
 impl MeosBox for STBox {
     fn from_wkb(wkb: &[u8]) -> Self {
-        unsafe { Self::from_inner(meos_sys::stbox_from_wkb(wkb.as_ptr(), wkb.len())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::stbox_from_wkb(wkb.as_ptr(), wkb.len()))) }
     }
 
     fn from_hexwkb(hexwkb: &[u8]) -> Self {
         let c_hexwkb = CString::new(hexwkb).unwrap();
         unsafe {
-            let inner = meos_sys::stbox_from_hexwkb(c_hexwkb.as_ptr());
+            let inner = meos_call!(meos_sys::stbox_from_hexwkb(c_hexwkb.as_ptr()));
             Self::from_inner(inner)
         }
     }
 
     fn from_temporal_span(span: TsTzSpan) -> Self {
-        unsafe { Self::from_inner(meos_sys::tstzspan_to_stbox(span.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::tstzspan_to_stbox(span.inner()))) }
     }
 
     /// Creates an `STBox` from a `DateTime` value.
@@ -66,17 +66,17 @@ impl MeosBox for STBox {
     fn from_time<Tz: TimeZone>(time: DateTime<Tz>) -> Self {
         // Convert DateTime<Utc> to the expected timestamp format for MEOS
         let timestamptz = to_meos_timestamp(&time);
-        unsafe { Self::from_inner(meos_sys::timestamptz_to_stbox(timestamptz)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::timestamptz_to_stbox(timestamptz))) }
     }
 
     fn tstzspan(&self) -> TsTzSpan {
-        unsafe { TsTzSpan::from_inner(meos_sys::stbox_to_tstzspan(self.inner())) }
+        unsafe { TsTzSpan::from_inner(meos_call!(meos_sys::stbox_to_tstzspan(self.inner()))) }
     }
 
     fn as_wkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size: usize = 0;
-            let ptr = meos_sys::stbox_as_wkb(self.inner(), variant.into(), &raw mut size);
+            let ptr = meos_call!(meos_sys::stbox_as_wkb(self.inner(), variant.into(), &raw mut size));
             std::slice::from_raw_parts(ptr, size)
         }
     }
@@ -84,7 +84,7 @@ impl MeosBox for STBox {
     fn as_hexwkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size: usize = 0;
-            let hexwkb_ptr = meos_sys::stbox_as_hexwkb(self.inner(), variant.into(), &raw mut size);
+            let hexwkb_ptr = meos_call!(meos_sys::stbox_as_hexwkb(self.inner(), variant.into(), &raw mut size));
 
             CStr::from_ptr(hexwkb_ptr).to_bytes()
         }
@@ -93,18 +93,18 @@ impl MeosBox for STBox {
     // ------------------------- Accessors -------------------------------------
 
     fn has_x(&self) -> bool {
-        unsafe { meos_sys::stbox_hasx(self.inner()) }
+        unsafe { meos_call!(meos_sys::stbox_hasx(self.inner())) }
     }
 
     fn has_t(&self) -> bool {
-        unsafe { meos_sys::stbox_hast(self.inner()) }
+        unsafe { meos_call!(meos_sys::stbox_hast(self.inner())) }
     }
 
     fn xmin(&self) -> Option<f64> {
         unsafe {
             let mut value = 0.0;
             let ptr: *mut f64 = ptr::addr_of_mut!(value);
-            if meos_sys::stbox_xmin(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_xmin(self.inner(), ptr)) {
                 Some(value)
             } else {
                 None
@@ -116,7 +116,7 @@ impl MeosBox for STBox {
         unsafe {
             let mut value = 0.0;
             let ptr: *mut f64 = ptr::addr_of_mut!(value);
-            if meos_sys::stbox_xmax(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_xmax(self.inner(), ptr)) {
                 Some(value)
             } else {
                 None
@@ -128,7 +128,7 @@ impl MeosBox for STBox {
         unsafe {
             let mut value: i64 = 0;
             let ptr: *mut i64 = ptr::addr_of_mut!(value);
-            if meos_sys::stbox_tmin(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_tmin(self.inner(), ptr)) {
                 Some(from_meos_timestamp(value))
             } else {
                 None
@@ -140,7 +140,7 @@ impl MeosBox for STBox {
         unsafe {
             let mut value: i64 = 0;
             let ptr: *mut i64 = ptr::addr_of_mut!(value);
-            if meos_sys::stbox_tmax(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_tmax(self.inner(), ptr)) {
                 DateTime::from_timestamp_micros(value)
             } else {
                 None
@@ -152,7 +152,7 @@ impl MeosBox for STBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::stbox_tmin_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_tmin_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -164,7 +164,7 @@ impl MeosBox for STBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::stbox_tmax_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::stbox_tmax_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -177,10 +177,10 @@ impl MeosBox for STBox {
     fn expand_time(&self, duration: TimeDelta) -> STBox {
         let interval = create_interval(duration);
         unsafe {
-            Self::from_inner(meos_sys::stbox_expand_time(
+            Self::from_inner(meos_call!(meos_sys::stbox_expand_time(
                 self.inner(),
                 std::ptr::addr_of!(interval),
-            ))
+            )))
         }
     }
 
@@ -203,23 +203,23 @@ impl MeosBox for STBox {
 
         let modified = unsafe {
             match (delta, width) {
-                (Some(_), None) => meos_sys::stbox_shift_time(self.inner(), d),
-                (None, Some(_)) => meos_sys::stbox_scale_time(self.inner(), w),
-                _ => meos_sys::stbox_shift_scale_time(self.inner(), d, w),
+                (Some(_), None) => meos_call!(meos_sys::stbox_shift_time(self.inner(), d)),
+                (None, Some(_)) => meos_call!(meos_sys::stbox_scale_time(self.inner(), w)),
+                _ => meos_call!(meos_sys::stbox_shift_scale_time(self.inner(), d, w)),
             }
         };
         STBox::from_inner(modified)
     }
 
     fn round(&self, max_decimals: i32) -> STBox {
-        let result = unsafe { meos_sys::stbox_round(self.inner(), max_decimals) };
+        let result = unsafe { meos_call!(meos_sys::stbox_round(self.inner(), max_decimals)) };
         STBox::from_inner(result)
     }
 
     // ------------------------- Set Operations --------------------------------
 
     fn union(&self, other: &STBox, strict: bool) -> Option<STBox> {
-        let result = unsafe { meos_sys::union_stbox_stbox(self.inner(), other.inner(), strict) };
+        let result = unsafe { meos_call!(meos_sys::union_stbox_stbox(self.inner(), other.inner(), strict)) };
         if result.is_null() {
             None
         } else {
@@ -228,7 +228,7 @@ impl MeosBox for STBox {
     }
 
     fn intersection(&self, other: &STBox) -> Option<STBox> {
-        let result = unsafe { meos_sys::intersection_stbox_stbox(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::intersection_stbox_stbox(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -239,7 +239,7 @@ impl MeosBox for STBox {
     // ------------------------- Distance Operations --------------------------------
 
     fn nearest_approach_distance(&self, other: &STBox) -> f64 {
-        unsafe { meos_sys::nad_stbox_stbox(self.inner(), other.inner(), true) }
+        unsafe { meos_call!(meos_sys::nad_stbox_stbox(self.inner(), other.inner(), true)) }
     }
 }
 
@@ -280,34 +280,34 @@ impl STBox {
     // ------------------------- Transformation --------------------------------
 
     pub fn expand_space(&self, value: f64) -> STBox {
-        unsafe { Self::from_inner(meos_sys::stbox_expand_space(self.inner(), value)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::stbox_expand_space(self.inner(), value))) }
     }
 
     // ------------------------- Positional operators --------------------------
 
-    pub fn is_left(&self, other: &STBox) -> bool { unsafe { meos_sys::left_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_left(&self, other: &STBox) -> bool { unsafe { meos_sys::overleft_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_right(&self, other: &STBox) -> bool { unsafe { meos_sys::right_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_right(&self, other: &STBox) -> bool { unsafe { meos_sys::overright_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_below(&self, other: &STBox) -> bool { unsafe { meos_sys::below_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_below(&self, other: &STBox) -> bool { unsafe { meos_sys::overbelow_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_above(&self, other: &STBox) -> bool { unsafe { meos_sys::above_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_above(&self, other: &STBox) -> bool { unsafe { meos_sys::overabove_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_front(&self, other: &STBox) -> bool { unsafe { meos_sys::front_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_front(&self, other: &STBox) -> bool { unsafe { meos_sys::overfront_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_back(&self, other: &STBox) -> bool { unsafe { meos_sys::back_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_over_or_back(&self, other: &STBox) -> bool { unsafe { meos_sys::overback_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_adjacent(&self, other: &STBox) -> bool { unsafe { meos_sys::adjacent_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn overlaps(&self, other: &STBox) -> bool { unsafe { meos_sys::overlaps_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_same(&self, other: &STBox) -> bool { unsafe { meos_sys::same_stbox_stbox(self.inner(), other.inner()) } }
-    pub fn is_contained_in(&self, other: &STBox) -> bool { unsafe { meos_sys::contained_stbox_stbox(self.inner(), other.inner()) } }
+    pub fn is_left(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::left_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_left(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overleft_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_right(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::right_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_right(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overright_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_below(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::below_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_below(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overbelow_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_above(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::above_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_above(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overabove_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_front(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::front_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_front(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overfront_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_back(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::back_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_over_or_back(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overback_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_adjacent(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::adjacent_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn overlaps(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::overlaps_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_same(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::same_stbox_stbox(self.inner(), other.inner())) } }
+    pub fn is_contained_in(&self, other: &STBox) -> bool { unsafe { meos_call!(meos_sys::contained_stbox_stbox(self.inner(), other.inner())) } }
 }
 
 impl Collection for STBox {
     impl_collection!(stbox, STBox);
 
     fn contains(&self, content: &Self::Type) -> bool {
-        unsafe { meos_sys::contains_stbox_stbox(self.inner(), content.inner()) }
+        unsafe { meos_call!(meos_sys::contains_stbox_stbox(self.inner(), content.inner())) }
     }
 }
 
@@ -331,7 +331,7 @@ impl cmp::PartialEq for STBox {
     /// assert_eq!(span1, span2);
     /// ```
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::stbox_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::stbox_eq(self.inner(), other.inner())) }
     }
 }
 
@@ -339,7 +339,7 @@ impl cmp::Eq for STBox {}
 
 impl Debug for STBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::stbox_out(self.inner(), 3) };
+        let out_str = unsafe { meos_call!(meos_sys::stbox_out(self.inner(), 3)) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);
@@ -350,7 +350,7 @@ impl Debug for STBox {
 
 impl Clone for STBox {
     fn clone(&self) -> Self {
-        unsafe { Self::from_inner(meos_sys::stbox_copy(self.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::stbox_copy(self.inner()))) }
     }
 }
 
@@ -383,7 +383,7 @@ impl std::str::FromStr for STBox {
     /// ```
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::stbox_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::stbox_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -393,6 +393,6 @@ impl std::str::FromStr for STBox {
 
 impl From<&STBox> for TsTzSpan {
     fn from(stbox: &STBox) -> Self {
-        unsafe { TsTzSpan::from_inner(meos_sys::stbox_to_tstzspan(stbox.inner())) }
+        unsafe { TsTzSpan::from_inner(meos_call!(meos_sys::stbox_to_tstzspan(stbox.inner()))) }
     }
 }

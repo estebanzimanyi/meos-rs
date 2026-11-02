@@ -30,19 +30,19 @@ pub struct TBox {
 
 impl MeosBox for TBox {
     fn from_wkb(wkb: &[u8]) -> Self {
-        unsafe { Self::from_inner(meos_sys::tbox_from_wkb(wkb.as_ptr(), wkb.len())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::tbox_from_wkb(wkb.as_ptr(), wkb.len()))) }
     }
 
     fn from_hexwkb(hexwkb: &[u8]) -> Self {
         let c_hexwkb = CString::new(hexwkb).unwrap();
         unsafe {
-            let inner = meos_sys::tbox_from_hexwkb(c_hexwkb.as_ptr());
+            let inner = meos_call!(meos_sys::tbox_from_hexwkb(c_hexwkb.as_ptr()));
             Self::from_inner(inner)
         }
     }
 
     fn from_temporal_span(value: TsTzSpan) -> Self {
-        unsafe { Self::from_inner(meos_sys::span_to_tbox(value.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::span_to_tbox(value.inner()))) }
     }
 
     /// Creates a new `TBox` instance from a `DateTime<Tz>` object.
@@ -68,7 +68,7 @@ impl MeosBox for TBox {
     fn from_time<Tz: TimeZone>(time: DateTime<Tz>) -> Self {
         // Convert DateTime<Utc> to the expected timestamp format for MEOS
         let timestamptz = to_meos_timestamp(&time);
-        unsafe { Self::from_inner(meos_sys::timestamptz_to_tbox(timestamptz)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::timestamptz_to_tbox(timestamptz))) }
     }
 
     /// Converts the `TBox` into a `TsTzSpan` representing the timestamp with time zone span.
@@ -89,13 +89,13 @@ impl MeosBox for TBox {
     /// assert_eq!(tstzspan, (datetime..=datetime).into()); // Assuming `TsTzSpan` has a `to_string` method
     /// ```
     fn tstzspan(&self) -> TsTzSpan {
-        unsafe { TsTzSpan::from_inner(meos_sys::tbox_to_tstzspan(self.inner())) }
+        unsafe { TsTzSpan::from_inner(meos_call!(meos_sys::tbox_to_tstzspan(self.inner()))) }
     }
 
     fn as_wkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size: usize = 0;
-            let ptr = meos_sys::tbox_as_wkb(self.inner(), variant.into(), &raw mut size);
+            let ptr = meos_call!(meos_sys::tbox_as_wkb(self.inner(), variant.into(), &raw mut size));
             std::slice::from_raw_parts(ptr, size)
         }
     }
@@ -103,7 +103,7 @@ impl MeosBox for TBox {
     fn as_hexwkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size: usize = 0;
-            let ptr = meos_sys::tbox_as_hexwkb(self.inner(), variant.into(), &raw mut size);
+            let ptr = meos_call!(meos_sys::tbox_as_hexwkb(self.inner(), variant.into(), &raw mut size));
             CStr::from_ptr(ptr).to_bytes()
         }
     }
@@ -123,7 +123,7 @@ impl MeosBox for TBox {
     /// assert!(tbox.has_x());
     /// ```
     fn has_x(&self) -> bool {
-        unsafe { meos_sys::tbox_hasx(self.inner()) }
+        unsafe { meos_call!(meos_sys::tbox_hasx(self.inner())) }
     }
 
     /// Checks if the `TBox` has a valid T (time) dimension.
@@ -143,7 +143,7 @@ impl MeosBox for TBox {
     /// assert!(tbox.has_t());
     /// ```
     fn has_t(&self) -> bool {
-        unsafe { meos_sys::tbox_hast(self.inner()) }
+        unsafe { meos_call!(meos_sys::tbox_hast(self.inner())) }
     }
 
     /// Retrieves the minimum value of the X dimension in the `TBox`.
@@ -164,7 +164,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut value = 0.0;
             let ptr: *mut f64 = ptr::addr_of_mut!(value);
-            if meos_sys::tbox_xmin(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_xmin(self.inner(), ptr)) {
                 Some(value)
             } else {
                 None
@@ -190,7 +190,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut value = 0.0;
             let ptr: *mut f64 = ptr::addr_of_mut!(value);
-            if meos_sys::tbox_xmax(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_xmax(self.inner(), ptr)) {
                 Some(value)
             } else {
                 None
@@ -218,7 +218,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut value: i64 = 0;
             let ptr: *mut i64 = ptr::addr_of_mut!(value);
-            if meos_sys::tbox_tmin(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_tmin(self.inner(), ptr)) {
                 Some(from_meos_timestamp(value))
             } else {
                 None
@@ -246,7 +246,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut value: i64 = 0;
             let ptr: *mut i64 = ptr::addr_of_mut!(value);
-            if meos_sys::tbox_tmax(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_tmax(self.inner(), ptr)) {
                 Some(from_meos_timestamp(value))
             } else {
                 None
@@ -271,7 +271,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::tbox_tmin_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_tmin_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -299,7 +299,7 @@ impl MeosBox for TBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::tbox_tmax_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_tmax_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -332,10 +332,10 @@ impl MeosBox for TBox {
     fn expand_time(&self, duration: TimeDelta) -> TBox {
         let interval = create_interval(duration);
         unsafe {
-            Self::from_inner(meos_sys::tbox_expand_time(
+            Self::from_inner(meos_call!(meos_sys::tbox_expand_time(
                 self.inner(),
                 std::ptr::addr_of!(interval),
-            ))
+            )))
         }
     }
 
@@ -358,7 +358,7 @@ impl MeosBox for TBox {
     /// assert_eq!(rounded_tbox.xmin(), Some(3.14));
     /// ```
     fn round(&self, max_decimals: i32) -> TBox {
-        let result = unsafe { meos_sys::tbox_round(self.inner(), max_decimals) };
+        let result = unsafe { meos_call!(meos_sys::tbox_round(self.inner(), max_decimals)) };
         TBox::from_inner(result)
     }
 
@@ -383,7 +383,7 @@ impl MeosBox for TBox {
     /// assert_eq!(distance, 4.0);
     /// ```
     fn nearest_approach_distance(&self, other: &TBox) -> f64 {
-        unsafe { meos_sys::nad_tboxfloat_tboxfloat(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::nad_tboxfloat_tboxfloat(self.inner(), other.inner())) }
     }
 
     /// Shifts and scales the T (time) dimension of the `TBox`.
@@ -431,16 +431,16 @@ impl MeosBox for TBox {
 
         let modified = unsafe {
             match (delta, width) {
-                (Some(_), None) => meos_sys::tbox_shift_time(self.inner(), d),
-                (None, Some(_)) => meos_sys::tbox_scale_time(self.inner(), w),
-                _ => meos_sys::tbox_shift_scale_time(self.inner(), d, w),
+                (Some(_), None) => meos_call!(meos_sys::tbox_shift_time(self.inner(), d)),
+                (None, Some(_)) => meos_call!(meos_sys::tbox_scale_time(self.inner(), w)),
+                _ => meos_call!(meos_sys::tbox_shift_scale_time(self.inner(), d, w)),
             }
         };
         TBox::from_inner(modified)
     }
 
     fn union(&self, other: &Self, strict: bool) -> Option<Self> {
-        let result = unsafe { meos_sys::union_tbox_tbox(self.inner(), other.inner(), strict) };
+        let result = unsafe { meos_call!(meos_sys::union_tbox_tbox(self.inner(), other.inner(), strict)) };
         if result.is_null() {
             None
         } else {
@@ -449,7 +449,7 @@ impl MeosBox for TBox {
     }
 
     fn intersection(&self, other: &Self) -> Option<Self> {
-        let result = unsafe { meos_sys::intersection_tbox_tbox(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::intersection_tbox_tbox(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -490,7 +490,7 @@ impl TBox {
     /// assert_eq!(tbox.xmin().unwrap(), 42.0);
     /// ```
     pub fn from_int(value: i32) -> Self {
-        unsafe { Self::from_inner(meos_sys::int_to_tbox(value)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::int_to_tbox(value))) }
     }
 
     /// Creates a new `TBox` instance from an float value.
@@ -512,7 +512,7 @@ impl TBox {
     /// assert_eq!(tbox.xmin().unwrap(), 42.0);
     /// ```
     pub fn from_float(value: f64) -> Self {
-        unsafe { Self::from_inner(meos_sys::float_to_tbox(value)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::float_to_tbox(value))) }
     }
 
     /// Creates a new `TBox` instance from an float value.
@@ -539,7 +539,7 @@ impl TBox {
     /// assert_eq!(tbox.xmax().unwrap(), 50.0);
     /// ```
     pub fn from_numeric_span(value: &impl NumberSpan) -> Self {
-        unsafe { Self::from_inner(meos_sys::span_to_tbox(value.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::span_to_tbox(value.inner()))) }
     }
 
     // pub fn from_tnumber(temporal: TNumber) -> Self {
@@ -567,7 +567,7 @@ impl TBox {
     /// assert_eq!(intspan, (5..6).into());
     /// ```
     pub fn intspan(&self) -> IntSpan {
-        unsafe { IntSpan::from_inner(meos_sys::tbox_to_intspan(self.inner())) }
+        unsafe { IntSpan::from_inner(meos_call!(meos_sys::tbox_to_intspan(self.inner()))) }
     }
 
     /// Converts the `TBox` into an `FloatSpan` representing the float span.
@@ -588,7 +588,7 @@ impl TBox {
     /// assert_eq!(floatspan, (5.0..=5.0).into());
     /// ```
     pub fn floatspan(&self) -> FloatSpan {
-        unsafe { FloatSpan::from_inner(meos_sys::tbox_to_floatspan(self.inner())) }
+        unsafe { FloatSpan::from_inner(meos_call!(meos_sys::tbox_to_floatspan(self.inner()))) }
     }
 
     // ------------------------- Accessors -------------------------------------
@@ -610,7 +610,7 @@ impl TBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::tbox_xmin_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_xmin_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -636,7 +636,7 @@ impl TBox {
         unsafe {
             let mut is_inclusive = false;
             let ptr: *mut bool = ptr::addr_of_mut!(is_inclusive);
-            if meos_sys::tbox_xmax_inc(self.inner(), ptr) {
+            if meos_call!(meos_sys::tbox_xmax_inc(self.inner(), ptr)) {
                 Some(is_inclusive)
             } else {
                 None
@@ -665,7 +665,7 @@ impl TBox {
     /// assert_eq!(expanded_tbox.xmax(), Some(5.0));
     /// ```
     pub fn expand_value(&self, value: f64) -> TBox {
-        unsafe { Self::from_inner(meos_sys::tfloatbox_expand(self.inner(), value)) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::tfloatbox_expand(self.inner(), value))) }
     }
 
     /// Shifts and scales the X dimension of the `TBox`.
@@ -694,7 +694,7 @@ impl TBox {
         let d = delta.unwrap_or_default();
         let w = width.unwrap_or_default();
         let modified = unsafe {
-            meos_sys::tfloatbox_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some())
+            meos_call!(meos_sys::tfloatbox_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some()))
         };
         TBox::from_inner(modified)
     }
@@ -704,7 +704,7 @@ impl Collection for TBox {
     impl_collection!(tbox, TFloat);
 
     fn contains(&self, content: &Self::Type) -> bool {
-        unsafe { meos_sys::contains_tbox_tnumber(self.inner(), content.inner()) }
+        unsafe { meos_call!(meos_sys::contains_tbox_tnumber(self.inner(), content.inner())) }
     }
 }
 
@@ -729,7 +729,7 @@ impl cmp::PartialEq for TBox {
     /// assert_eq!(span1, span2);
     /// ```
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::tbox_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::tbox_eq(self.inner(), other.inner())) }
     }
 }
 
@@ -737,7 +737,7 @@ impl cmp::Eq for TBox {}
 
 impl Debug for TBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::tbox_out(self.inner(), 3) };
+        let out_str = unsafe { meos_call!(meos_sys::tbox_out(self.inner(), 3)) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);
@@ -748,7 +748,7 @@ impl Debug for TBox {
 
 impl Clone for TBox {
     fn clone(&self) -> Self {
-        unsafe { Self::from_inner(meos_sys::tbox_copy(self.inner())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::tbox_copy(self.inner()))) }
     }
 }
 
@@ -784,7 +784,7 @@ impl std::str::FromStr for TBox {
     /// ```
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::tbox_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::tbox_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }

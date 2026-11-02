@@ -31,7 +31,7 @@ impl Collection for DateSpan {
     impl_collection!(span, NaiveDate);
 
     fn contains(&self, content: &NaiveDate) -> bool {
-        unsafe { meos_sys::contains_span_date(self.inner(), content.num_days_from_ce()) }
+        unsafe { meos_call!(meos_sys::contains_span_date(self.inner(), content.num_days_from_ce())) }
     }
 }
 
@@ -74,7 +74,7 @@ impl Span for DateSpan {
     /// assert_eq!(lower, from_ymd_opt(2023, 1, 1));
     /// ```
     fn lower(&self) -> Self::Type {
-        let num_of_days = unsafe { meos_sys::datespan_lower(self.inner()) };
+        let num_of_days = unsafe { meos_call!(meos_sys::datespan_lower(self.inner())) };
         NaiveDate::from_num_days_from_ce_opt(num_of_days)
             .expect("Wrong date returned from meos")
             .checked_add_days(DAYS_UNTIL_2000)
@@ -101,7 +101,7 @@ impl Span for DateSpan {
     /// assert_eq!(upper, from_ymd_opt(2023, 1, 15));
     /// ```
     fn upper(&self) -> Self::Type {
-        let num_of_days = unsafe { meos_sys::datespan_upper(self.inner()) };
+        let num_of_days = unsafe { meos_call!(meos_sys::datespan_upper(self.inner())) };
         NaiveDate::from_num_days_from_ce_opt(num_of_days)
             .expect("Wrong date returned from meos")
             .checked_add_days(DAYS_UNTIL_2000)
@@ -201,13 +201,13 @@ impl Span for DateSpan {
             .try_into()
             .expect("Number too big");
         let modified = unsafe {
-            meos_sys::datespan_shift_scale(
+            meos_call!(meos_sys::datespan_shift_scale(
                 self._inner.as_ptr(),
                 d,
                 w,
                 delta.is_some(),
                 width.is_some(),
-            )
+            ))
         };
         DateSpan::from_inner(modified)
     }
@@ -236,13 +236,13 @@ impl Span for DateSpan {
     fn distance_to_value(&self, other: &Self::Type) -> TimeDelta {
         unsafe {
             TimeDelta::days(
-                meos_sys::distance_span_date(
+                meos_call!(meos_sys::distance_span_date(
                     self.inner(),
                     other
                         .checked_sub_days(DAYS_UNTIL_2000)
                         .unwrap()
                         .num_days_from_ce(),
-                )
+                ))
                 .into(),
             )
         }
@@ -272,7 +272,7 @@ impl Span for DateSpan {
     fn distance_to_span(&self, other: &Self) -> TimeDelta {
         unsafe {
             TimeDelta::days(
-                meos_sys::distance_datespan_datespan(self.inner(), other.inner()).into(),
+                meos_call!(meos_sys::distance_datespan_datespan(self.inner(), other.inner())).into(),
             )
         }
     }
@@ -280,19 +280,19 @@ impl Span for DateSpan {
 
 impl DateSpan {
     pub fn duration(&self) -> TimeDelta {
-        from_interval(unsafe { meos_sys::datespan_duration(self._inner.as_ptr()).read() })
+        from_interval(unsafe { meos_call!(meos_sys::datespan_duration(self._inner.as_ptr())).read() })
     }
 }
 
 impl Clone for DateSpan {
     fn clone(&self) -> Self {
-        unsafe { Self::from_inner(meos_sys::span_copy(self._inner.as_ptr())) }
+        unsafe { Self::from_inner(meos_call!(meos_sys::span_copy(self._inner.as_ptr()))) }
     }
 }
 
 impl Hash for DateSpan {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash = unsafe { meos_sys::span_hash(self._inner.as_ptr()) };
+        let hash = unsafe { meos_call!(meos_sys::span_hash(self._inner.as_ptr())) };
         state.write_u32(hash);
 
         let _ = state.finish();
@@ -328,7 +328,7 @@ impl std::str::FromStr for DateSpan {
     /// ```
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::datespan_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::datespan_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -358,7 +358,7 @@ impl cmp::PartialEq for DateSpan {
     /// assert_eq!(span1, span2);
     /// ```
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::span_eq(self._inner.as_ptr(), other._inner.as_ptr()) }
+        unsafe { meos_call!(meos_sys::span_eq(self._inner.as_ptr(), other._inner.as_ptr())) }
     }
 }
 
@@ -367,7 +367,7 @@ impl cmp::Eq for DateSpan {}
 impl From<Range<NaiveDate>> for DateSpan {
     fn from(Range { start, end }: Range<NaiveDate>) -> Self {
         let inner = unsafe {
-            meos_sys::datespan_make(
+            meos_call!(meos_sys::datespan_make(
                 start
                     .checked_sub_days(DAYS_UNTIL_2000)
                     .unwrap()
@@ -377,7 +377,7 @@ impl From<Range<NaiveDate>> for DateSpan {
                     .num_days_from_ce(),
                 true,
                 false,
-            )
+            ))
         };
         Self::from_inner(inner)
     }
@@ -386,7 +386,7 @@ impl From<Range<NaiveDate>> for DateSpan {
 impl From<RangeInclusive<NaiveDate>> for DateSpan {
     fn from(range: RangeInclusive<NaiveDate>) -> Self {
         let inner = unsafe {
-            meos_sys::datespan_make(
+            meos_call!(meos_sys::datespan_make(
                 range
                     .start()
                     .checked_sub_days(DAYS_UNTIL_2000)
@@ -399,7 +399,7 @@ impl From<RangeInclusive<NaiveDate>> for DateSpan {
                     .num_days_from_ce(),
                 true,
                 true,
-            )
+            ))
         };
         Self::from_inner(inner)
     }
@@ -407,7 +407,7 @@ impl From<RangeInclusive<NaiveDate>> for DateSpan {
 
 impl Debug for DateSpan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::datespan_out(self._inner.as_ptr()) };
+        let out_str = unsafe { meos_call!(meos_sys::datespan_out(self._inner.as_ptr())) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);
@@ -447,7 +447,7 @@ impl BitAnd for DateSpan {
     fn bitand(self, other: Self) -> Self::Output {
         // Replace with actual function call or logic
         let result = unsafe {
-            meos_sys::intersection_span_span(self._inner.as_ptr(), other._inner.as_ptr())
+            meos_call!(meos_sys::intersection_span_span(self._inner.as_ptr(), other._inner.as_ptr()))
         };
         if result.is_null() {
             None
@@ -459,7 +459,7 @@ impl BitAnd for DateSpan {
 
 impl PartialOrd for DateSpan {
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        let cmp = unsafe { meos_sys::span_cmp(self._inner.as_ptr(), other._inner.as_ptr()) };
+        let cmp = unsafe { meos_call!(meos_sys::span_cmp(self._inner.as_ptr(), other._inner.as_ptr())) };
         match cmp {
             -1 => Some(cmp::Ordering::Less),
             0 => Some(cmp::Ordering::Equal),

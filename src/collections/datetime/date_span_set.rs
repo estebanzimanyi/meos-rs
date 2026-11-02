@@ -31,7 +31,7 @@ impl Drop for DateSpanSet {
 impl Collection for DateSpanSet {
     impl_collection!(spanset, NaiveDate);
     fn contains(&self, content: &NaiveDate) -> bool {
-        unsafe { meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce()) }
+        unsafe { meos_call!(meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce())) }
     }
 }
 
@@ -142,7 +142,7 @@ impl SpanSet for DateSpanSet {
             .try_into()
             .expect("Number too big");
         let modified = unsafe {
-            meos_sys::datespanset_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some())
+            meos_call!(meos_sys::datespanset_shift_scale(self.inner(), d, w, delta.is_some(), width.is_some()))
         };
         DateSpanSet::from_inner(modified)
     }
@@ -171,13 +171,13 @@ impl SpanSet for DateSpanSet {
     fn distance_to_value(&self, other: &Self::Type) -> TimeDelta {
         unsafe {
             TimeDelta::days(
-                meos_sys::distance_spanset_date(
+                meos_call!(meos_sys::distance_spanset_date(
                     self.inner(),
                     other
                         .checked_sub_days(DAYS_UNTIL_2000)
                         .unwrap()
                         .num_days_from_ce(),
-                )
+                ))
                 .into(),
             )
         }
@@ -207,7 +207,7 @@ impl SpanSet for DateSpanSet {
     fn distance_to_span_set(&self, other: &Self) -> TimeDelta {
         unsafe {
             TimeDelta::days(
-                meos_sys::distance_datespanset_datespanset(self.inner(), other.inner()).into(),
+                meos_call!(meos_sys::distance_datespanset_datespanset(self.inner(), other.inner())).into(),
             )
         }
     }
@@ -238,7 +238,7 @@ impl SpanSet for DateSpanSet {
     fn distance_to_span(&self, span: &Self::SpanType) -> TimeDelta {
         unsafe {
             TimeDelta::days(
-                meos_sys::distance_datespanset_datespan(self.inner(), span.inner()).into(),
+                meos_call!(meos_sys::distance_datespanset_datespan(self.inner(), span.inner())).into(),
             )
         }
     }
@@ -247,7 +247,7 @@ impl SpanSet for DateSpanSet {
 impl DateSpanSet {
     pub fn duration(&self, ignore_gaps: bool) -> TimeDelta {
         from_interval(unsafe {
-            meos_sys::datespanset_duration(self._inner.as_ptr(), ignore_gaps).read()
+            meos_call!(meos_sys::datespanset_duration(self._inner.as_ptr(), ignore_gaps)).read()
         })
     }
 }
@@ -262,7 +262,7 @@ impl_iterator!(DateSpanSet);
 
 impl Hash for DateSpanSet {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let hash = unsafe { meos_sys::spanset_hash(self.inner()) };
+        let hash = unsafe { meos_call!(meos_sys::spanset_hash(self.inner())) };
         state.write_u32(hash);
 
         let _ = state.finish();
@@ -273,7 +273,7 @@ impl std::str::FromStr for DateSpanSet {
     type Err = ParseError;
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         CString::new(string).map_err(|_| ParseError).map(|string| {
-            let inner = unsafe { meos_sys::datespanset_in(string.as_ptr()) };
+            let inner = unsafe { meos_call!(meos_sys::datespanset_in(string.as_ptr())) };
             Self::from_inner(inner)
         })
     }
@@ -281,13 +281,13 @@ impl std::str::FromStr for DateSpanSet {
 
 impl std::cmp::PartialEq for DateSpanSet {
     fn eq(&self, other: &Self) -> bool {
-        unsafe { meos_sys::spanset_eq(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::spanset_eq(self.inner(), other.inner())) }
     }
 }
 
 impl Debug for DateSpanSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_sys::datespanset_out(self.inner()) };
+        let out_str = unsafe { meos_call!(meos_sys::datespanset_out(self.inner())) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
         let result = f.write_str(str);

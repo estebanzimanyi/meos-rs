@@ -21,7 +21,7 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
     /// ## Returns
     /// * A new `Span` instance.
     fn from_wkb(wkb: &[u8]) -> Self {
-        let span = unsafe { meos_sys::spanset_from_wkb(wkb.as_ptr(), wkb.len()) };
+        let span = unsafe { meos_call!(meos_sys::spanset_from_wkb(wkb.as_ptr(), wkb.len())) };
         Self::from_inner(span)
     }
 
@@ -34,12 +34,12 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
     /// * A new `Span` instance.
     fn from_hexwkb(hexwkb: &[u8]) -> Self {
         let c_string = CString::new(hexwkb).expect("Cannot create CString");
-        let span = unsafe { meos_sys::spanset_from_hexwkb(c_string.as_ptr()) };
+        let span = unsafe { meos_call!(meos_sys::spanset_from_hexwkb(c_string.as_ptr())) };
         Self::from_inner(span)
     }
 
     fn copy(&self) -> Self {
-        let inner = unsafe { meos_sys::spanset_copy(self.inner()) };
+        let inner = unsafe { meos_call!(meos_sys::spanset_copy(self.inner())) };
         Self::from_inner(inner)
     }
 
@@ -49,7 +49,7 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
         unsafe {
             let mut size = 0;
             let wkb =
-                meos_sys::spanset_as_wkb(self.inner(), variant.into(), ptr::addr_of_mut!(size));
+                meos_call!(meos_sys::spanset_as_wkb(self.inner(), variant.into(), ptr::addr_of_mut!(size)));
             std::slice::from_raw_parts(wkb, size)
         }
     }
@@ -58,33 +58,33 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
         unsafe {
             let mut size = 0;
             let wkb =
-                meos_sys::spanset_as_hexwkb(self.inner(), variant.into(), ptr::addr_of_mut!(size));
+                meos_call!(meos_sys::spanset_as_hexwkb(self.inner(), variant.into(), ptr::addr_of_mut!(size)));
             CStr::from_ptr(wkb).to_bytes()
         }
     }
 
     fn num_spans(&self) -> i32 {
-        unsafe { meos_sys::spanset_num_spans(self.inner()) }
+        unsafe { meos_call!(meos_sys::spanset_num_spans(self.inner())) }
     }
 
     fn start_span(&self) -> Self::SpanType {
-        let span = unsafe { meos_sys::spanset_start_span(self.inner()) };
+        let span = unsafe { meos_call!(meos_sys::spanset_start_span(self.inner())) };
         Span::from_inner(span)
     }
 
     fn end_span(&self) -> Self::SpanType {
-        let span = unsafe { meos_sys::spanset_end_span(self.inner()) };
+        let span = unsafe { meos_call!(meos_sys::spanset_end_span(self.inner())) };
         Span::from_inner(span)
     }
 
     fn span_n(&self, n: i32) -> Self::SpanType {
-        let span = unsafe { meos_sys::spanset_span_n(self.inner(), n) };
+        let span = unsafe { meos_call!(meos_sys::spanset_span_n(self.inner(), n)) };
         Span::from_inner(span)
     }
 
     fn spans(&self) -> Vec<Self::SpanType> {
         let mut count = 0;
-        let spans = unsafe { meos_sys::spanset_spanarr(self.inner(), &raw mut count) };
+        let spans = unsafe { meos_call!(meos_sys::spanset_spanarr(self.inner(), &raw mut count)) };
         let size = count as usize;
         unsafe {
             std::slice::from_raw_parts(spans, size)
@@ -107,7 +107,7 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
         -> Self;
 
     fn intersection(&self, other: &Self) -> Option<Self> {
-        let result = unsafe { meos_sys::intersection_spanset_spanset(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::intersection_spanset_spanset(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -116,7 +116,7 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
     }
 
     fn union(&self, other: &Self) -> Option<Self> {
-        let result = unsafe { meos_sys::union_spanset_spanset(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::union_spanset_spanset(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -125,7 +125,7 @@ pub trait SpanSet: Collection + FromIterator<Self::SpanType> {
     }
 
     fn hash(&self) -> u32 {
-        unsafe { meos_sys::spanset_hash(self.inner()) }
+        unsafe { meos_call!(meos_sys::spanset_hash(self.inner())) }
     }
 
     fn distance_to_value(&self, value: &Self::Type) -> Self::SubsetType;

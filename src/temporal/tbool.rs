@@ -35,7 +35,7 @@ macro_rules! impl_debug {
     ($type:ty) => {
         impl Debug for $type {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let out_str = unsafe { meos_sys::tbool_out(self.inner()) };
+                let out_str = unsafe { meos_call!(meos_sys::tbool_out(self.inner())) };
                 let c_str = unsafe { CStr::from_ptr(out_str) };
                 let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
                 let result = f.write_str(str);
@@ -53,7 +53,7 @@ macro_rules! impl_tbool_traits {
                 impl_collection!(tnumber, bool);
 
                 fn contains(&self, content: &Self::Type) -> bool {
-                    let result = unsafe { meos_sys::ever_eq_tbool_bool(self.inner(), *content) };
+                    let result = unsafe { meos_call!(meos_sys::ever_eq_tbool_bool(self.inner(), *content)) };
                     result == 1
                 }
             }
@@ -86,18 +86,18 @@ macro_rules! impl_tbool_traits {
                 fn values(&self) -> Vec<Self::Type> {
                     let mut count = 0;
                     unsafe {
-                        let values = meos_sys::tbool_values(self.inner(), ptr::addr_of_mut!(count));
+                        let values = meos_call!(meos_sys::tbool_values(self.inner(), ptr::addr_of_mut!(count)));
 
                         std::slice::from_raw_parts(values, count as usize).to_vec()
                     }
                 }
 
                 fn start_value(&self) -> Self::Type {
-                    unsafe { meos_sys::tbool_start_value(self.inner()) }
+                    unsafe { meos_call!(meos_sys::tbool_start_value(self.inner())) }
                 }
 
                 fn end_value(&self) -> Self::Type {
-                    unsafe { meos_sys::tbool_end_value(self.inner()) }
+                    unsafe { meos_call!(meos_sys::tbool_end_value(self.inner())) }
                 }
 
                 fn value_at_timestamp<Tz: TimeZone>(
@@ -106,12 +106,12 @@ macro_rules! impl_tbool_traits {
                 ) -> Option<Self::Type> {
                     let mut result = false;
                     unsafe {
-                        let success = meos_sys::tbool_value_at_timestamptz(
+                        let success = meos_call!(meos_sys::tbool_value_at_timestamptz(
                             self.inner(),
                             to_meos_timestamp(&timestamp),
                             true,
                             ptr::addr_of_mut!(result),
-                        );
+                        ));
                         if success {
                             Some(result)
                         } else {
@@ -121,7 +121,7 @@ macro_rules! impl_tbool_traits {
                 }
 
                 fn at_value(&self, value: &Self::Type) -> Option<Self::Enum> {
-                    let result = unsafe { meos_sys::tbool_at_value(self.inner(), *value) };
+                    let result = unsafe { meos_call!(meos_sys::tbool_at_value(self.inner(), *value)) };
                     if !result.is_null() {
                         Some(factory::<Self::Enum>(result))
                     } else {
@@ -133,7 +133,7 @@ macro_rules! impl_tbool_traits {
 
                 fn minus_value(&self, value: Self::Type) -> Self::Enum {
                     factory::<Self::Enum>(unsafe {
-                        meos_sys::tbool_minus_value(self.inner(), value)
+                        meos_call!(meos_sys::tbool_minus_value(self.inner(), value))
                     })
                 }
                 /// Not implemented for `tbool` types
@@ -141,13 +141,13 @@ macro_rules! impl_tbool_traits {
 
                 fn temporal_equal_value(&self, value: &Self::Type) -> Self {
                     Self::from_inner_as_temporal(unsafe {
-                        meos_sys::teq_tbool_bool(self.inner(), *value)
+                        meos_call!(meos_sys::teq_tbool_bool(self.inner(), *value))
                     })
                 }
 
                 fn temporal_not_equal_value(&self, value: &Self::Type) -> Self {
                     Self::from_inner_as_temporal(unsafe {
-                        meos_sys::tne_tbool_bool(self.inner(), *value)
+                        meos_call!(meos_sys::tne_tbool_bool(self.inner(), *value))
                     })
                 }
             }
@@ -163,7 +163,7 @@ macro_rules! impl_tbool_traits {
                 type Output = Self;
 
                 fn bitand(self, rhs: bool) -> Self::Output {
-                    Self::from_inner_as_temporal(unsafe { meos_sys::tand_tbool_bool(self.inner(), rhs) })
+                    Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tand_tbool_bool(self.inner(), rhs)) })
                 }
             }
 
@@ -179,7 +179,7 @@ macro_rules! impl_tbool_traits {
                 type Output = Self;
 
                 fn bitor(self, rhs: bool) -> Self::Output {
-                    Self::from_inner_as_temporal(unsafe { meos_sys::tor_tbool_bool(self.inner(), rhs) })
+                    Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tor_tbool_bool(self.inner(), rhs)) })
                 }
             }
 
@@ -211,7 +211,7 @@ impl MeosEnum for TBool {
 
     fn from_mfjson(mfjson: &str) -> Self {
         let cstr = CString::new(mfjson).unwrap();
-        factory::<Self>(unsafe { meos_sys::tbool_from_mfjson(cstr.as_ptr()) })
+        factory::<Self>(unsafe { meos_call!(meos_sys::tbool_from_mfjson(cstr.as_ptr())) })
     }
 }
 
@@ -229,16 +229,16 @@ pub trait TBoolTrait:
 {
     fn temporal_or(&self, other: &Self) -> Self {
         Self::from_inner_as_temporal(unsafe {
-            meos_sys::tor_tbool_tbool(self.inner(), other.inner())
+            meos_call!(meos_sys::tor_tbool_tbool(self.inner(), other.inner()))
         })
     }
     fn temporal_and(&self, other: &Self) -> Self {
         Self::from_inner_as_temporal(unsafe {
-            meos_sys::tand_tbool_tbool(self.inner(), other.inner())
+            meos_call!(meos_sys::tand_tbool_tbool(self.inner(), other.inner()))
         })
     }
     fn temporal_not(&self) -> Self {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tnot_tbool(self.inner()) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tnot_tbool(self.inner())) })
     }
 
     fn at_true(&self) -> Option<Self::Enum> {
@@ -266,7 +266,7 @@ impl TInstant for TBoolInstant {
     }
 
     fn from_value_and_timestamp<Tz: TimeZone>(value: Self::Type, timestamp: DateTime<Tz>) -> Self {
-        Self::from_inner(unsafe { meos_sys::tboolinst_make(value, to_meos_timestamp(&timestamp)) })
+        Self::from_inner(unsafe { meos_call!(meos_sys::tboolinst_make(value, to_meos_timestamp(&timestamp))) })
     }
 }
 
@@ -287,7 +287,7 @@ impl TBoolSequence {
     /// ## Returns
     /// A new temporal object.
     pub fn from_value_and_tstz_span<Tz: TimeZone>(value: bool, time_span: &TsTzSpan) -> Self {
-        Self::from_inner(unsafe { meos_sys::tboolseq_from_base_tstzspan(value, time_span.inner()) })
+        Self::from_inner(unsafe { meos_call!(meos_sys::tboolseq_from_base_tstzspan(value, time_span.inner())) })
     }
 }
 
@@ -339,7 +339,7 @@ impl TBoolSequenceSet {
         time_span_set: &TsTzSpanSet,
     ) -> Self {
         Self::from_inner(unsafe {
-            meos_sys::tboolseqset_from_base_tstzspanset(value, time_span_set.inner())
+            meos_call!(meos_sys::tboolseqset_from_base_tstzspanset(value, time_span_set.inner()))
         })
     }
 }
@@ -410,7 +410,7 @@ impl Collection for TBool {
     impl_collection!(tnumber, bool);
 
     fn contains(&self, content: &Self::Type) -> bool {
-        let result = unsafe { meos_sys::ever_eq_tbool_bool(self.inner(), *content) };
+        let result = unsafe { meos_call!(meos_sys::ever_eq_tbool_bool(self.inner(), *content)) };
         result == 1
     }
 }
@@ -444,29 +444,29 @@ impl Temporal for TBool {
     fn values(&self) -> Vec<Self::Type> {
         let mut count = 0;
         unsafe {
-            let values = meos_sys::tbool_values(self.inner(), ptr::addr_of_mut!(count));
+            let values = meos_call!(meos_sys::tbool_values(self.inner(), ptr::addr_of_mut!(count)));
 
             std::slice::from_raw_parts(values, count as usize).to_vec()
         }
     }
 
     fn start_value(&self) -> Self::Type {
-        unsafe { meos_sys::tbool_start_value(self.inner()) }
+        unsafe { meos_call!(meos_sys::tbool_start_value(self.inner())) }
     }
 
     fn end_value(&self) -> Self::Type {
-        unsafe { meos_sys::tbool_end_value(self.inner()) }
+        unsafe { meos_call!(meos_sys::tbool_end_value(self.inner())) }
     }
 
     fn value_at_timestamp<Tz: TimeZone>(&self, timestamp: DateTime<Tz>) -> Option<Self::Type> {
         let mut result = false;
         unsafe {
-            let success = meos_sys::tbool_value_at_timestamptz(
+            let success = meos_call!(meos_sys::tbool_value_at_timestamptz(
                 self.inner(),
                 to_meos_timestamp(&timestamp),
                 true,
                 ptr::addr_of_mut!(result),
-            );
+            ));
             if success {
                 Some(result)
             } else {
@@ -476,7 +476,7 @@ impl Temporal for TBool {
     }
 
     fn at_value(&self, value: &Self::Type) -> Option<Self::Enum> {
-        let result = unsafe { meos_sys::tbool_at_value(self.inner(), *value) };
+        let result = unsafe { meos_call!(meos_sys::tbool_at_value(self.inner(), *value)) };
         if result.is_null() {
             None
         } else {
@@ -489,7 +489,7 @@ impl Temporal for TBool {
     }
 
     fn minus_value(&self, value: Self::Type) -> Self::Enum {
-        factory::<Self::Enum>(unsafe { meos_sys::tbool_minus_value(self.inner(), value) })
+        factory::<Self::Enum>(unsafe { meos_call!(meos_sys::tbool_minus_value(self.inner(), value)) })
     }
     /// Not implemented for `tbool` types
     fn minus_values(&self, _: &[Self::Type]) -> Self::Enum {
@@ -497,11 +497,11 @@ impl Temporal for TBool {
     }
 
     fn temporal_equal_value(&self, value: &Self::Type) -> Self {
-        Self::from_inner_as_temporal(unsafe { meos_sys::teq_tbool_bool(self.inner(), *value) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::teq_tbool_bool(self.inner(), *value)) })
     }
 
     fn temporal_not_equal_value(&self, value: &Self::Type) -> Self {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tne_tbool_bool(self.inner(), *value) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tne_tbool_bool(self.inner(), *value)) })
     }
 }
 impl BitAnd for TBool {
@@ -516,7 +516,7 @@ impl BitAnd<bool> for TBool {
     type Output = Self;
 
     fn bitand(self, rhs: bool) -> Self::Output {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tand_tbool_bool(self.inner(), rhs) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tand_tbool_bool(self.inner(), rhs)) })
     }
 }
 
@@ -532,7 +532,7 @@ impl BitOr<bool> for TBool {
     type Output = Self;
 
     fn bitor(self, rhs: bool) -> Self::Output {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tor_tbool_bool(self.inner(), rhs) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tor_tbool_bool(self.inner(), rhs)) })
     }
 }
 

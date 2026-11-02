@@ -17,12 +17,12 @@ pub struct Point(f64, f64, Option<f64>);
 
 pub(super) fn geo_to_gserialized_geom(point: Point) -> *mut meos_sys::GSERIALIZED {
     let cstring = CString::new(point.to_string()).unwrap();
-    unsafe { meos_sys::geom_in(cstring.as_ptr().cast_mut(), -1) }
+    unsafe { meos_call!(meos_sys::geom_in(cstring.as_ptr().cast_mut(), -1)) }
 }
 
 pub(super) fn geo_to_gserialized_geog(point: Point) -> *mut meos_sys::GSERIALIZED {
     let cstring = CString::new(point.to_string()).unwrap();
-    unsafe { meos_sys::geog_in(cstring.as_ptr().cast_mut(), -1) }
+    unsafe { meos_call!(meos_sys::geog_in(cstring.as_ptr().cast_mut(), -1)) }
 }
 pub(super) fn geometry_to_gserialized(geometry: &Geometry) -> *mut GSERIALIZED {
     let mut writer = WKBWriter::new().expect("Failed to create WKBWriter");
@@ -30,11 +30,11 @@ pub(super) fn geometry_to_gserialized(geometry: &Geometry) -> *mut GSERIALIZED {
     let wkb: Vec<u8> = writer.write_wkb(geometry).unwrap();
     let wkb_len = wkb.len();
     unsafe {
-        meos_sys::geo_from_ewkb(
+        meos_call!(meos_sys::geo_from_ewkb(
             wkb.as_ptr(),
             wkb_len,
             geometry.get_srid().unwrap_or_default(),
-        )
+        ))
     }
 }
 
@@ -44,13 +44,13 @@ pub(super) fn geometry_to_gserialized_geog(geometry: &Geometry) -> *mut GSERIALI
     let wkb: Vec<u8> = writer.write_wkb(geometry).unwrap();
     let wkb_len = wkb.len();
     let geom = unsafe {
-        meos_sys::geo_from_ewkb(
+        meos_call!(meos_sys::geo_from_ewkb(
             wkb.as_ptr(),
             wkb_len,
             geometry.get_srid().unwrap_or_default(),
-        )
+        ))
     };
-    unsafe { meos_sys::geom_to_geog(geom) }
+    unsafe { meos_call!(meos_sys::geom_to_geog(geom)) }
 }
 
 pub(super) fn gserialized_to_geometry(
@@ -58,7 +58,7 @@ pub(super) fn gserialized_to_geometry(
 ) -> Result<Geometry, geos::Error> {
     let mut size = 0;
     let endian = CString::new("xdr").unwrap();
-    let bytes = unsafe { meos_sys::geo_as_ewkb(gs, endian.as_ptr(), ptr::addr_of_mut!(size)) };
+    let bytes = unsafe { meos_call!(meos_sys::geo_as_ewkb(gs, endian.as_ptr(), ptr::addr_of_mut!(size))) };
 
     Geometry::new_from_wkb(unsafe { slice::from_raw_parts(bytes, size) })
 }
@@ -66,13 +66,13 @@ pub(super) fn gserialized_to_geometry(
 /// Creates a geometry set (non-geodetic) from a slice of geometries.
 pub(super) fn create_geomset(values: &[Geometry]) -> *mut meos_sys::Set {
     let mut cgeos: Vec<_> = values.iter().map(geometry_to_gserialized).collect();
-    unsafe { meos_sys::geoset_make(cgeos.as_mut_ptr(), values.len() as i32) }
+    unsafe { meos_call!(meos_sys::geoset_make(cgeos.as_mut_ptr(), values.len() as i32)) }
 }
 
 /// Creates a geography set (geodetic) from a slice of geometries.
 pub(super) fn create_geogset(values: &[Geometry]) -> *mut meos_sys::Set {
     let mut cgeos: Vec<_> = values.iter().map(geometry_to_gserialized_geog).collect();
-    unsafe { meos_sys::geoset_make(cgeos.as_mut_ptr(), values.len() as i32) }
+    unsafe { meos_call!(meos_sys::geoset_make(cgeos.as_mut_ptr(), values.len() as i32)) }
 }
 
 impl fmt::Display for Point {
@@ -104,7 +104,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_out`
     fn as_wkt(&self, precision: i32) -> String {
-        let out_str = unsafe { meos_sys::tspatial_as_text(self.inner(), precision) };
+        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_text(self.inner(), precision)) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().unwrap().to_owned();
         unsafe { libc::free(out_str.cast::<c_void>()) };
@@ -125,7 +125,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_as_ewkt`
     fn as_ewkt(&self, precision: i32) -> String {
-        let out_str = unsafe { meos_sys::tspatial_as_ewkt(self.inner(), precision) };
+        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_ewkt(self.inner(), precision)) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().unwrap().to_owned();
         unsafe { libc::free(out_str.cast::<c_void>()) };
@@ -149,9 +149,9 @@ pub trait TGeoTrait: Temporal {
     /// `gserialized_as_geojson`
     fn as_geojson(&self, variant: JSONCVariant, srs: &str) -> Option<String> {
         let cstring = CString::new(srs).unwrap();
-        let trajectory = unsafe { meos_sys::tpoint_trajectory(self.inner(), false) };
+        let trajectory = unsafe { meos_call!(meos_sys::tpoint_trajectory(self.inner(), false)) };
         let out_str =
-            unsafe { meos_sys::geo_as_geojson(trajectory, variant as i32, 5, cstring.as_ptr()) };
+            unsafe { meos_call!(meos_sys::geo_as_geojson(trajectory, variant as i32, 5, cstring.as_ptr())) };
         let c_str = unsafe { CStr::from_ptr(out_str) };
         let str = c_str.to_str().map_err(|_| std::fmt::Error).ok()?;
         let result = str.to_owned();
@@ -169,7 +169,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_length`
     fn length(&self) -> f64 {
-        unsafe { meos_sys::tpoint_length(self.inner(), true) }
+        unsafe { meos_call!(meos_sys::tpoint_length(self.inner(), true)) }
     }
 
     /// Returns the cumulative length of the trajectory.
@@ -182,7 +182,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_cumulative_length`
     fn cumulative_length(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_cumulative_length(self.inner(), true) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::tpoint_cumulative_length(self.inner(), true)) })
     }
 
     /// Returns the speed of the temporal point.
@@ -195,7 +195,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_speed`
     fn speed(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_speed(self.inner(), true) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::tpoint_speed(self.inner(), true)) })
     }
 
     /// Returns the x coordinate of the temporal point.
@@ -208,7 +208,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_get_x`
     fn x(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_get_x(self.inner()) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::tpoint_get_x(self.inner())) })
     }
 
     /// Returns the y coordinate of the temporal point.
@@ -221,7 +221,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_get_y`
     fn y(&self) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::tpoint_get_y(self.inner()) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::tpoint_get_y(self.inner())) })
     }
 
     /// Returns the z coordinate of the temporal point.
@@ -236,7 +236,7 @@ pub trait TGeoTrait: Temporal {
     fn z(&self) -> Option<TFloat> {
         if self.has_z() {
             Some(factory::<TFloat>(unsafe {
-                meos_sys::tpoint_get_z(self.inner())
+                meos_call!(meos_sys::tpoint_get_z(self.inner()))
             }))
         } else {
             None
@@ -253,7 +253,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_start_value`
     fn has_z(&self) -> bool {
-        unsafe { meos_sys::stbox_hasz(meos_sys::tspatial_to_stbox(self.inner())) }
+        unsafe { meos_call!(meos_sys::stbox_hasz(meos_call!(meos_sys::tspatial_to_stbox(self.inner())))) }
     }
 
     /// Returns a `STBox` representing the bounding box of the temporal point.
@@ -266,7 +266,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tspatial_to_stbox`
     fn stbox(&self) -> STBox {
-        STBox::from_inner(unsafe { meos_sys::tspatial_to_stbox(self.inner()) })
+        STBox::from_inner(unsafe { meos_call!(meos_sys::tspatial_to_stbox(self.inner())) })
     }
 
     /// Returns a collection of bounding boxes representing the segments of the temporal point.
@@ -280,7 +280,7 @@ pub trait TGeoTrait: Temporal {
     /// `tpoint_stboxes`
     fn stboxes(&self) -> Vec<STBox> {
         let mut count = 0;
-        let result = unsafe { meos_sys::tgeo_stboxes(self.inner(), ptr::addr_of_mut!(count)) };
+        let result = unsafe { meos_call!(meos_sys::tgeo_stboxes(self.inner(), ptr::addr_of_mut!(count))) };
 
         unsafe {
             std::slice::from_raw_parts(result, count as usize)
@@ -304,7 +304,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_is_simple`
     fn is_simple(&self) -> bool {
-        unsafe { meos_sys::tpoint_is_simple(self.inner()) }
+        unsafe { meos_call!(meos_sys::tpoint_is_simple(self.inner())) }
     }
 
     /// Returns the temporal bearing between the temporal point and another point.
@@ -321,7 +321,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `bearing_tpoint_point`, `bearing_tpoint_tpoint`
     fn bearing(&self, other: &Self::Enum) -> TFloat {
-        factory::<TFloat>(unsafe { meos_sys::bearing_tpoint_tpoint(self.inner(), other.inner()) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::bearing_tpoint_tpoint(self.inner(), other.inner())) })
     }
 
     /// Returns the temporal bearing between the temporal point and another point.
@@ -339,7 +339,7 @@ pub trait TGeoTrait: Temporal {
     /// `bearing_tpoint_point`, `bearing_tpoint_tpoint`
     fn bearing_geometry(&self, geometry: &Geometry) -> TFloat {
         let geo = geometry_to_gserialized(geometry);
-        factory::<TFloat>(unsafe { meos_sys::bearing_tpoint_point(self.inner(), geo, false) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::bearing_tpoint_point(self.inner(), geo, false)) })
     }
 
     /// Returns the temporal azimuth of the temporal point.
@@ -352,7 +352,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_azimuth`
     fn azimuth(&self) -> Option<TFloat> {
-        let result = unsafe { meos_sys::tpoint_azimuth(self.inner()) };
+        let result = unsafe { meos_call!(meos_sys::tpoint_azimuth(self.inner())) };
         if result.is_null() {
             None
         } else {
@@ -370,7 +370,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_angular_difference`
     fn angular_difference(&self) -> Option<TFloat> {
-        let result = unsafe { meos_sys::tpoint_angular_difference(self.inner()) };
+        let result = unsafe { meos_call!(meos_sys::tpoint_angular_difference(self.inner())) };
         if result.is_null() {
             None
         } else {
@@ -392,7 +392,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_twcentroid`
     fn time_weighted_centroid(&self) -> Result<Geometry, geos::Error> {
-        let gs = unsafe { meos_sys::tpoint_twcentroid(self.inner()) };
+        let gs = unsafe { meos_call!(meos_sys::tpoint_twcentroid(self.inner())) };
         gserialized_to_geometry(gs)
     }
 
@@ -412,7 +412,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `gserialized_to_geos_geometry`
     fn trajectory(&self, unary_union: bool) -> Result<Geometry, geos::Error> {
-        let gs = unsafe { meos_sys::tpoint_trajectory(self.inner(), unary_union) };
+        let gs = unsafe { meos_call!(meos_sys::tpoint_trajectory(self.inner(), unary_union)) };
 
         gserialized_to_geometry(gs)
     }
@@ -424,7 +424,7 @@ pub trait TGeoTrait: Temporal {
     /// MEOS Functions:
     ///     `tpoint_srid`
     fn srid(&self) -> i32 {
-        unsafe { meos_sys::tspatial_srid(self.inner()) }
+        unsafe { meos_call!(meos_sys::tspatial_srid(self.inner())) }
     }
 
     /// Returns a new `TPoint` with the given SRID.
@@ -432,7 +432,7 @@ pub trait TGeoTrait: Temporal {
     /// MEOS Functions:
     ///     `tpoint_set_srid`
     fn with_srid(&self, srid: i32) -> Self {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tspatial_set_srid(self.inner(), srid) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tspatial_set_srid(self.inner(), srid)) })
     }
 
     // ------------------------- Transformations -------------------------------
@@ -445,7 +445,7 @@ pub trait TGeoTrait: Temporal {
     ///     `tpoint_round`
     fn round(&self, max_decimals: i32) -> Self {
         Self::from_inner_as_temporal(unsafe {
-            meos_sys::temporal_round(self.inner(), max_decimals)
+            meos_call!(meos_sys::temporal_round(self.inner(), max_decimals))
         })
     }
 
@@ -459,7 +459,7 @@ pub trait TGeoTrait: Temporal {
     fn make_simple(&self) -> Vec<Self::Enum> {
         let mut count = 0;
         let result =
-            unsafe { meos_sys::tpoint_make_simple(self.inner(), ptr::addr_of_mut!(count)) };
+            unsafe { meos_call!(meos_sys::tpoint_make_simple(self.inner(), ptr::addr_of_mut!(count))) };
         unsafe {
             std::slice::from_raw_parts(result, count as usize)
                 .iter()
@@ -481,7 +481,7 @@ pub trait TGeoTrait: Temporal {
     /// MEOS Functions:
     ///     `tpoint_expand_space`
     fn expand(&self, distance: f64) -> STBox {
-        STBox::from_inner(unsafe { meos_sys::stbox_expand_space(self.stbox().inner(), distance) })
+        STBox::from_inner(unsafe { meos_call!(meos_sys::stbox_expand_space(self.stbox().inner(), distance)) })
     }
 
     /// Returns a new `TPoint` of the same subclass of `self` transformed to another SRID.
@@ -495,7 +495,7 @@ pub trait TGeoTrait: Temporal {
     /// MEOS Functions:
     ///     `tpoint_transform`
     fn transform(&self, srid: i32) -> Self {
-        Self::from_inner_as_temporal(unsafe { meos_sys::tspatial_transform(self.inner(), srid) })
+        Self::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tspatial_transform(self.inner(), srid)) })
     }
 
     // ------------------------- Position Operations ---------------------------
@@ -511,7 +511,7 @@ pub trait TGeoTrait: Temporal {
     /// See Also:
     ///     `TsTzSpan::is_before`
     fn is_below(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::below_tspatial_tspatial(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::below_tspatial_tspatial(self.inner(), other.inner())) }
     }
 
     /// Returns whether the bounding box of `self` is over or below to the bounding box of `other`.
@@ -525,7 +525,7 @@ pub trait TGeoTrait: Temporal {
     /// See Also:
     ///     `TsTzSpan::is_over_or_before`
     fn is_over_or_below(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::overbelow_tspatial_tspatial(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::overbelow_tspatial_tspatial(self.inner(), other.inner())) }
     }
 
     /// Returns whether the bounding box of `self` is above to the bounding box of `other`.
@@ -539,7 +539,7 @@ pub trait TGeoTrait: Temporal {
     /// See Also:
     ///     `TsTzSpan::is_after`
     fn is_above(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::above_tspatial_tspatial(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::above_tspatial_tspatial(self.inner(), other.inner())) }
     }
 
     /// Returns whether the bounding box of `self` is over or above to the bounding box of `other`.
@@ -553,7 +553,7 @@ pub trait TGeoTrait: Temporal {
     /// See Also:
     ///     `TsTzSpan::is_over_or_before`
     fn is_over_or_above(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::overabove_tspatial_tspatial(self.inner(), other.inner()) }
+        unsafe { meos_call!(meos_sys::overabove_tspatial_tspatial(self.inner(), other.inner())) }
     }
 
     /// Returns whether the bounding box of `self` is front to the bounding box of `other`. Both must have 3rd dimension
@@ -565,7 +565,7 @@ pub trait TGeoTrait: Temporal {
     ///     True if front, False otherwise.
     fn is_front(&self, other: &Self::Enum) -> Option<bool> {
         if self.has_z() {
-            Some(unsafe { meos_sys::front_tspatial_tspatial(self.inner(), other.inner()) })
+            Some(unsafe { meos_call!(meos_sys::front_tspatial_tspatial(self.inner(), other.inner())) })
         } else {
             None
         }
@@ -583,7 +583,7 @@ pub trait TGeoTrait: Temporal {
     ///     `TsTzSpan::is_over_or_before`
     fn is_over_or_front(&self, other: &Self::Enum) -> Option<bool> {
         if self.has_z() {
-            Some(unsafe { meos_sys::overfront_tspatial_tspatial(self.inner(), other.inner()) })
+            Some(unsafe { meos_call!(meos_sys::overfront_tspatial_tspatial(self.inner(), other.inner())) })
         } else {
             None
         }
@@ -598,7 +598,7 @@ pub trait TGeoTrait: Temporal {
     ///     True if behind, False otherwise.
     fn is_behind(&self, other: &Self::Enum) -> Option<bool> {
         if self.has_z() {
-            Some(unsafe { meos_sys::back_tspatial_tspatial(self.inner(), other.inner()) })
+            Some(unsafe { meos_call!(meos_sys::back_tspatial_tspatial(self.inner(), other.inner())) })
         } else {
             None
         }
@@ -613,7 +613,7 @@ pub trait TGeoTrait: Temporal {
     ///     True if over or behind, False otherwise.
     fn is_over_or_behind(&self, other: &Self::Enum) -> Option<bool> {
         if self.has_z() {
-            Some(unsafe { meos_sys::overback_tspatial_tspatial(self.inner(), other.inner()) })
+            Some(unsafe { meos_call!(meos_sys::overback_tspatial_tspatial(self.inner(), other.inner())) })
         } else {
             None
         }
@@ -623,55 +623,55 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns true if `self` is spatially to the left of `stbox`. MEOS: `left_tspatial_stbox`
     fn is_left_of_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::left_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::left_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` does not extend to the right of `stbox`. MEOS: `overleft_tspatial_stbox`
     fn is_over_or_left_of_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::overleft_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::overleft_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` is spatially to the right of `stbox`. MEOS: `right_tspatial_stbox`
     fn is_right_of_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::right_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::right_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` does not extend to the left of `stbox`. MEOS: `overright_tspatial_stbox`
     fn is_over_or_right_of_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::overright_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::overright_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` is spatially below `stbox`. MEOS: `below_tspatial_stbox`
     fn is_below_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::below_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::below_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` does not extend above `stbox`. MEOS: `overbelow_tspatial_stbox`
     fn is_over_or_below_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::overbelow_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::overbelow_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` is spatially above `stbox`. MEOS: `above_tspatial_stbox`
     fn is_above_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::above_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::above_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if `self` does not extend below `stbox`. MEOS: `overabove_tspatial_stbox`
     fn is_over_or_above_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::overabove_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::overabove_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if the bounding boxes of `self` and `stbox` are adjacent. MEOS: `adjacent_tspatial_stbox`
     fn is_adjacent_to_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::adjacent_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::adjacent_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if the bounding boxes of `self` and `stbox` overlap. MEOS: `overlaps_tspatial_stbox`
     fn overlaps_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::overlaps_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::overlaps_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if the bounding boxes of `self` and `stbox` are the same. MEOS: `same_tspatial_stbox`
     fn is_same_as_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::same_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::same_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if the bounding box of `self` is contained in `stbox`. MEOS: `contained_tspatial_stbox`
     fn is_contained_in_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::contained_tspatial_stbox(self.inner(), stbox.inner()) }
+        unsafe { meos_call!(meos_sys::contained_tspatial_stbox(self.inner(), stbox.inner())) }
     }
     /// Returns true if the bounding box of `self` contains `stbox`. MEOS: `contains_stbox_tspatial`
     fn contains_stbox(&self, stbox: &STBox) -> bool {
-        unsafe { meos_sys::contains_stbox_tspatial(stbox.inner(), self.inner()) }
+        unsafe { meos_call!(meos_sys::contains_stbox_tspatial(stbox.inner(), self.inner())) }
     }
 
     /// Returns a new temporal boolean indicating whether the temporal point is contained by `container`.
@@ -690,7 +690,7 @@ pub trait TGeoTrait: Temporal {
     fn is_spatially_contained_in_geometry(&self, container: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(container);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_geo_tgeo(geo, self.inner())
+            meos_call!(meos_sys::tcontains_geo_tgeo(geo, self.inner()))
         })
     }
 
@@ -710,7 +710,7 @@ pub trait TGeoTrait: Temporal {
     fn is_disjoint_to_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdisjoint_tgeo_geo(self.inner(), geo)
+            meos_call!(meos_sys::tdisjoint_tgeo_geo(self.inner(), geo))
         })
     }
 
@@ -730,7 +730,7 @@ pub trait TGeoTrait: Temporal {
     /// * `tdwithin_tgeo_geo`, `tdwithin_tgeo_tgeo`
     fn is_within_distance(&self, other: &Self::Enum, distance: f64) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdwithin_tgeo_tgeo(self.inner(), other.inner(), distance, true)
+            meos_call!(meos_sys::tdwithin_tgeo_tgeo(self.inner(), other.inner(), distance, true))
         })
     }
 
@@ -751,7 +751,7 @@ pub trait TGeoTrait: Temporal {
     fn within_distance_of_geometry(&self, geometry: &Geometry, distance: f64) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdwithin_tgeo_geo(self.inner(), geo, distance, true)
+            meos_call!(meos_sys::tdwithin_tgeo_geo(self.inner(), geo, distance, true))
         })
     }
 
@@ -771,7 +771,7 @@ pub trait TGeoTrait: Temporal {
     fn intersects_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tintersects_tgeo_geo(self.inner(), geo)
+            meos_call!(meos_sys::tintersects_tgeo_geo(self.inner(), geo))
         })
     }
 
@@ -791,7 +791,7 @@ pub trait TGeoTrait: Temporal {
     fn touches_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::ttouches_tgeo_geo(self.inner(), geo)
+            meos_call!(meos_sys::ttouches_tgeo_geo(self.inner(), geo))
         })
     }
 
@@ -810,7 +810,7 @@ pub trait TGeoTrait: Temporal {
     /// * `distance_tgeo_point`, `distance_tgeo_tgeo`
     fn distance(&self, other: &Self::Enum) -> TFloat {
         factory::<TFloat>(unsafe {
-            meos_sys::tdistance_tgeo_tgeo(self.inner(), other.inner(), true)
+            meos_call!(meos_sys::tdistance_tgeo_tgeo(self.inner(), other.inner(), true))
         })
     }
 
@@ -829,7 +829,7 @@ pub trait TGeoTrait: Temporal {
     /// * `distance_tgeo_point`, `distance_tgeo_tgeo`
     fn distance_to_point(&self, point: Point) -> TFloat {
         let point = Self::geo_to_gserialized(point);
-        factory::<TFloat>(unsafe { meos_sys::tdistance_tgeo_geo(self.inner(), point, true) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::tdistance_tgeo_geo(self.inner(), point, true)) })
     }
 
     /// Returns the nearest approach distance between the temporal point and `other`.
@@ -846,7 +846,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `nad_tgeo_geo`, `nad_tgeo_stbox`, `nad_tgeo_tgeo`
     fn nearest_approach_distance(&self, other: &Self::Enum) -> f64 {
-        unsafe { meos_sys::nad_tgeo_tgeo(self.inner(), other.inner(), true) }
+        unsafe { meos_call!(meos_sys::nad_tgeo_tgeo(self.inner(), other.inner(), true)) }
     }
 
     /// Returns the nearest approach distance between the temporal point and `other`.
@@ -864,7 +864,7 @@ pub trait TGeoTrait: Temporal {
     /// * `nad_tgeo_geo`, `nad_tgeo_stbox`, `nad_tgeo_tgeo`
     fn nearest_approach_distance_to_geometry(&self, geometry: &Geometry) -> f64 {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::nad_tgeo_geo(self.inner(), geo, true) }
+        unsafe { meos_call!(meos_sys::nad_tgeo_geo(self.inner(), geo, true)) }
     }
 
     /// Returns the nearest approach instant between the temporal point and `other`.
@@ -881,7 +881,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `nai_tgeo_geo`, `nai_tgeo_tgeo`
     fn nearest_approach_instant(&self, other: &Self::Enum) -> Self::TI {
-        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_tgeo(self.inner(), other.inner(), true) })
+        Self::TI::from_inner(unsafe { meos_call!(meos_sys::nai_tgeo_tgeo(self.inner(), other.inner(), true)) })
     }
 
     /// Returns the nearest approach instant between the temporal point and `other`.
@@ -899,7 +899,7 @@ pub trait TGeoTrait: Temporal {
     /// * `nai_tgeo_geo`
     fn nearest_approach_instant_to_geometry(&self, geometry: &Geometry) -> Self::TI {
         let geo = geometry_to_gserialized(geometry);
-        Self::TI::from_inner(unsafe { meos_sys::nai_tgeo_geo(self.inner(), geo, true) })
+        Self::TI::from_inner(unsafe { meos_call!(meos_sys::nai_tgeo_geo(self.inner(), geo, true)) })
     }
 
     /// Returns the shortest line between the temporal point and `other`.
@@ -916,7 +916,7 @@ pub trait TGeoTrait: Temporal {
     ///
     /// * `shortestline_tgeo_geo`, `shortestline_tgeo_tgeo`
     fn shortest_line(&self, other: &Self::Enum) -> Result<Geometry, geos::Error> {
-        let gs = unsafe { meos_sys::shortestline_tgeo_tgeo(self.inner(), other.inner(), true) };
+        let gs = unsafe { meos_call!(meos_sys::shortestline_tgeo_tgeo(self.inner(), other.inner(), true)) };
         gserialized_to_geometry(gs)
     }
 
@@ -935,7 +935,7 @@ pub trait TGeoTrait: Temporal {
     /// * `shortestline_tgeo_geo`, `shortestline_tgeo_tgeo`
     fn shortest_line_to_geometry(&self, geometry: &Geometry) -> Result<Geometry, geos::Error> {
         let geo = geometry_to_gserialized(geometry);
-        let gs = unsafe { meos_sys::shortestline_tgeo_geo(self.inner(), geo, true) };
+        let gs = unsafe { meos_call!(meos_sys::shortestline_tgeo_geo(self.inner(), geo, true)) };
         gserialized_to_geometry(gs)
     }
 
@@ -1022,130 +1022,130 @@ pub trait TGeoTrait: Temporal {
     /// Returns true if `self` is ever spatially equal to `geometry`. MEOS: `ever_eq_tgeo_geo`
     fn ever_equal_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::ever_eq_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::ever_eq_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` is ever spatially not equal to `geometry`. MEOS: `ever_ne_tgeo_geo`
     fn ever_not_equal_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::ever_ne_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::ever_ne_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` is always spatially equal to `geometry`. MEOS: `always_eq_tgeo_geo`
     fn always_equal_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::always_eq_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::always_eq_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` is always spatially not equal to `geometry`. MEOS: `always_ne_tgeo_geo`
     fn always_not_equal_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::always_ne_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::always_ne_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever contains `geometry`. MEOS: `econtains_tgeo_geo`
     fn ever_contains_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::econtains_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::econtains_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever contains `other`. MEOS: `econtains_tgeo_tgeo`
     fn ever_contains(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::econtains_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::econtains_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` ever covers `geometry`. MEOS: `ecovers_tgeo_geo`
     fn ever_covers_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::ecovers_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::ecovers_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever covers `other`. MEOS: `ecovers_tgeo_tgeo`
     fn ever_covers(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::ecovers_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::ecovers_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` is ever disjoint from `geometry`. MEOS: `edisjoint_tgeo_geo`
     fn ever_disjoint_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::edisjoint_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::edisjoint_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever intersects `geometry`. MEOS: `eintersects_tgeo_geo`
     fn ever_intersects_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::eintersects_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::eintersects_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever intersects `other`. MEOS: `eintersects_tgeo_tgeo`
     fn ever_intersects(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::eintersects_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::eintersects_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` ever touches `geometry`. MEOS: `etouches_tgeo_geo`
     fn ever_touches_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::etouches_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::etouches_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` ever touches `other`. MEOS: `etouches_tgeo_tgeo`
     fn ever_touches(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::etouches_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::etouches_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` is ever within `dist` of `geometry`. MEOS: `edwithin_tgeo_geo`
     fn ever_within_distance_of_geometry(&self, geometry: &Geometry, dist: f64) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::edwithin_tgeo_geo(self.inner(), geo, dist, true) == 1 }
+        unsafe { meos_call!(meos_sys::edwithin_tgeo_geo(self.inner(), geo, dist, true)) == 1 }
     }
 
     /// Returns true if `self` is ever within `dist` of `other`. MEOS: `edwithin_tgeo_tgeo`
     fn ever_within_distance(&self, other: &Self::Enum, dist: f64) -> bool {
-        unsafe { meos_sys::edwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true) == 1 }
+        unsafe { meos_call!(meos_sys::edwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true)) == 1 }
     }
 
     /// Returns true if `self` always contains `geometry`. MEOS: `acontains_tgeo_geo`
     fn always_contains_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::acontains_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::acontains_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` always contains `other`. MEOS: `acontains_tgeo_tgeo`
     fn always_contains(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::acontains_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::acontains_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` always intersects `geometry`. MEOS: `aintersects_tgeo_geo`
     fn always_intersects_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::aintersects_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::aintersects_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` always intersects `other`. MEOS: `aintersects_tgeo_tgeo`
     fn always_intersects(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::aintersects_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::aintersects_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` always touches `geometry`. MEOS: `atouches_tgeo_geo`
     fn always_touches_geometry(&self, geometry: &Geometry) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::atouches_tgeo_geo(self.inner(), geo) == 1 }
+        unsafe { meos_call!(meos_sys::atouches_tgeo_geo(self.inner(), geo)) == 1 }
     }
 
     /// Returns true if `self` always touches `other`. MEOS: `atouches_tgeo_tgeo`
     fn always_touches(&self, other: &Self::Enum) -> bool {
-        unsafe { meos_sys::atouches_tgeo_tgeo(self.inner(), other.inner()) == 1 }
+        unsafe { meos_call!(meos_sys::atouches_tgeo_tgeo(self.inner(), other.inner())) == 1 }
     }
 
     /// Returns true if `self` is always within `dist` of `geometry`. MEOS: `adwithin_tgeo_geo`
     fn always_within_distance_of_geometry(&self, geometry: &Geometry, dist: f64) -> bool {
         let geo = geometry_to_gserialized(geometry);
-        unsafe { meos_sys::adwithin_tgeo_geo(self.inner(), geo, dist, true) == 1 }
+        unsafe { meos_call!(meos_sys::adwithin_tgeo_geo(self.inner(), geo, dist, true)) == 1 }
     }
 
     /// Returns true if `self` is always within `dist` of `other`. MEOS: `adwithin_tgeo_tgeo`
     fn always_within_distance(&self, other: &Self::Enum, dist: f64) -> bool {
-        unsafe { meos_sys::adwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true) == 1 }
+        unsafe { meos_call!(meos_sys::adwithin_tgeo_tgeo(self.inner(), other.inner(), dist, true)) == 1 }
     }
 
     // ------------------------- Geometry restrictions -------------------------
@@ -1153,7 +1153,7 @@ pub trait TGeoTrait: Temporal {
     /// Returns the portion of `self` at the given `point`. MEOS: `tgeo_at_value`
     fn at_point(&self, point: Point) -> Option<Self::Enum> {
         let result =
-            unsafe { meos_sys::tgeo_at_value(self.inner(), Self::geo_to_gserialized(point)) };
+            unsafe { meos_call!(meos_sys::tgeo_at_value(self.inner(), Self::geo_to_gserialized(point))) };
         if result.is_null() {
             None
         } else {
@@ -1164,7 +1164,7 @@ pub trait TGeoTrait: Temporal {
     /// Returns the portion of `self` excluding the given `point`. MEOS: `tgeo_minus_value`
     fn minus_point(&self, point: Point) -> Option<Self::Enum> {
         let result =
-            unsafe { meos_sys::tgeo_minus_value(self.inner(), Self::geo_to_gserialized(point)) };
+            unsafe { meos_call!(meos_sys::tgeo_minus_value(self.inner(), Self::geo_to_gserialized(point))) };
         if result.is_null() {
             None
         } else {
@@ -1175,7 +1175,7 @@ pub trait TGeoTrait: Temporal {
     /// Returns the portion of `self` whose trajectory intersects `geometry`. MEOS: `tgeo_at_geom`
     fn at_geom(&self, geometry: &Geometry) -> Option<Self::Enum> {
         let geo = geometry_to_gserialized(geometry);
-        let result = unsafe { meos_sys::tgeo_at_geom(self.inner(), geo) };
+        let result = unsafe { meos_call!(meos_sys::tgeo_at_geom(self.inner(), geo)) };
         if result.is_null() {
             None
         } else {
@@ -1186,7 +1186,7 @@ pub trait TGeoTrait: Temporal {
     /// Returns the portion of `self` whose trajectory does not intersect `geometry`. MEOS: `tgeo_minus_geom`
     fn minus_geom(&self, geometry: &Geometry) -> Option<Self::Enum> {
         let geo = geometry_to_gserialized(geometry);
-        let result = unsafe { meos_sys::tgeo_minus_geom(self.inner(), geo) };
+        let result = unsafe { meos_call!(meos_sys::tgeo_minus_geom(self.inner(), geo)) };
         if result.is_null() {
             None
         } else {
@@ -1208,10 +1208,10 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the portions of `self` that do not intersect any of `geometries`. MEOS: `tgeo_minus_geom`
     fn minus_geometries(&self, geometries: &[Geometry]) -> Option<Self::Enum> {
-        let mut result = unsafe { meos_sys::temporal_copy(self.inner()) };
+        let mut result = unsafe { meos_call!(meos_sys::temporal_copy(self.inner())) };
         for g in geometries {
             let geo = geometry_to_gserialized(g);
-            let next = unsafe { meos_sys::tgeo_minus_geom(result, geo) };
+            let next = unsafe { meos_call!(meos_sys::tgeo_minus_geom(result, geo)) };
             if next.is_null() {
                 return None;
             }
@@ -1222,7 +1222,7 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the portion of `self` within `stbox`. MEOS: `tgeo_at_stbox`
     fn at_stbox(&self, stbox: &STBox, border_inc: bool) -> Option<Self::Enum> {
-        let result = unsafe { meos_sys::tgeo_at_stbox(self.inner(), stbox.inner(), border_inc) };
+        let result = unsafe { meos_call!(meos_sys::tgeo_at_stbox(self.inner(), stbox.inner(), border_inc)) };
         if result.is_null() {
             None
         } else {
@@ -1232,7 +1232,7 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the portion of `self` outside `stbox`. MEOS: `tgeo_minus_stbox`
     fn minus_stbox(&self, stbox: &STBox, border_inc: bool) -> Option<Self::Enum> {
-        let result = unsafe { meos_sys::tgeo_minus_stbox(self.inner(), stbox.inner(), border_inc) };
+        let result = unsafe { meos_call!(meos_sys::tgeo_minus_stbox(self.inner(), stbox.inner(), border_inc)) };
         if result.is_null() {
             None
         } else {
@@ -1244,17 +1244,17 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the time-weighted centroid of `self` as a temporal point. MEOS: `tgeo_centroid`
     fn centroid(&self) -> Result<Geometry, geos::Error> {
-        gserialized_to_geometry(unsafe { meos_sys::tgeo_centroid(self.inner(), true).cast() })
+        gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_centroid(self.inner(), true)).cast() })
     }
 
     /// Returns the convex hull of the trajectory of `self`. MEOS: `tgeo_convex_hull`
     fn convex_hull(&self) -> Result<Geometry, geos::Error> {
-        gserialized_to_geometry(unsafe { meos_sys::tgeo_convex_hull(self.inner()) })
+        gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_convex_hull(self.inner())) })
     }
 
     /// Returns the area traversed by `self`. Only valid for polygon temporal types. MEOS: `tgeo_traversed_area`
     fn traversed_area(&self, unary_union: bool) -> Option<Result<Geometry, geos::Error>> {
-        let gs = unsafe { meos_sys::tgeo_traversed_area(self.inner(), unary_union) };
+        let gs = unsafe { meos_call!(meos_sys::tgeo_traversed_area(self.inner(), unary_union)) };
         if gs.is_null() {
             None
         } else {
@@ -1264,14 +1264,14 @@ pub trait TGeoTrait: Temporal {
 
     /// Returns the nearest approach distance between `self` and `stbox`. MEOS: `nad_tgeo_stbox`
     fn nearest_approach_distance_to_stbox(&self, stbox: &STBox) -> f64 {
-        unsafe { meos_sys::nad_tgeo_stbox(self.inner(), stbox.inner(), true) }
+        unsafe { meos_call!(meos_sys::nad_tgeo_stbox(self.inner(), stbox.inner(), true)) }
     }
 
     /// Returns the nth geometry value of `self` (1-based). MEOS: `tgeo_value_n`
     fn value_n(&self, n: usize) -> Result<Option<Geometry>, geos::Error> {
         let mut result: *mut meos_sys::GSERIALIZED = ptr::null_mut();
         let found =
-            unsafe { meos_sys::tgeo_value_n(self.inner(), n as i32, ptr::addr_of_mut!(result)) };
+            unsafe { meos_call!(meos_sys::tgeo_value_n(self.inner(), n as i32, ptr::addr_of_mut!(result))) };
         if found {
             gserialized_to_geometry(result).map(Some)
         } else {
@@ -1283,14 +1283,14 @@ pub trait TGeoTrait: Temporal {
     fn contains_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_tgeo_geo(self.inner(), geo)
+            meos_call!(meos_sys::tcontains_tgeo_geo(self.inner(), geo))
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally contains `other`. MEOS: `tcontains_tgeo_tgeo`
     fn contains(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcontains_tgeo_tgeo(self.inner(), other.inner())
+            meos_call!(meos_sys::tcontains_tgeo_tgeo(self.inner(), other.inner()))
         })
     }
 
@@ -1298,28 +1298,28 @@ pub trait TGeoTrait: Temporal {
     fn covers_geometry(&self, geometry: &Geometry) -> Self::TBoolType {
         let geo = geometry_to_gserialized(geometry);
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcovers_tgeo_geo(self.inner(), geo)
+            meos_call!(meos_sys::tcovers_tgeo_geo(self.inner(), geo))
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally covers `other`. MEOS: `tcovers_tgeo_tgeo`
     fn covers(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tcovers_tgeo_tgeo(self.inner(), other.inner())
+            meos_call!(meos_sys::tcovers_tgeo_tgeo(self.inner(), other.inner()))
         })
     }
 
     /// Returns a `TBool` indicating whether `self` is temporally disjoint from `other`. MEOS: `tdisjoint_tgeo_tgeo`
     fn disjoint(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::tdisjoint_tgeo_tgeo(self.inner(), other.inner())
+            meos_call!(meos_sys::tdisjoint_tgeo_tgeo(self.inner(), other.inner()))
         })
     }
 
     /// Returns a `TBool` indicating whether `self` temporally touches `other`. MEOS: `ttouches_tgeo_tgeo`
     fn touches(&self, other: &Self::Enum) -> Self::TBoolType {
         Self::TBoolType::from_inner_as_temporal(unsafe {
-            meos_sys::ttouches_tgeo_tgeo(self.inner(), other.inner())
+            meos_call!(meos_sys::ttouches_tgeo_tgeo(self.inner(), other.inner()))
         })
     }
 
@@ -1402,7 +1402,7 @@ macro_rules! impl_tpoint_traits {
             impl Collection for $type {
                 impl_collection!(tspatial, Geometry);
                 fn contains(&self, element: &Self::Type) -> bool {
-                    unsafe { meos_sys::contains_tspatial_stbox(self.inner(), meos_sys::geo_to_stbox(geometry_to_gserialized(element))) }
+                    unsafe { meos_call!(meos_sys::contains_tspatial_stbox(self.inner(), meos_call!(meos_sys::geo_to_stbox(geometry_to_gserialized(element))))) }
                 }
             }
 
@@ -1441,13 +1441,13 @@ macro_rules! impl_tpoint_traits {
                 }
 
                 fn bounding_box(&self) -> Self::TBB {
-                    STBox::from_inner(unsafe { meos_sys::tspatial_to_stbox(self.inner()) })
+                    STBox::from_inner(unsafe { meos_call!(meos_sys::tspatial_to_stbox(self.inner())) })
                 }
 
                 fn values(&self) -> Vec<Self::Type> {
                     let mut count = 0;
                     unsafe {
-                        let values = meos_sys::tgeo_values(self.inner(), ptr::addr_of_mut!(count));
+                        let values = meos_call!(meos_sys::tgeo_values(self.inner(), ptr::addr_of_mut!(count)));
 
                         std::slice::from_raw_parts(values, count as usize)
                             .into_iter()
@@ -1458,11 +1458,11 @@ macro_rules! impl_tpoint_traits {
                 }
 
                 fn start_value(&self) -> Self::Type {
-                    gserialized_to_geometry(unsafe { meos_sys::tgeo_start_value(self.inner()) }).unwrap()
+                    gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_start_value(self.inner())) }).unwrap()
                 }
 
                 fn end_value(&self) -> Self::Type {
-                    gserialized_to_geometry(unsafe { meos_sys::tgeo_end_value(self.inner()) }).unwrap()
+                    gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_end_value(self.inner())) }).unwrap()
                 }
 
                 fn value_at_timestamp<Tz: TimeZone>(
@@ -1471,12 +1471,12 @@ macro_rules! impl_tpoint_traits {
                 ) -> Option<Self::Type> {
                     let mut result: mem::MaybeUninit<*mut meos_sys::GSERIALIZED> = mem::MaybeUninit::uninit();
                     unsafe {
-                        let success = meos_sys::tgeo_value_at_timestamptz(
+                        let success = meos_call!(meos_sys::tgeo_value_at_timestamptz(
                             self.inner(),
                             to_meos_timestamp(&timestamp),
                             true,
                             result.as_mut_ptr(),
-                        );
+                        ));
                         if success {
                             Some(gserialized_to_geometry(result.assume_init()).unwrap())
                         } else {
@@ -1486,37 +1486,37 @@ macro_rules! impl_tpoint_traits {
                 }
 
                 fn at_value(&self, value: &Self::Type) -> Option<Self::Enum> {
-                    let result = unsafe { meos_sys::tgeo_at_value(self.inner(), Self::geometry_to_gserialized_typed(value)) };
+                    let result = unsafe { meos_call!(meos_sys::tgeo_at_value(self.inner(), Self::geometry_to_gserialized_typed(value))) };
                     if !result.is_null() { Some(factory::<Self::Enum>(result)) } else { None }
                 }
                 fn at_values(&self, values: &[Self::Type]) -> Option<Self::Enum> {
                     unsafe {
                         let set = if $geodetic { create_geogset(values) } else { create_geomset(values) };
-                        let result = meos_sys::temporal_at_values(self.inner(), set);
+                        let result = meos_call!(meos_sys::temporal_at_values(self.inner(), set));
                         if !result.is_null() { Some(factory::<Self::Enum>(result)) } else { None }
                     }
                 }
                 fn minus_value(&self, value: Self::Type) -> Self::Enum {
                     factory::<Self::Enum>(unsafe {
-                        meos_sys::tgeo_minus_value(self.inner(), Self::geometry_to_gserialized_typed(&value))
+                        meos_call!(meos_sys::tgeo_minus_value(self.inner(), Self::geometry_to_gserialized_typed(&value)))
                     })
                 }
                 fn minus_values(&self, values: &[Self::Type]) -> Self::Enum {
                     factory::<Self::Enum>(unsafe {
                         let set = if $geodetic { create_geogset(values) } else { create_geomset(values) };
-                        meos_sys::temporal_minus_values(self.inner(), set)
+                        meos_call!(meos_sys::temporal_minus_values(self.inner(), set))
                     })
                 }
 
                 fn temporal_equal_value(&self, value: &Self::Type) -> Self::TBoolType {
                     Self::TBoolType::from_inner_as_temporal(unsafe {
-                        meos_sys::teq_tgeo_geo(self.inner(), geometry_to_gserialized(value))
+                        meos_call!(meos_sys::teq_tgeo_geo(self.inner(), geometry_to_gserialized(value)))
                     })
                 }
 
                 fn temporal_not_equal_value(&self, value: &Self::Type) -> Self::TBoolType {
                     Self::TBoolType::from_inner_as_temporal(unsafe {
-                        meos_sys::tne_tgeo_geo(self.inner(), geometry_to_gserialized(value))
+                        meos_call!(meos_sys::tne_tgeo_geo(self.inner(), geometry_to_gserialized(value)))
                     })
                 }
             }
@@ -1548,7 +1548,7 @@ macro_rules! impl_tgeo_type {
                 fn inner_as_tinstant(&self) -> *const meos_sys::TInstant { self._inner.as_ptr() }
                 fn from_value_and_timestamp<Tz: TimeZone>(value: Self::Type, timestamp: DateTime<Tz>) -> Self {
                     Self::from_inner(unsafe {
-                        meos_sys::$inst_make(geometry_to_gserialized(&value), to_meos_timestamp(&timestamp))
+                        meos_call!(meos_sys::$inst_make(geometry_to_gserialized(&value), to_meos_timestamp(&timestamp)))
                     })
                 }
             }
@@ -1622,21 +1622,21 @@ macro_rules! impl_tgeo_type {
                 }
                 fn from_mfjson(mfjson: &str) -> Self {
                     let cstr = CString::new(mfjson).unwrap();
-                    factory::<Self>(unsafe { meos_sys::$mfjson_fn(cstr.as_ptr()) })
+                    factory::<Self>(unsafe { meos_call!(meos_sys::$mfjson_fn(cstr.as_ptr())) })
                 }
             }
             impl FromStr for $prefix {
                 type Err = ParseError;
                 fn from_str(s: &str) -> Result<Self, Self::Err> {
                     CString::new(s).map_err(|_| ParseError).map(|string| {
-                        factory::<Self>(unsafe { meos_sys::$in_fn(string.as_ptr()) })
+                        factory::<Self>(unsafe { meos_call!(meos_sys::$in_fn(string.as_ptr())) })
                     })
                 }
             }
             impl Collection for $prefix {
                 impl_collection!(tspatial, Geometry);
                 fn contains(&self, element: &Self::Type) -> bool {
-                    unsafe { meos_sys::contains_tspatial_stbox(self.inner(), meos_sys::geo_to_stbox(geometry_to_gserialized(element))) }
+                    unsafe { meos_call!(meos_sys::contains_tspatial_stbox(self.inner(), meos_call!(meos_sys::geo_to_stbox(geometry_to_gserialized(element))))) }
                 }
             }
             impl_simple_traits_for_temporal!($prefix);
@@ -1658,54 +1658,54 @@ macro_rules! impl_tgeo_type {
                     }
                 }
                 fn bounding_box(&self) -> Self::TBB {
-                    STBox::from_inner(unsafe { meos_sys::tspatial_to_stbox(self.inner()) })
+                    STBox::from_inner(unsafe { meos_call!(meos_sys::tspatial_to_stbox(self.inner())) })
                 }
                 fn values(&self) -> Vec<Self::Type> {
                     let mut count = 0;
                     unsafe {
-                        let values = meos_sys::tgeo_values(self.inner(), ptr::addr_of_mut!(count));
+                        let values = meos_call!(meos_sys::tgeo_values(self.inner(), ptr::addr_of_mut!(count)));
                         std::slice::from_raw_parts(values, count as usize)
                             .iter().map(|&gs| gserialized_to_geometry(gs).unwrap()).collect()
                     }
                 }
                 fn start_value(&self) -> Self::Type {
-                    gserialized_to_geometry(unsafe { meos_sys::tgeo_start_value(self.inner()) }).unwrap()
+                    gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_start_value(self.inner())) }).unwrap()
                 }
                 fn end_value(&self) -> Self::Type {
-                    gserialized_to_geometry(unsafe { meos_sys::tgeo_end_value(self.inner()) }).unwrap()
+                    gserialized_to_geometry(unsafe { meos_call!(meos_sys::tgeo_end_value(self.inner())) }).unwrap()
                 }
                 fn value_at_timestamp<Tz: TimeZone>(&self, timestamp: DateTime<Tz>) -> Option<Self::Type> {
                     let mut result: mem::MaybeUninit<*mut meos_sys::GSERIALIZED> = mem::MaybeUninit::uninit();
                     unsafe {
-                        let success = meos_sys::tgeo_value_at_timestamptz(self.inner(), to_meos_timestamp(&timestamp), true, result.as_mut_ptr());
+                        let success = meos_call!(meos_sys::tgeo_value_at_timestamptz(self.inner(), to_meos_timestamp(&timestamp), true, result.as_mut_ptr()));
                         if success { Some(gserialized_to_geometry(result.assume_init()).unwrap()) } else { None }
                     }
                 }
                 fn at_value(&self, value: &Self::Type) -> Option<Self::Enum> {
-                    let result = unsafe { meos_sys::tgeo_at_value(self.inner(), Self::geometry_to_gserialized_typed(value)) };
+                    let result = unsafe { meos_call!(meos_sys::tgeo_at_value(self.inner(), Self::geometry_to_gserialized_typed(value))) };
                     if result.is_null() { None } else { Some(factory::<Self::Enum>(result)) }
                 }
                 fn at_values(&self, values: &[Self::Type]) -> Option<Self::Enum> {
                     unsafe {
                         let set = if $geodetic { create_geogset(values) } else { create_geomset(values) };
-                        let result = meos_sys::temporal_at_values(self.inner(), set);
+                        let result = meos_call!(meos_sys::temporal_at_values(self.inner(), set));
                         if result.is_null() { None } else { Some(factory::<Self::Enum>(result)) }
                     }
                 }
                 fn minus_value(&self, value: Self::Type) -> Self::Enum {
-                    factory::<Self::Enum>(unsafe { meos_sys::tgeo_minus_value(self.inner(), Self::geometry_to_gserialized_typed(&value)) })
+                    factory::<Self::Enum>(unsafe { meos_call!(meos_sys::tgeo_minus_value(self.inner(), Self::geometry_to_gserialized_typed(&value))) })
                 }
                 fn minus_values(&self, values: &[Self::Type]) -> Self::Enum {
                     factory::<Self::Enum>(unsafe {
                         let set = if $geodetic { create_geogset(values) } else { create_geomset(values) };
-                        meos_sys::temporal_minus_values(self.inner(), set)
+                        meos_call!(meos_sys::temporal_minus_values(self.inner(), set))
                     })
                 }
                 fn temporal_equal_value(&self, value: &Self::Type) -> Self::TBoolType {
-                    Self::TBoolType::from_inner_as_temporal(unsafe { meos_sys::teq_tgeo_geo(self.inner(), geometry_to_gserialized(value)) })
+                    Self::TBoolType::from_inner_as_temporal(unsafe { meos_call!(meos_sys::teq_tgeo_geo(self.inner(), geometry_to_gserialized(value))) })
                 }
                 fn temporal_not_equal_value(&self, value: &Self::Type) -> Self::TBoolType {
-                    Self::TBoolType::from_inner_as_temporal(unsafe { meos_sys::tne_tgeo_geo(self.inner(), geometry_to_gserialized(value)) })
+                    Self::TBoolType::from_inner_as_temporal(unsafe { meos_call!(meos_sys::tne_tgeo_geo(self.inner(), geometry_to_gserialized(value))) })
                 }
             }
         }

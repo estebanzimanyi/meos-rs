@@ -17,7 +17,7 @@ pub trait Span: Collection {
     /// ## Returns
     /// * A new `Span` instance.
     fn from_wkb(wkb: &[u8]) -> Self {
-        let span = unsafe { meos_sys::span_from_wkb(wkb.as_ptr(), wkb.len()) };
+        let span = unsafe { meos_call!(meos_sys::span_from_wkb(wkb.as_ptr(), wkb.len())) };
         Self::from_inner(span)
     }
 
@@ -30,7 +30,7 @@ pub trait Span: Collection {
     /// * A new `Span` instance.
     fn from_hexwkb(hexwkb: &[u8]) -> Self {
         let c_string = CString::new(hexwkb).expect("Cannot create CString");
-        let span = unsafe { meos_sys::span_from_hexwkb(c_string.as_ptr()) };
+        let span = unsafe { meos_call!(meos_sys::span_from_hexwkb(c_string.as_ptr())) };
         Self::from_inner(span)
     }
 
@@ -39,7 +39,7 @@ pub trait Span: Collection {
     fn as_wkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size = 0;
-            let wkb = meos_sys::span_as_wkb(self.inner(), variant.into(), &raw mut size);
+            let wkb = meos_call!(meos_sys::span_as_wkb(self.inner(), variant.into(), &raw mut size));
             std::slice::from_raw_parts(wkb, size)
         }
     }
@@ -47,7 +47,7 @@ pub trait Span: Collection {
     fn as_hexwkb(&self, variant: WKBVariant) -> &[u8] {
         unsafe {
             let mut size: usize = 0;
-            let hexwkb_ptr = meos_sys::span_as_hexwkb(self.inner(), variant.into(), &raw mut size);
+            let hexwkb_ptr = meos_call!(meos_sys::span_as_hexwkb(self.inner(), variant.into(), &raw mut size));
             CStr::from_ptr(hexwkb_ptr).to_bytes()
         }
     }
@@ -78,7 +78,7 @@ pub trait Span: Collection {
     /// assert!(!span.is_lower_inclusive());
     /// ```
     fn is_lower_inclusive(&self) -> bool {
-        unsafe { meos_sys::span_lower_inc(self.inner()) }
+        unsafe { meos_call!(meos_sys::span_lower_inc(self.inner())) }
     }
 
     /// Checks if the upper bound of the span is inclusive.
@@ -101,7 +101,7 @@ pub trait Span: Collection {
     /// assert!(!span.is_upper_inclusive());
     /// ```
     fn is_upper_inclusive(&self) -> bool {
-        unsafe { meos_sys::span_upper_inc(self.inner()) }
+        unsafe { meos_call!(meos_sys::span_upper_inc(self.inner())) }
     }
 
     /// Return a new `Span` with the lower and upper bounds shifted by `delta`.
@@ -115,11 +115,11 @@ pub trait Span: Collection {
         -> Self;
 
     fn to_spanset<T: SpanSet<Type = Self::Type>>(&self) -> T {
-        unsafe { T::from_inner(meos_sys::span_to_spanset(self.inner())) }
+        unsafe { T::from_inner(meos_call!(meos_sys::span_to_spanset(self.inner()))) }
     }
 
     fn intersection(&self, other: &Self) -> Option<Self> {
-        let result = unsafe { meos_sys::intersection_span_span(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::intersection_span_span(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {
@@ -128,7 +128,7 @@ pub trait Span: Collection {
     }
 
     fn union<T: SpanSet<Type = Self::Type>>(&self, other: &Self) -> Option<T> {
-        let result = unsafe { meos_sys::union_span_span(self.inner(), other.inner()) };
+        let result = unsafe { meos_call!(meos_sys::union_span_span(self.inner(), other.inner())) };
         if result.is_null() {
             None
         } else {

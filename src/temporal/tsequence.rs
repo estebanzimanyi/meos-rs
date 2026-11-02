@@ -22,14 +22,14 @@ pub trait TSequence: Temporal {
             TInterpolation::Discrete | TInterpolation::Stepwise
         ) || values.len() == 1;
         TSequence::from_inner(unsafe {
-            meos_sys::tsequence_make(
+            meos_call!(meos_sys::tsequence_make(
                 t_list.as_mut_ptr(),
                 t_list.len() as i32,
                 true,
                 upper_inclusive,
                 interpolation as u32,
                 true,
-            )
+            ))
         })
     }
 
@@ -40,9 +40,9 @@ pub trait TSequence: Temporal {
     }
 
     fn is_lower_inclusive(&self) -> bool {
-        unsafe { meos_sys::temporal_lower_inc(self.inner()) }
+        unsafe { meos_call!(meos_sys::temporal_lower_inc(self.inner())) }
     }
     fn is_upper_inclusive(&self) -> bool {
-        unsafe { meos_sys::temporal_upper_inc(self.inner()) }
+        unsafe { meos_call!(meos_sys::temporal_upper_inc(self.inner())) }
     }
 }
