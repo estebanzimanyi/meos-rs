@@ -24,7 +24,8 @@
 #
 # allowlist.py writes sys/wrapper.h and sys/allowlist.txt from the catalog; the crate's own
 # `bindgen` feature then runs bindgen over them, as a build against the installed headers does,
-# and its output becomes the committed FFI every other build includes.
+# catalog_docs.py gives each function the doc the catalog states for it, and the result becomes
+# the committed FFI every other build includes.
 set -euo pipefail
 
 if [ $# -ne 2 ]; then
@@ -47,4 +48,5 @@ if [ "${#OUT[@]}" -ne 1 ]; then
 fi
 mkdir -p "$REPO/sys/prebuilt-bindings"
 cp "${OUT[0]}" "$REPO/sys/prebuilt-bindings/meos.rs"
+python3 "$REPO/sys/catalog_docs.py" "$CATALOG" "$REPO/sys/prebuilt-bindings/meos.rs"
 echo "wrote sys/prebuilt-bindings/meos.rs"
