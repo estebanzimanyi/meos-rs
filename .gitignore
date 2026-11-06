@@ -14,3 +14,5 @@ data/**
 src/main.rs
 # tools/refresh-from-master.sh scratch (sibling clones + libmeos prefix).
 .meos-chain/
+# Bytecode Python writes when sys/tests/test_codegen.py imports sys/codegen.py.
+__pycache__/

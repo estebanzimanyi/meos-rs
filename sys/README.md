@@ -83,9 +83,13 @@ Compilation will take longer due to building all dependencies from source.
 `src/generated.rs` is a projection of the [MEOS-API](https://github.com/MobilityDB/MEOS-API)
 catalog `meos-idl.json` — the single source of truth from which every MEOS
 binding is derived, and the one place a MEOS header is ever parsed. `codegen.py`
-emits the `#[repr(C)]` structs, `extern "C"` functions, enums, and `#define`
-constants from that catalog:
+emits from that catalog the `#[repr(C)]` structs with compile-time checks of
+their size, alignment and field offsets, the `extern "C"` functions with their
+documentation and the trailing `...` of a variadic one, the callbacks as typed
+function pointers, the enums, and the `#define` constants. It stops on a type it
+cannot declare faithfully rather than writing a stand-in:
 
 ```bash
 python3 codegen.py <meos-idl.json> src/generated.rs
+python3 tests/test_codegen.py
 ```

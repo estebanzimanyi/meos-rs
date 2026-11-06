@@ -1,3 +1,4 @@
+use crate::utils::take_meos_string;
 use crate::temporal::tinstant::TInstant;
 use crate::temporal::JSONCVariant;
 use crate::{
@@ -9,7 +10,7 @@ use core::fmt;
 use geos::{CoordDimensions, Geom, Geometry, WKBWriter};
 use meos_sys::GSERIALIZED;
 use std::{
-    ffi::{c_void, CStr, CString},
+    ffi::CString,
     ptr, slice,
 };
 #[derive(Clone, Copy)]
@@ -104,11 +105,9 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_out`
     fn as_wkt(&self, precision: i32) -> String {
-        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_text(self.inner(), precision)) };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().unwrap().to_owned();
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        str
+        let mut size = 0;
+        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_text(self.inner(), precision, &raw mut size)) };
+        unsafe { take_meos_string(out_str, size) }.unwrap()
     }
 
     /// Returns the temporal point as an EWKT string.
@@ -125,11 +124,9 @@ pub trait TGeoTrait: Temporal {
     ///
     /// `tpoint_as_ewkt`
     fn as_ewkt(&self, precision: i32) -> String {
-        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_ewkt(self.inner(), precision)) };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().unwrap().to_owned();
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        str
+        let mut size = 0;
+        let out_str = unsafe { meos_call!(meos_sys::tspatial_as_ewkt(self.inner(), precision, &raw mut size)) };
+        unsafe { take_meos_string(out_str, size) }.unwrap()
     }
 
     /// Returns the trajectory of the temporal point as a `GeoJSON` string.
@@ -150,13 +147,11 @@ pub trait TGeoTrait: Temporal {
     fn as_geojson(&self, variant: JSONCVariant, srs: &str) -> Option<String> {
         let cstring = CString::new(srs).unwrap();
         let trajectory = unsafe { meos_call!(meos_sys::tpoint_trajectory(self.inner(), false)) };
-        let out_str =
-            unsafe { meos_call!(meos_sys::geo_as_geojson(trajectory, variant as i32, 5, cstring.as_ptr())) };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().map_err(|_| std::fmt::Error).ok()?;
-        let result = str.to_owned();
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        Some(result)
+        let mut size = 0;
+        let out_str = unsafe {
+            meos_call!(meos_sys::geo_as_geojson(trajectory, variant as i32, 5, cstring.as_ptr(), &raw mut size))
+        };
+        unsafe { take_meos_string(out_str, size) }
     }
 
     /// Returns the length of the trajectory.

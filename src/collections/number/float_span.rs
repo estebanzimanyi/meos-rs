@@ -1,6 +1,6 @@
 use std::{
     cmp,
-    ffi::{c_void, CStr, CString},
+    ffi::{c_void, CString},
     fmt::Debug,
     hash::Hash,
     ops::{BitAnd, Range, RangeInclusive},
@@ -13,6 +13,7 @@ use crate::{
 };
 
 use super::number_span::NumberSpan;
+use crate::utils::take_meos_string;
 
 pub struct FloatSpan {
     _inner: ptr::NonNull<meos_sys::Span>,
@@ -294,13 +295,11 @@ impl From<RangeInclusive<f32>> for FloatSpan {
 
 impl Debug for FloatSpan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_call!(meos_sys::floatspan_out(self.inner(), 3)) };
+        let mut size = 0;
         // Default of 3 decimal digits
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
-        let result = f.write_str(str);
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        result
+        let out_str = unsafe { meos_call!(meos_sys::floatspan_out(self.inner(), 3, &raw mut size)) };
+        let string = unsafe { take_meos_string(out_str, size) }.ok_or(std::fmt::Error)?;
+        f.write_str(&string)
     }
 }
 

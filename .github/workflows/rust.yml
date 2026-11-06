@@ -22,7 +22,7 @@ jobs:
     # The action installs libmeos and a GDAL built without GEOS under /usr/local.
     - name: Provision MEOS (master, every family)
       id: provision
-      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@1c9a7aa200c7f673f7a130efdc1db268396ee029
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@43b601a8b331bfb63956466cc334aa0fd0f017c8
       with:
         mobilitydb-ref: master
         build-libmeos: "true"
@@ -65,10 +65,15 @@ jobs:
 
     - name: Provision MEOS (master, every family)
       id: provision
-      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@1c9a7aa200c7f673f7a130efdc1db268396ee029
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@43b601a8b331bfb63956466cc334aa0fd0f017c8
       with:
         mobilitydb-ref: master
         build-libmeos: "true"
+
+    # The generator's own rules (widths, variadics, layouts, callbacks, the types it
+    # refuses), each over a small catalog.
+    - name: Test the generator
+      run: python3 sys/tests/test_codegen.py
 
     # meos-sys is a projection of the catalog: the committed FFI must be what codegen.py
     # writes from it, so a MEOS change the FFI has not taken surfaces here.
@@ -100,7 +105,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: MobilityDB/MEOS-API
-        ref: 1c9a7aa200c7f673f7a130efdc1db268396ee029
+        ref: 43b601a8b331bfb63956466cc334aa0fd0f017c8
         path: _meos_api
 
     - name: Build GDAL without GEOS

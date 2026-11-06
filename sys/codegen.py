@@ -11,8 +11,9 @@ projection of the MEOS-API catalog — the one place a MEOS header is ever parse
 ``structs`` / ``functions`` / ``enums`` / ``macros`` arrays and emits a single
 ``src/generated.rs``:
 
-  * ``pub type`` aliases for the MEOS base-type vocabulary (``Datum``,
-    ``TimestampTz``, ``uint8`` …) — a fixed boundary table, not a heuristic;
+  * ``pub type`` aliases for every name the catalog's ``typedefs`` defines
+    (``Datum``, ``TimestampTz``, ``text`` …) and every type of its own a slot's
+    ``typedef`` names (``H3Index``), each the Rust type of its definition;
   * ``#[repr(C)]`` structs from ``structs`` (offset-ordered fields), opaque
     forward declarations for the ones the public headers leave incomplete;
   * ``pub type <E> = c_uint`` + ``pub const <E>_<V>`` for each ``enum``
@@ -20,6 +21,9 @@ projection of the MEOS-API catalog — the one place a MEOS header is ever parse
     crate consumes as ``interpType_DISCRETE`` etc.);
   * ``pub const`` for each public object-like integer ``#define`` (``WKB_NDR`` …);
   * one ``extern "C"`` block per function.
+
+The catalog states the surface an installed MEOS declares, so every entry is
+projected.
 
 Run:  python3 codegen.py <meos-idl.json> <out.rs>
 """
@@ -29,12 +33,10 @@ import sys
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Boundary table (keyed on the catalog's declared C type spelling).
-#
-# NAMED base typedefs are emitted as `pub type` aliases so the names the FFI
-# exposes match what rust-bindgen produced (e.g. `meos_sys::TimestampTz`).
-# Order is irrelevant — Rust resolves type aliases regardless of definition
-# order.
+# The C language's own types, as Rust spells them. Every other name a type
+# spelling uses is one the catalog states (#Emitter): a structure, an enumeration,
+# a callback, a `typedefs` entry (`TimestampTz`, `Datum`, `text`), or a slot's
+# `typedef` (`H3Index`), so this table holds C, not MEOS.
 # ---------------------------------------------------------------------------
 C_SCHAR = "::std::os::raw::c_schar"
 C_SHORT = "::std::os::raw::c_short"
@@ -47,42 +49,13 @@ C_ULONG = "::std::os::raw::c_ulong"
 C_CHAR = "::std::os::raw::c_char"
 C_VOID = "::std::os::raw::c_void"
 
-NAMED_ALIASES = [
-    ("int8", C_SCHAR),
-    ("int16", C_SHORT),
-    ("int32", C_INT),
-    ("int64", C_LONG),
-    ("uint8", C_UCHAR),
-    ("uint16", C_USHORT),
-    ("uint32", C_UINT),
-    ("uint64", C_ULONG),
-    ("Datum", "usize"),
-    ("size_t", "usize"),
-    ("Oid", C_UINT),
-    ("lwflags_t", "u16"),
-    ("DateADT", "int32"),
-    ("TimeADT", "int64"),
-    ("Timestamp", "int64"),
-    ("TimestampTz", "int64"),
-    ("TimeOffset", "int64"),
-]
-NAMED_ALIAS_SET = {n for n, _ in NAMED_ALIASES}
-
-# Callback typedefs — emitted as typed `Option<unsafe extern "C" fn(…)>` so a
-# caller passes a concrete Rust `fn` (`Some(handler)`), exactly as rust-bindgen
-# rendered them. A MEOS public callback typedef carries no field layout in the
-# catalog, so its (stable) signature lives here in the boundary table.
-CALLBACK_ALIASES = {
-    "error_handler_fn":
-        "::std::option::Option<unsafe extern \"C\" fn("
-        f"arg1: {C_INT}, arg2: {C_INT}, arg3: *const {C_CHAR})>",
-}
-
-# Primitive C spellings inlined directly to their Rust c-type (no named alias
-# needed — nothing references these by name).
-INLINE_SCALARS = {
+# The fixed-width and size types are Rust's fixed-width types, as rust-bindgen
+# spells them: `long` is 64 bits on Linux and 32 on Windows, so `int64_t` is
+# `i64`, never `c_long`.
+C_TYPES = {
     "bool": "bool",
     "char": C_CHAR,
+    "signed char": C_SCHAR,
     "int": C_INT,
     "short": C_SHORT,
     "long": C_LONG,
@@ -92,29 +65,21 @@ INLINE_SCALARS = {
     "unsigned long": C_ULONG,
     "double": "f64",
     "float": "f32",
-    "float4": "f32",
-    "float8": "f64",
-    "int8_t": C_SCHAR,
-    "int16_t": C_SHORT,
-    "int32_t": C_INT,
-    "int64_t": C_LONG,
-    "uint8_t": C_UCHAR,
-    "uint16_t": C_USHORT,
-    "uint32_t": C_UINT,
-    "uint64_t": C_ULONG,
-}
-
-# Bare typedef names that are really (function-)pointers. A pointer is ABI
-# identical to `*mut c_void`, which is how a raw FFI surfaces an opaque
-# callback / context handle (the rare caller casts the concrete value in).
-FORCE_VOID_PTR = {
-    "datum_func2",
-    "meos_malloc_fn",
-    "meos_realloc_fn",
-    "meos_free_fn",
-    "GEOSContextHandle_t",
-    # `Numeric` is `NumericData *` — a pointer typedef used bare.
-    "Numeric",
+    "int8_t": "i8",
+    "int16_t": "i16",
+    "int32_t": "i32",
+    "int64_t": "i64",
+    "uint8_t": "u8",
+    "uint16_t": "u16",
+    "uint32_t": "u32",
+    "uint64_t": "u64",
+    "size_t": "usize",
+    "uintptr_t": "usize",
+    "intptr_t": "isize",
+    "ptrdiff_t": "isize",
+    # <stdarg.h>'s va_list, as the x86-64 System V ABI passes it and rust-bindgen
+    # declares it: a pointer to the platform's `__va_list_tag`
+    "va_list": "*mut __va_list_tag",
 }
 
 # Rust keywords + primitives that cannot be used bare as an identifier; a
@@ -131,6 +96,18 @@ RUST_KEYWORDS = {
 }
 
 
+class CodegenError(Exception):
+    """A catalog entry the generator cannot declare faithfully; #main reports it and
+    exits with an error, so the drift job fails instead of committing a wrong FFI."""
+
+
+def rust_string(text: str) -> str:
+    """A Rust string literal holding `text`, as rust-bindgen writes a `#[doc]`: the
+    backslash and the double quote escaped. Sibling of #sanitize_ident, which makes a
+    C name a Rust identifier."""
+    return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
 def sanitize_ident(name: str, index: int) -> str:
     if not name:
         return f"arg{index + 1}"
@@ -139,33 +116,83 @@ def sanitize_ident(name: str, index: int) -> str:
 
 class Emitter:
     def __init__(self, idl: dict):
+        if "typedefs" not in idl:
+            raise CodegenError(
+                "the catalog states no `typedefs`: provision it with a MEOS-API that "
+                "states every type a slot names")
         self.struct_names = {s["name"] for s in idl["structs"]}
         self.enum_names = {e["name"] for e in idl["enums"]}
         self.structs = idl["structs"]
         self.enums = idl["enums"]
         self.macros = idl.get("macros", [])
         self.functions = idl["functions"]
-        # External opaque types referenced but not declared by the catalog
-        # (Jsonb, json_object, gsl_rng, …) — collected while mapping, emitted as
-        # zero-sized forward declarations.
+        self.callbacks = idl.get("callbacks", [])
+        self.callback_names = {c["name"] for c in self.callbacks}
+        # The definition of each name a slot keeps (`TimestampTz` is `int64_t`,
+        # `text` is `struct varlena`), and of each type of its own a slot names over
+        # a width (`H3Index` over `uint64_t`), collected by #slot_type.
+        self.typedefs = {t["name"]: t["canonical"] for t in idl["typedefs"]}
+        self.own: dict[str, str] = {}
+        # Structures only `struct` names and the catalog does not lay out
+        # (`struct json_object`), reachable only through a pointer; collected while
+        # mapping, emitted as zero-sized forward declarations.
         self.opaque: set[str] = set()
 
     # -- C type -> Rust FFI type -------------------------------------------
-    def base_rust(self, name: str) -> str:
+    def base_rust(self, name: str, by_value: bool = False, tagged: bool = False) -> str:
+        """The Rust type of a C base type name, for #rust_type, which strips the
+        pointers and arrays around it and says whether the name is used by value and
+        whether `struct` names it. A name the catalog states keeps its name; a name
+        only `struct` names is an opaque record, declared once and reachable only
+        through a pointer. Any other name, and an opaque record used by value, stops
+        the generator (#CodegenError) rather than declare a stand-in."""
         name = name.strip()
         if name == "void":
             return C_VOID
-        if name in INLINE_SCALARS:
-            return INLINE_SCALARS[name]
-        if name in NAMED_ALIAS_SET or name in CALLBACK_ALIASES \
+        if name in C_TYPES:
+            if name == "va_list":
+                self.opaque.add("__va_list_tag")
+            return C_TYPES[name]
+        if name in self.typedefs or name in self.own or name in self.callback_names \
                 or name in self.struct_names or name in self.enum_names:
             return name
-        # Unknown named type -> opaque forward declaration.
-        if re.match(r"^[A-Za-z_]\w*$", name):
-            self.opaque.add(name)
-            return name
-        # Anything exotic left (e.g. a residual expression) -> void.
-        return C_VOID
+        if not tagged or not re.match(r"^[A-Za-z_]\w*$", name):
+            raise CodegenError(f"the catalog states no type `{name}`")
+        if by_value:
+            raise CodegenError(
+                f"`struct {name}` is used by value, and the catalog states no layout")
+        self.opaque.add(name)
+        return name
+
+    def slot_type(self, slot: dict, parameter: bool = True) -> str:
+        """The Rust type of a catalog slot, read by #rust_type from its `canonical`, the
+        type as MEOS declares it. A slot naming a type of its own over a width
+        (`typedef`: `H3Index` over `uint64_t`) is declared with that name, which
+        #emit_aliases defines as the width. A parameter of array type is a pointer to
+        its element, as C adjusts it (C11 6.7.6.3), where a struct field keeps its
+        array (#emit_structs)."""
+        spelling = slot["canonical"].strip()
+        own = slot.get("typedef")
+        if own:
+            base = re.sub(r"\b(?:const|struct)\b|\*|\[\d*\]", " ", spelling).strip()
+            self.own[own] = self.rust_type(base)
+            spelling = re.sub(rf"\b{re.escape(base)}\b", own, spelling)
+        if parameter:
+            m = re.match(r"^(.*?)\s*\[\d*\]$", spelling)
+            spelling = f"{m.group(1)} *" if m else spelling
+        return self.rust_type(spelling)
+
+    def function_pointer(self, ret: str, params: str) -> str:
+        """An inline function pointer `T (*)(A, B)` as rust-bindgen declares one, a
+        typed `Option<unsafe extern "C" fn(arg1: A, arg2: B) -> T>`, each part mapped
+        by #rust_type as #emit_callbacks maps a named callback's."""
+        parts = [p.strip() for p in params.split(",") if p.strip()]
+        if parts == ["void"]:
+            parts = []
+        args = ", ".join(f"arg{i + 1}: {self.rust_type(p)}" for i, p in enumerate(parts))
+        ret = ret.strip()
+        arrow = "" if ret == "void" else f" -> {self.rust_type(ret)}"
+        return f'::std::option::Option<unsafe extern "C" fn({args}){arrow}>'
 
     def rust_type(self, ctype: str) -> str:
         s = ctype.strip()
@@ -177,22 +204,24 @@ class Emitter:
             n = m.group(2)
             return f"[{inner}; 0]" if n == "" else f"[{inner}; {n}usize]"
 
-        # Function pointer (inline `T (*)(…)`) -> opaque pointer.
+        # Function pointer: `T (*)(…)`.
+        m = re.match(r"^(.*?)\(\s*\*\s*\)\s*\((.*)\)$", s)
+        if m:
+            return self.function_pointer(m.group(1), m.group(2))
         if "(" in s:
-            return f"*mut {C_VOID}"
+            raise CodegenError(f"no Rust type for the C type `{s}`")
 
         stars = s.count("*")
         without_stars = s.replace("*", "")
+        tagged = bool(re.search(r"\b(?:struct|union)\b", without_stars))
         base_name = re.sub(r"\b(const|struct|union|enum)\b", " ", without_stars)
         base_name = " ".join(base_name.split())
 
         if stars == 0:
-            if base_name in FORCE_VOID_PTR:
-                return f"*mut {C_VOID}"
-            return self.base_rust(base_name)
+            return self.base_rust(base_name, by_value=True, tagged=tagged)
 
         pointee_const = bool(re.match(r"^\s*const\b", without_stars.strip()))
-        inner = self.base_rust(base_name)
+        inner = self.base_rust(base_name, tagged=tagged)
         rt = f"*{'const' if pointee_const else 'mut'} {inner}"
         for _ in range(stars - 1):  # outer pointers are non-const here
             rt = f"*mut {rt}"
@@ -200,9 +229,30 @@ class Emitter:
 
     # -- emitters -----------------------------------------------------------
     def emit_aliases(self) -> str:
-        lines = [f"pub type {n} = {t};" for n, t in NAMED_ALIASES]
-        lines += [f"pub type {n} = {t};" for n, t in CALLBACK_ALIASES.items()]
-        return "\n".join(lines)
+        """`pub type` for each name the catalog's `typedefs` defines and each type of
+        its own a slot names (#slot_type), as rust-bindgen declares a typedef:
+        `TimestampTz` is `i64`, `text` is `varlena`, `H3Index` is `u64`."""
+        aliases = {n: self.rust_type(c) for n, c in self.typedefs.items()}
+        aliases.update(self.own)
+        return "\n".join(f"pub type {n} = {t};" for n, t in sorted(aliases.items()))
+
+    def emit_callbacks(self) -> str:
+        """One typed `Option<unsafe extern "C" fn(…)>` per catalog callback, as
+        rust-bindgen writes a function-pointer typedef, so a caller passes a Rust
+        `fn` (`Some(handler)`). Its parameters and result map as #emit_functions maps
+        a function's."""
+        out = []
+        for cb in self.callbacks:
+            params = [f"{sanitize_ident(p.get('name', ''), i)}: {self.slot_type(p)}"
+                      for i, p in enumerate(cb["params"])]
+            if cb.get("variadic"):
+                params.append("...")
+            ret = cb["returnType"]
+            arrow = "" if ret["canonical"].strip() == "void" \
+                else f" -> {self.slot_type(ret, parameter=False)}"
+            out.append(f"pub type {cb['name']} = ::std::option::Option<"
+                       f"unsafe extern \"C\" fn({', '.join(params)}){arrow}>;")
+        return "\n".join(out)
 
     def emit_opaque(self) -> str:
         # Emitted after mapping so `self.opaque` is fully populated.
@@ -248,9 +298,36 @@ class Emitter:
             else:
                 for i, f in enumerate(s["fields"]):
                     fname = sanitize_ident(f["name"], i)
-                    out.append(f"    pub {fname}: {self.rust_type(f['cType'])},")
+                    out.append(f"    pub {fname}: {self.slot_type(f, parameter=False)},")
             out.append("}")
+            out.extend(self.layout_assertions(s))
         return "\n".join(out)
+
+    def layout_assertions(self, s: dict) -> list[str]:
+        """Compile-time checks that the Rust struct has the size, alignment and field
+        offsets the catalog states (`sizeBytes`, `alignBytes`, `offset_bits`), in
+        rust-bindgen's form. A field at no whole byte (a bit-field) has no Rust offset to
+        check. A struct the catalog only declares states no size and gets none. Sibling
+        of #emit_structs, which lays the fields out."""
+        if not s["fields"] or "sizeBytes" not in s:
+            return []
+        name = s["name"]
+        out = ["#[allow(clippy::unnecessary_operation, clippy::identity_op)]",
+               "const _: () = {",
+               f'    ["Size of {name}"][::std::mem::size_of::<{name}>() - '
+               f'{s["sizeBytes"]}usize];']
+        if "alignBytes" in s:
+            out.append(f'    ["Alignment of {name}"][::std::mem::align_of::<{name}>() - '
+                       f'{s["alignBytes"]}usize];')
+        for i, f in enumerate(s["fields"]):
+            bits = f.get("offset_bits")
+            if not isinstance(bits, int) or bits < 0 or bits % 8:
+                continue
+            fname = sanitize_ident(f["name"], i)
+            out.append(f'    ["Offset of field: {name}::{fname}"]'
+                       f"[::std::mem::offset_of!({name}, {fname}) - {bits // 8}usize];")
+        out.append("};")
+        return out
 
     def emit_functions(self) -> str:
         out = []
@@ -258,13 +335,18 @@ class Emitter:
             params = []
             for i, p in enumerate(fn["params"]):
                 pname = sanitize_ident(p.get("name", ""), i)
-                params.append(f"{pname}: {self.rust_type(p['cType'])}")
-            ret_c = fn["returnType"]["c"].strip()
-            arrow = "" if ret_c == "void" else f" -> {self.rust_type(ret_c)}"
+                params.append(f"{pname}: {self.slot_type(p)}")
+            ret = fn["returnType"]
+            arrow = "" if ret["canonical"].strip() == "void" \
+                else f" -> {self.slot_type(ret, parameter=False)}"
             fname = fn["name"]
             if fname in RUST_KEYWORDS:
                 fname = f"r#{fname}"
+            if fn.get("variadic"):
+                params.append("...")
             out.append('extern "C" {')
+            if fn.get("doc"):
+                out.append(f"    #[doc = {rust_string(' ' + fn['doc'])}]")
             out.append(f"    pub fn {fname}({', '.join(params)}){arrow};")
             out.append("}")
         return "\n".join(out)
@@ -274,8 +356,9 @@ class Emitter:
         # opaque block is emitted.
         structs = self.emit_structs()
         functions = self.emit_functions()
+        callbacks = self.emit_callbacks()
         enums = self.emit_enums()
-        aliases = self.emit_aliases()
+        aliases = self.emit_aliases()  # after every slot, so #slot_type filled `own`
         macros = self.emit_macros()
         opaque = self.emit_opaque()
 
@@ -290,6 +373,9 @@ class Emitter:
             "",
             "// --- base-type vocabulary ---",
             aliases,
+            "",
+            "// --- callbacks ---",
+            callbacks,
             "",
             "// --- external opaque types ---",
             opaque,
@@ -310,10 +396,14 @@ class Emitter:
 
 
 def main() -> None:
+    """Write the FFI of the catalog with #Emitter."""
     if len(sys.argv) != 3:
         sys.exit("usage: codegen.py <meos-idl.json> <out.rs>")
     idl = json.loads(Path(sys.argv[1]).read_text())
-    out = Emitter(idl).generate()
+    try:
+        out = Emitter(idl).generate()
+    except CodegenError as err:
+        sys.exit(f"codegen.py: {err}")
     Path(sys.argv[2]).write_text(out)
     print(f"wrote {sys.argv[2]}")
 
