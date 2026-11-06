@@ -1,6 +1,7 @@
+use crate::utils::take_meos_string;
 use std::{
     cmp,
-    ffi::{c_void, CStr, CString},
+    ffi::{CStr, CString},
     fmt::Debug,
     ptr,
 };
@@ -737,12 +738,10 @@ impl cmp::Eq for TBox {}
 
 impl Debug for TBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_call!(meos_sys::tbox_out(self.inner(), 3)) };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
-        let result = f.write_str(str);
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        result
+        let mut size = 0;
+        let out_str = unsafe { meos_call!(meos_sys::tbox_out(self.inner(), 3, &raw mut size)) };
+        let string = unsafe { take_meos_string(out_str, size) }.ok_or(std::fmt::Error)?;
+        f.write_str(&string)
     }
 }
 

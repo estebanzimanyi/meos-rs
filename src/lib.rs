@@ -15,6 +15,7 @@
 #![allow(clippy::must_use_candidate)]
 #![allow(clippy::cast_sign_loss)]
 
+use crate::utils::take_meos_string;
 use std::{
     ffi::{CStr, CString},
     fmt::Debug,
@@ -249,6 +250,7 @@ pub trait MeosEnum: Debug + Sized + Temporal {
         srs: &str,
     ) -> String {
         let srs = CString::new(srs).unwrap();
+        let mut size = 0;
         let out_str = unsafe {
             meos_call!(meos_sys::temporal_as_mfjson(
                 self.inner(),
@@ -256,12 +258,10 @@ pub trait MeosEnum: Debug + Sized + Temporal {
                 variant as i32,
                 precision,
                 srs.as_ptr(),
+                &raw mut size,
             ))
         };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().unwrap().to_owned();
-        unsafe { libc::free(out_str.cast()) };
-        str
+        unsafe { take_meos_string(out_str, size) }.unwrap()
     }
 
     /// Returns the temporal object as Well-Known Binary (WKB) bytes.

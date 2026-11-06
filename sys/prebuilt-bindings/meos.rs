@@ -56,6 +56,7 @@ pub const MEOS_FLAG_Z: u32 = 32;
 pub const MEOS_FLAG_T: u32 = 64;
 pub const MEOS_FLAG_GEODETIC: u32 = 128;
 pub const MEOS_FLAG_GEOM: u32 = 256;
+pub const MEOS_FLAG_PARTS: u32 = 512;
 pub const MEOS_ARRAY_INITIAL_SIZE: u32 = 16;
 pub const SKIPLIST_MAXLEVEL: u32 = 32;
 pub const LWFLAG_VERSBIT2: u32 = 128;
@@ -134,16 +135,20 @@ unsafe extern "C" {
     pub fn bool_in(str_: *const ::std::os::raw::c_char) -> bool;
 }
 unsafe extern "C" {
-    pub fn bool_out(b: bool) -> *mut ::std::os::raw::c_char;
+    pub fn bool_out(b: bool, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn float8_out(num: f64, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn float8_out(
+        num: f64,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn date_in(str_: *const ::std::os::raw::c_char) -> DateADT;
 }
 unsafe extern "C" {
-    pub fn date_out(date: DateADT) -> *mut ::std::os::raw::c_char;
+    pub fn date_out(date: DateADT, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn interval_cmp(
@@ -155,25 +160,28 @@ unsafe extern "C" {
     pub fn interval_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> *mut Interval;
 }
 unsafe extern "C" {
-    pub fn interval_out(interv: *const Interval) -> *mut ::std::os::raw::c_char;
+    pub fn interval_out(
+        interv: *const Interval,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn time_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimeADT;
 }
 unsafe extern "C" {
-    pub fn time_out(time: TimeADT) -> *mut ::std::os::raw::c_char;
+    pub fn time_out(time: TimeADT, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn timestamp_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> Timestamp;
 }
 unsafe extern "C" {
-    pub fn timestamp_out(ts: Timestamp) -> *mut ::std::os::raw::c_char;
+    pub fn timestamp_out(ts: Timestamp, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn timestamptz_in(str_: *const ::std::os::raw::c_char, typmod: int32) -> TimestampTz;
 }
 unsafe extern "C" {
-    pub fn timestamptz_out(tstz: TimestampTz) -> *mut ::std::os::raw::c_char;
+    pub fn timestamptz_out(tstz: TimestampTz, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn cstring_to_text(str_: *const ::std::os::raw::c_char) -> *mut text;
@@ -185,7 +193,7 @@ unsafe extern "C" {
     pub fn text_in(str_: *const ::std::os::raw::c_char) -> *mut text;
 }
 unsafe extern "C" {
-    pub fn text_out(txt: *const text) -> *mut ::std::os::raw::c_char;
+    pub fn text_out(txt: *const text, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn text_cmp(txt1: *const text, txt2: *const text, collid: Oid) -> ::std::os::raw::c_int;
@@ -232,6 +240,7 @@ pub const errorCode_MEOS_ERR_GEOJSON_INPUT: errorCode = 26;
 pub const errorCode_MEOS_ERR_GEOJSON_OUTPUT: errorCode = 27;
 pub const errorCode_MEOS_ERR_SQL_JSON_ERROR: errorCode = 28;
 pub const errorCode_MEOS_ERR_INVALID_REGULAR_EXPRESSION: errorCode = 29;
+pub const errorCode_MEOS_ERR_DATETIME_OUT_OF_RANGE: errorCode = 30;
 pub type errorCode = ::std::os::raw::c_uint;
 pub const errorLevel_MEOS_INFO: errorLevel = 17;
 pub const errorLevel_MEOS_NOTICE: errorLevel = 18;
@@ -1009,10 +1018,10 @@ unsafe extern "C" {
     ) -> bool;
 }
 unsafe extern "C" {
-    pub fn meos_get_datestyle() -> *mut ::std::os::raw::c_char;
+    pub fn meos_get_datestyle(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn meos_get_intervalstyle() -> *mut ::std::os::raw::c_char;
+    pub fn meos_get_intervalstyle(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn meos_set_spatial_ref_sys_csv(path: *const ::std::os::raw::c_char);
@@ -1028,23 +1037,23 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     #[doc = " Version functions"]
-    pub fn meos_version() -> *mut ::std::os::raw::c_char;
+    pub fn meos_version(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn meos_full_version() -> *mut ::std::os::raw::c_char;
+    pub fn meos_full_version(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn mobilitydb_version() -> *mut ::std::os::raw::c_char;
+    pub fn mobilitydb_version(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn mobilitydb_full_version() -> *mut ::std::os::raw::c_char;
+    pub fn mobilitydb_full_version(size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Input/output functions for set and span types"]
     pub fn bigintset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn bigintset_out(set: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn bigintset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn bigintspan_expand(s: *const Span, value: int64) -> *mut Span;
@@ -1053,31 +1062,35 @@ unsafe extern "C" {
     pub fn bigintspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    pub fn bigintspan_out(s: *const Span) -> *mut ::std::os::raw::c_char;
+    pub fn bigintspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn bigintspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    pub fn bigintspanset_out(ss: *const SpanSet) -> *mut ::std::os::raw::c_char;
+    pub fn bigintspanset_out(
+        ss: *const SpanSet,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn dateset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn dateset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn dateset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn datespan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    pub fn datespan_out(s: *const Span) -> *mut ::std::os::raw::c_char;
+    pub fn datespan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn datespanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    pub fn datespanset_out(ss: *const SpanSet) -> *mut ::std::os::raw::c_char;
+    pub fn datespanset_out(ss: *const SpanSet, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn floatset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
@@ -1086,6 +1099,7 @@ unsafe extern "C" {
     pub fn floatset_out(
         set: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -1098,6 +1112,7 @@ unsafe extern "C" {
     pub fn floatspan_out(
         s: *const Span,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -1107,13 +1122,14 @@ unsafe extern "C" {
     pub fn floatspanset_out(
         ss: *const SpanSet,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn intset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn intset_out(set: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn intset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn intspan_expand(s: *const Span, value: int32) -> *mut Span;
@@ -1122,13 +1138,13 @@ unsafe extern "C" {
     pub fn intspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    pub fn intspan_out(s: *const Span) -> *mut ::std::os::raw::c_char;
+    pub fn intspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn intspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    pub fn intspanset_out(ss: *const SpanSet) -> *mut ::std::os::raw::c_char;
+    pub fn intspanset_out(ss: *const SpanSet, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn set_as_hexwkb(
@@ -1182,25 +1198,26 @@ unsafe extern "C" {
     pub fn textset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn textset_out(set: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn textset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tstzset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn tstzset_out(set: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn tstzset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tstzspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    pub fn tstzspan_out(s: *const Span) -> *mut ::std::os::raw::c_char;
+    pub fn tstzspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tstzspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    pub fn tstzspanset_out(ss: *const SpanSet) -> *mut ::std::os::raw::c_char;
+    pub fn tstzspanset_out(ss: *const SpanSet, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Constructor functions for set and span types"]
@@ -3345,8 +3362,11 @@ unsafe extern "C" {
     pub fn tbox_in(str_: *const ::std::os::raw::c_char) -> *mut TBox;
 }
 unsafe extern "C" {
-    pub fn tbox_out(box_: *const TBox, maxdd: ::std::os::raw::c_int)
-    -> *mut ::std::os::raw::c_char;
+    pub fn tbox_out(
+        box_: *const TBox,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Constructor functions for box types"]
@@ -3368,7 +3388,7 @@ unsafe extern "C" {
     pub fn bigint_tstzspan_to_tbox(i: int64, s: *const Span) -> *mut TBox;
 }
 unsafe extern "C" {
-    pub fn numspan_tstzspan_to_tbox(span: *const Span, s: *const Span) -> *mut TBox;
+    pub fn numspan_tstzspan_to_tbox(s: *const Span, p: *const Span) -> *mut TBox;
 }
 unsafe extern "C" {
     pub fn numspan_timestamptz_to_tbox(span: *const Span, t: TimestampTz) -> *mut TBox;
@@ -3712,7 +3732,7 @@ unsafe extern "C" {
     pub fn tbool_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tbool_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tbool_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn temporal_as_hexwkb(
@@ -3728,6 +3748,7 @@ unsafe extern "C" {
         flags: ::std::os::raw::c_int,
         precision: ::std::os::raw::c_int,
         srs: *const ::std::os::raw::c_char,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -3755,6 +3776,7 @@ unsafe extern "C" {
     pub fn tfloat_out(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -3770,10 +3792,10 @@ unsafe extern "C" {
     pub fn tbigint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tint_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    pub fn tbigint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tbigint_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn ttext_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -3782,7 +3804,7 @@ unsafe extern "C" {
     pub fn ttext_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn ttext_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn ttext_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Constructor functions for temporal types"]
@@ -7000,6 +7022,7 @@ unsafe extern "C" {
     pub fn box3d_out(
         box_: *const BOX3D,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7021,8 +7044,11 @@ unsafe extern "C" {
     pub fn gbox_in(str_: *const ::std::os::raw::c_char) -> *mut GBOX;
 }
 unsafe extern "C" {
-    pub fn gbox_out(box_: *const GBOX, maxdd: ::std::os::raw::c_int)
-    -> *mut ::std::os::raw::c_char;
+    pub fn gbox_out(
+        box_: *const GBOX,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn geo_as_ewkb(
@@ -7035,6 +7061,7 @@ unsafe extern "C" {
     pub fn geo_as_ewkt(
         gs: *const GSERIALIZED,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7043,18 +7070,21 @@ unsafe extern "C" {
         option: ::std::os::raw::c_int,
         precision: ::std::os::raw::c_int,
         srs: *const ::std::os::raw::c_char,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn geo_as_hexewkb(
         gs: *const GSERIALIZED,
         endian: *const ::std::os::raw::c_char,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn geo_as_text(
         gs: *const GSERIALIZED,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7067,7 +7097,7 @@ unsafe extern "C" {
     pub fn geo_from_text(wkt: *const ::std::os::raw::c_char, srid: i32) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
-    pub fn geo_out(gs: *const GSERIALIZED) -> *mut ::std::os::raw::c_char;
+    pub fn geo_out(gs: *const GSERIALIZED, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn geog_from_hexewkb(hexwkb: *const ::std::os::raw::c_char) -> *mut GSERIALIZED;
@@ -7414,15 +7444,13 @@ unsafe extern "C" {
     pub fn geom_disjoint2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
 }
 unsafe extern "C" {
-    pub fn geom_dwithin(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64) -> bool;
+    pub fn geom_dwithin(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
 }
 unsafe extern "C" {
-    pub fn geom_dwithin2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64)
-    -> bool;
+    pub fn geom_dwithin2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
 }
 unsafe extern "C" {
-    pub fn geom_dwithin3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, tolerance: f64)
-    -> bool;
+    pub fn geom_dwithin3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
 }
 unsafe extern "C" {
     pub fn geom_intersects(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
@@ -7437,6 +7465,7 @@ unsafe extern "C" {
     pub fn geom_relate(
         gs1: *const GSERIALIZED,
         gs2: *const GSERIALIZED,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7522,12 +7551,14 @@ unsafe extern "C" {
     pub fn spatialset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn spatialset_as_text(
         set: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7537,6 +7568,7 @@ unsafe extern "C" {
     pub fn spatialset_as_ewkt(
         set: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7656,6 +7688,7 @@ unsafe extern "C" {
     pub fn stbox_out(
         box_: *const STBox,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7919,6 +7952,7 @@ unsafe extern "C" {
     pub fn tspatial_out(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7952,6 +7986,7 @@ unsafe extern "C" {
     pub fn tspatial_as_ewkt(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -7965,6 +8000,7 @@ unsafe extern "C" {
     pub fn tspatial_as_text(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -8202,6 +8238,12 @@ unsafe extern "C" {
         yoff: f64,
         zoff: f64,
     ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tgeo_force2d(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tgeo_force3d(temp: *const Temporal, zvalue: f64) -> *mut Temporal;
 }
 unsafe extern "C" {
     pub fn tgeo_rotate(temp: *const Temporal, angle: f64, x0: f64, y0: f64) -> *mut Temporal;
@@ -9152,7 +9194,7 @@ unsafe extern "C" {
     pub fn tpoint_tcentroid_finalfn(state: *mut SkipList) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tpoint_tcentroid_transfn(state: *mut SkipList, temp: *mut Temporal) -> *mut SkipList;
+    pub fn tpoint_tcentroid_transfn(state: *mut SkipList, temp: *const Temporal) -> *mut SkipList;
 }
 unsafe extern "C" {
     pub fn stbox_extent_transfn(state: *mut STBox, box_: *const STBox) -> *mut STBox;
@@ -9889,6 +9931,7 @@ unsafe extern "C" {
     pub fn cbuffer_as_ewkt(
         cb: *const Cbuffer,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -9909,6 +9952,7 @@ unsafe extern "C" {
     pub fn cbuffer_as_text(
         cb: *const Cbuffer,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -9927,6 +9971,7 @@ unsafe extern "C" {
     pub fn cbuffer_out(
         cb: *const Cbuffer,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -10076,6 +10121,7 @@ unsafe extern "C" {
     pub fn cbufferset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -10944,7 +10990,7 @@ unsafe extern "C" {
     pub fn bigint_to_h3index(i: int64) -> H3Index;
 }
 unsafe extern "C" {
-    pub fn h3index_out(cell: H3Index) -> *mut ::std::os::raw::c_char;
+    pub fn h3index_out(cell: H3Index, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn h3_is_valid_cell(cell: H3Index) -> bool;
@@ -11066,7 +11112,8 @@ unsafe extern "C" {
     pub fn th3indexseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    pub fn th3index_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn th3index_out(temp: *const Temporal, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn th3index_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -11314,7 +11361,7 @@ unsafe extern "C" {
     pub fn h3indexset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn h3indexset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn h3indexset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn h3indexset_make(values: *const H3Index, count: ::std::os::raw::c_int) -> *mut Set;
@@ -11644,13 +11691,21 @@ unsafe extern "C" {
     pub fn set_in(str_: *const ::std::os::raw::c_char, settype: MeosType) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn set_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn set_out(
+        s: *const Set,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn span_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut Span;
 }
 unsafe extern "C" {
-    pub fn span_out(s: *const Span, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn span_out(
+        s: *const Span,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn spanset_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut SpanSet;
@@ -11659,6 +11714,7 @@ unsafe extern "C" {
     pub fn spanset_out(
         ss: *const SpanSet,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -12023,6 +12079,54 @@ unsafe extern "C" {
     pub fn ensure_index_join_op(op: IndexSearchOp) -> bool;
 }
 unsafe extern "C" {
+    pub fn bbox_same_structure(
+        bboxtype: MeosType,
+        box1: *const ::std::os::raw::c_void,
+        box2: *const ::std::os::raw::c_void,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn ensure_index_op(bboxtype: MeosType, op: IndexSearchOp) -> bool;
+}
+unsafe extern "C" {
+    pub fn index_op_is_valid(
+        bboxtype: MeosType,
+        op: IndexSearchOp,
+        box_: *const ::std::os::raw::c_void,
+        query: *const ::std::os::raw::c_void,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn index_op_apply(
+        bboxtype: MeosType,
+        op: IndexSearchOp,
+        box_: *const ::std::os::raw::c_void,
+        query: *const ::std::os::raw::c_void,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn index_query_project(
+        bboxtype: MeosType,
+        query: *const ::std::os::raw::c_void,
+        box_: *const ::std::os::raw::c_void,
+        result: *mut ::std::os::raw::c_void,
+    );
+}
+unsafe extern "C" {
+    pub fn index_distance_is_valid(
+        bboxtype: MeosType,
+        box_: *const ::std::os::raw::c_void,
+        query: *const ::std::os::raw::c_void,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn index_distance_apply(
+        bboxtype: MeosType,
+        box_: *const ::std::os::raw::c_void,
+        query: *const ::std::os::raw::c_void,
+    ) -> f64;
+}
+unsafe extern "C" {
     pub fn ensure_index_result(result: *const MeosArray) -> bool;
 }
 unsafe extern "C" {
@@ -12308,6 +12412,7 @@ unsafe extern "C" {
     pub fn temporal_out(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -12353,6 +12458,7 @@ unsafe extern "C" {
     pub fn tinstant_out(
         inst: *const TInstant,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -12412,6 +12518,7 @@ unsafe extern "C" {
     pub fn tsequence_out(
         seq: *const TSequence,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -12434,6 +12541,7 @@ unsafe extern "C" {
     pub fn tsequenceset_out(
         ss: *const TSequenceSet,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -14470,7 +14578,7 @@ unsafe extern "C" {
     pub fn numeric_ne(num1: Numeric, num2: Numeric) -> bool;
 }
 unsafe extern "C" {
-    pub fn numeric_out(num: Numeric) -> *mut ::std::os::raw::c_char;
+    pub fn numeric_out(num: Numeric, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn numeric_pow(num1: Numeric, num2: Numeric) -> Numeric;
@@ -14531,7 +14639,7 @@ unsafe extern "C" {
     pub fn json_in(str_: *const ::std::os::raw::c_char) -> *mut text;
 }
 unsafe extern "C" {
-    pub fn json_out(js: *const text) -> *mut ::std::os::raw::c_char;
+    pub fn json_out(js: *const text, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn jsonb_from_text(txt: *const text, unique_keys: bool) -> *mut Jsonb;
@@ -14540,7 +14648,7 @@ unsafe extern "C" {
     pub fn jsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Jsonb;
 }
 unsafe extern "C" {
-    pub fn jsonb_out(jb: *const Jsonb) -> *mut ::std::os::raw::c_char;
+    pub fn jsonb_out(jb: *const Jsonb, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn json_make(keys_vals: *mut *mut text, count: ::std::os::raw::c_int) -> *mut text;
@@ -14569,7 +14677,7 @@ unsafe extern "C" {
     pub fn jsonb_to_bool(jb: *const Jsonb) -> bool;
 }
 unsafe extern "C" {
-    pub fn jsonb_to_cstring(jb: *const Jsonb) -> *mut ::std::os::raw::c_char;
+    pub fn jsonb_to_cstring(jb: *const Jsonb, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn jsonb_to_float4(jb: *const Jsonb) -> float4;
@@ -14875,7 +14983,7 @@ unsafe extern "C" {
     pub fn jsonpath_mem_size(jp: *const JsonPath) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
-    pub fn jsonpath_out(jp: *const JsonPath) -> *mut ::std::os::raw::c_char;
+    pub fn jsonpath_out(jp: *const JsonPath, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 pub const nullHandleType_NULL_INVALID: nullHandleType = 0;
 pub const nullHandleType_NULL_ERROR: nullHandleType = 1;
@@ -14889,7 +14997,7 @@ unsafe extern "C" {
     pub fn jsonbset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn jsonbset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn jsonbset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn jsonbset_make(values: *mut *const Jsonb, count: ::std::os::raw::c_int) -> *mut Set;
@@ -15204,7 +15312,7 @@ unsafe extern "C" {
     pub fn tjsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tjsonb_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tjsonb_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tjsonbinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
@@ -15735,6 +15843,7 @@ unsafe extern "C" {
     pub fn npoint_as_ewkt(
         np: *const Npoint,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -15755,6 +15864,7 @@ unsafe extern "C" {
     pub fn npoint_as_text(
         np: *const Npoint,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -15773,6 +15883,7 @@ unsafe extern "C" {
     pub fn npoint_out(
         np: *const Npoint,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -15805,6 +15916,7 @@ unsafe extern "C" {
     pub fn nsegment_out(
         ns: *const Nsegment,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -15814,12 +15926,14 @@ unsafe extern "C" {
     pub fn nsegment_as_ewkt(
         ns: *const Nsegment,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn nsegment_as_text(
         ns: *const Nsegment,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -15956,6 +16070,7 @@ unsafe extern "C" {
     pub fn npointset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -16024,6 +16139,7 @@ unsafe extern "C" {
     pub fn tnpoint_out(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -16369,13 +16485,17 @@ unsafe extern "C" {
     pub fn pcpoint_hex_out(
         pt: *const Pcpoint,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn pcpoint_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Pcpoint;
 }
 unsafe extern "C" {
-    pub fn pcpoint_as_hexwkb(pt: *const Pcpoint) -> *mut ::std::os::raw::c_char;
+    pub fn pcpoint_as_hexwkb(
+        pt: *const Pcpoint,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn pcpoint_make(
@@ -16543,13 +16663,17 @@ unsafe extern "C" {
     pub fn pcpatch_hex_out(
         pa: *const Pcpatch,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn pcpatch_from_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> *mut Pcpatch;
 }
 unsafe extern "C" {
-    pub fn pcpatch_as_hexwkb(pa: *const Pcpatch) -> *mut ::std::os::raw::c_char;
+    pub fn pcpatch_as_hexwkb(
+        pa: *const Pcpatch,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn pcpatch_make(points: *mut *const Pcpoint, count: ::std::os::raw::c_int) -> *mut Pcpatch;
@@ -16620,6 +16744,7 @@ unsafe extern "C" {
     pub fn pcpointset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -16680,6 +16805,7 @@ unsafe extern "C" {
     pub fn pcpatchset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -16766,6 +16892,7 @@ unsafe extern "C" {
     pub fn tpcbox_out(
         box_: *const TPCBox,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -16788,6 +16915,9 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn pcpatch_to_tpcbox(pa: *const Pcpatch) -> *mut TPCBox;
+}
+unsafe extern "C" {
+    pub fn tpointcloud_to_tpcbox(temp: *const Temporal) -> *mut TPCBox;
 }
 unsafe extern "C" {
     pub fn tpcbox_hasx(box_: *const TPCBox) -> bool;
@@ -16954,7 +17084,8 @@ unsafe extern "C" {
     pub fn tpcpoint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tpcpoint_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tpcpoint_out(temp: *const Temporal, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tpcpoint_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -16963,7 +17094,8 @@ unsafe extern "C" {
     pub fn tpcpatch_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn tpcpatch_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tpcpatch_out(temp: *const Temporal, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tpcpatch_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -17523,6 +17655,15 @@ unsafe extern "C" {
     ) -> bool;
 }
 unsafe extern "C" {
+    pub fn nad_tpcbox_tpcbox(box1: *const TPCBox, box2: *const TPCBox) -> f64;
+}
+unsafe extern "C" {
+    pub fn nad_tpointcloud_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> f64;
+}
+unsafe extern "C" {
+    pub fn nad_tpointcloud_tpointcloud(temp1: *const Temporal, temp2: *const Temporal) -> f64;
+}
+unsafe extern "C" {
     pub fn tpc_extent_transfn(state: *mut TPCBox, temp: *const Temporal) -> *mut TPCBox;
 }
 unsafe extern "C" {
@@ -17554,6 +17695,7 @@ unsafe extern "C" {
     pub fn pose_as_ewkt(
         pose: *const Pose,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -17574,6 +17716,7 @@ unsafe extern "C" {
     pub fn pose_as_text(
         pose: *const Pose,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -17592,8 +17735,11 @@ unsafe extern "C" {
     pub fn pose_in(str_: *const ::std::os::raw::c_char) -> *mut Pose;
 }
 unsafe extern "C" {
-    pub fn pose_out(pose: *const Pose, maxdd: ::std::os::raw::c_int)
-    -> *mut ::std::os::raw::c_char;
+    pub fn pose_out(
+        pose: *const Pose,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn pose_from_geopose(json: *const ::std::os::raw::c_char) -> *mut Pose;
@@ -17603,6 +17749,7 @@ unsafe extern "C" {
         pose: *const Pose,
         conformance: ::std::os::raw::c_int,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -17613,12 +17760,14 @@ unsafe extern "C" {
         temp: *const Temporal,
         conformance: ::std::os::raw::c_int,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tpose_as_geopose_stream_header(
         temp: *const Temporal,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -17626,12 +17775,14 @@ unsafe extern "C" {
         temp: *const Temporal,
         inst: *const TInstant,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tpose_as_geopose_stream(
         temp: *const Temporal,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 #[doc = " @brief One frame of the OGC GeoPose registry, as the standard names it\n @details A frame whose position depends on a runtime anchor states no\n spatial reference system, and carries @p srid 0 for it."]
@@ -17676,7 +17827,7 @@ unsafe extern "C" {
     pub fn geopose_frame(frame_id: i32) -> *const GeoPoseFrame;
 }
 unsafe extern "C" {
-    pub fn geopose_frame_name(frame_id: i32) -> *mut ::std::os::raw::c_char;
+    pub fn geopose_frame_name(frame_id: i32, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn geopose_frame_srid(frame_id: i32) -> i32;
@@ -17710,6 +17861,9 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn tpose_rotate_y(temp: *const Temporal, angle: f64) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn tpose_force2d(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     pub fn tpose_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
@@ -17754,6 +17908,9 @@ unsafe extern "C" {
         pitch: f64,
         roll: f64,
     ) -> *mut Pose;
+}
+unsafe extern "C" {
+    pub fn pose_to_geog(pose: *const Pose) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     pub fn pose_to_point(pose: *const Pose) -> *mut GSERIALIZED;
@@ -17865,7 +18022,11 @@ unsafe extern "C" {
     pub fn poseset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn poseset_out(s: *const Set, maxdd: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+    pub fn poseset_out(
+        s: *const Set,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn poseset_make(values: *mut *const Pose, count: ::std::os::raw::c_int) -> *mut Set;
@@ -18164,12 +18325,14 @@ unsafe extern "C" {
     pub fn posechain_out(
         pc: *const PoseChain,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn posechain_as_text(
         pc: *const PoseChain,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -18179,6 +18342,7 @@ unsafe extern "C" {
     pub fn posechain_as_ewkt(
         pc: *const PoseChain,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -18289,6 +18453,7 @@ unsafe extern "C" {
     pub fn tposechain_as_geopose(
         temp: *const Temporal,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -18296,6 +18461,7 @@ unsafe extern "C" {
         temparr: *mut *const Temporal,
         count: ::std::os::raw::c_int,
         precision: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -18336,6 +18502,7 @@ unsafe extern "C" {
     pub fn posechainset_out(
         s: *const Set,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -18674,7 +18841,7 @@ unsafe extern "C" {
     pub fn bigint_to_quadbin(i: int64) -> Quadbin;
 }
 unsafe extern "C" {
-    pub fn quadbin_out(cell: Quadbin) -> *mut ::std::os::raw::c_char;
+    pub fn quadbin_out(cell: Quadbin, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn quadbin_eq(a: Quadbin, b: Quadbin) -> bool;
@@ -18783,13 +18950,19 @@ unsafe extern "C" {
     pub fn quadbin_cell_area(cell: Quadbin) -> f64;
 }
 unsafe extern "C" {
-    pub fn quadbin_index_to_string(index: Quadbin) -> *mut ::std::os::raw::c_char;
+    pub fn quadbin_index_to_string(
+        index: Quadbin,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn quadbin_string_to_index(str_: *const ::std::os::raw::c_char) -> Quadbin;
 }
 unsafe extern "C" {
-    pub fn quadbin_cell_to_quadkey(cell: Quadbin) -> *mut ::std::os::raw::c_char;
+    pub fn quadbin_cell_to_quadkey(
+        cell: Quadbin,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn quadbin_grid_disk(origin: Quadbin, k: ::std::os::raw::c_int) -> *mut Set;
@@ -18823,7 +18996,7 @@ unsafe extern "C" {
     pub fn quadbinset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn quadbinset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn quadbinset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn quadbinset_make(values: *const Quadbin, count: ::std::os::raw::c_int) -> *mut Set;
@@ -18888,7 +19061,8 @@ unsafe extern "C" {
     pub fn tquadbinseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    pub fn tquadbin_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn tquadbin_out(temp: *const Temporal, size_out: *mut usize)
+    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn tquadbin_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -19136,7 +19310,7 @@ unsafe extern "C" {
     pub fn raquet_in(str_: *const ::std::os::raw::c_char) -> *mut Raquet;
 }
 unsafe extern "C" {
-    pub fn raquet_out(rq: *const Raquet) -> *mut ::std::os::raw::c_char;
+    pub fn raquet_out(rq: *const Raquet, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn raquet_from_wkb(wkb: *const u8, size: usize) -> *mut Raquet;
@@ -19185,7 +19359,10 @@ unsafe extern "C" {
     pub fn raquet_height(rq: *const Raquet) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
-    pub fn raquet_band_pixel_type(rq: *const Raquet) -> *mut ::std::os::raw::c_char;
+    pub fn raquet_band_pixel_type(
+        rq: *const Raquet,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn raquet_band_has_nodata_value(rq: *const Raquet) -> bool;
@@ -19492,6 +19669,7 @@ unsafe extern "C" {
     pub fn raster_band_pixel_type(
         rast: *const Raster,
         band: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -19740,6 +19918,7 @@ unsafe extern "C" {
     pub fn raster_not_same_alignment_reason(
         rast1: *const Raster,
         rast2: *const Raster,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -19956,18 +20135,23 @@ unsafe extern "C" {
     pub fn trgeometry_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    pub fn trgeometry_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn trgeometry_out(
+        temp: *const Temporal,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn trgeometry_as_text(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn trgeometry_as_ewkt(
         temp: *const Temporal,
         maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
@@ -20244,6 +20428,9 @@ unsafe extern "C" {
         ss: *const SpanSet,
         connect: bool,
     ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    pub fn trgeometry_force2d(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     pub fn trgeometry_merge(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
@@ -20719,7 +20906,7 @@ unsafe extern "C" {
     pub fn bigint_to_s2cell(i: int64) -> S2CellId;
 }
 unsafe extern "C" {
-    pub fn s2cell_out(cell: S2CellId) -> *mut ::std::os::raw::c_char;
+    pub fn s2cell_out(cell: S2CellId, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn s2cell_eq(a: S2CellId, b: S2CellId) -> bool;
@@ -20753,7 +20940,10 @@ unsafe extern "C" {
     pub fn s2cell_is_valid_cell(cell: S2CellId) -> bool;
 }
 unsafe extern "C" {
-    pub fn s2cell_cell_to_token(cell: S2CellId) -> *mut ::std::os::raw::c_char;
+    pub fn s2cell_cell_to_token(
+        cell: S2CellId,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn s2cell_token_to_cell(token: *const ::std::os::raw::c_char) -> S2CellId;
@@ -20865,7 +21055,7 @@ unsafe extern "C" {
     pub fn s2cellset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    pub fn s2cellset_out(s: *const Set) -> *mut ::std::os::raw::c_char;
+    pub fn s2cellset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn s2cellset_make(values: *const S2CellId, count: ::std::os::raw::c_int) -> *mut Set;
@@ -20928,7 +21118,7 @@ unsafe extern "C" {
     pub fn ts2cellseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    pub fn ts2cell_out(temp: *const Temporal) -> *mut ::std::os::raw::c_char;
+    pub fn ts2cell_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn ts2cell_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
@@ -21881,7 +22071,7 @@ unsafe extern "C" {
     pub fn int32_or(num1: int32, num2: int32) -> int32;
 }
 unsafe extern "C" {
-    pub fn int32_out(num: int32) -> *mut ::std::os::raw::c_char;
+    pub fn int32_out(num: int32, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn int32_shl(num1: int32, num2: int32) -> int32;
@@ -21953,7 +22143,7 @@ unsafe extern "C" {
     pub fn int64_or(num1: int64, num2: int64) -> int64;
 }
 unsafe extern "C" {
-    pub fn int64_out(num: int64) -> *mut ::std::os::raw::c_char;
+    pub fn int64_out(num: int64, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn int64_shl(num1: int64, num2: int32) -> int64;
@@ -22514,7 +22704,10 @@ unsafe extern "C" {
     pub fn timetz_copy(timetz: *const TimeTzADT) -> *mut TimeTzADT;
 }
 unsafe extern "C" {
-    pub fn timetz_out(timetz: *const TimeTzADT) -> *mut ::std::os::raw::c_char;
+    pub fn timetz_out(
+        timetz: *const TimeTzADT,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     pub fn timetz_overlaps(

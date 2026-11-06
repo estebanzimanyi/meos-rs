@@ -1,4 +1,5 @@
-use std::ffi::{c_void, CStr, CString};
+use crate::utils::take_meos_string;
+use std::ffi::{c_void, CString};
 
 use std::fmt::Debug;
 use std::hash::Hash;
@@ -250,12 +251,10 @@ impl std::cmp::PartialEq for FloatSpanSet {
 
 impl Debug for FloatSpanSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out_str = unsafe { meos_call!(meos_sys::floatspanset_out(self.inner(), 3)) };
-        let c_str = unsafe { CStr::from_ptr(out_str) };
-        let str = c_str.to_str().map_err(|_| std::fmt::Error)?;
-        let result = f.write_str(str);
-        unsafe { libc::free(out_str.cast::<c_void>()) };
-        result
+        let mut size = 0;
+        let out_str = unsafe { meos_call!(meos_sys::floatspanset_out(self.inner(), 3, &raw mut size)) };
+        let string = unsafe { take_meos_string(out_str, size) }.ok_or(std::fmt::Error)?;
+        f.write_str(&string)
     }
 }
 
