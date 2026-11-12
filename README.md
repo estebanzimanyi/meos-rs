@@ -62,6 +62,8 @@ The library offers a range of temporal data types, including:
 
 The type hierarchy is the following, the main types (`TGeomPoint`, `TFloat`, etc.) are enums that encapsulate the different kinds of temporal subtypes, **Instant**, **Sequence**, and **SequenceSet**, to learn more about these, refer to the [`meos` documentation](https://libmeos.org/documentation/datamodel/). Users can almost seamlessly use either the enums or the concrete structs (e.g. `TGeomPointSequence`). Some users may benefit from using the concrete structs since more concrete types can be inferred in some functions.
 
+The grid cells `H3Index`, `Quadbin` and `S2Cell` are values of their own, each held by value as the `u64` of its index: each reads its text through `FromStr` and writes it through `Display`, and reads and writes its WKB (`from_wkb`, `as_wkb`) and hex-encoded WKB (`from_hexwkb`, `as_hexwkb`).
+
 ## Usage example
 
 You can check more examples in the `examples/` directory.
