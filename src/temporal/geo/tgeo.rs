@@ -334,7 +334,7 @@ pub trait TGeoTrait: Temporal {
     /// `bearing_tpoint_point`, `bearing_tpoint_tpoint`
     fn bearing_geometry(&self, geometry: &Geometry) -> TFloat {
         let geo = geometry_to_gserialized(geometry);
-        factory::<TFloat>(unsafe { meos_call!(meos_sys::bearing_tpoint_point(self.inner(), geo, false)) })
+        factory::<TFloat>(unsafe { meos_call!(meos_sys::bearing_tpoint_point(self.inner(), geo)) })
     }
 
     /// Returns the temporal azimuth of the temporal point.

@@ -297,7 +297,7 @@ impl Debug for FloatSpan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut size = 0;
         // Default of 3 decimal digits
-        let out_str = unsafe { meos_call!(meos_sys::floatspan_out(self.inner(), 3, &raw mut size)) };
+        let out_str = unsafe { meos_call!(meos_sys::span_out(self.inner(), 3, &raw mut size)) };
         let string = unsafe { take_meos_string(out_str, size) }.ok_or(std::fmt::Error)?;
         f.write_str(&string)
     }

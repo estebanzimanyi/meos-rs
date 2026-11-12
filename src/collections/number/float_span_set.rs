@@ -252,7 +252,7 @@ impl std::cmp::PartialEq for FloatSpanSet {
 impl Debug for FloatSpanSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut size = 0;
-        let out_str = unsafe { meos_call!(meos_sys::floatspanset_out(self.inner(), 3, &raw mut size)) };
+        let out_str = unsafe { meos_call!(meos_sys::spanset_out(self.inner(), 3, &raw mut size)) };
         let string = unsafe { take_meos_string(out_str, size) }.ok_or(std::fmt::Error)?;
         f.write_str(&string)
     }
