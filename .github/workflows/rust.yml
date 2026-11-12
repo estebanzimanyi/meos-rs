@@ -22,7 +22,7 @@ jobs:
     # The action installs libmeos and a GDAL built without GEOS under /usr/local.
     - name: Provision MEOS (master, every family)
       id: provision
-      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@43b601a8b331bfb63956466cc334aa0fd0f017c8
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@cf4d124e6f93e6eba9da7b912f3208dbcd3f4d36
       with:
         mobilitydb-ref: master
         build-libmeos: "true"
@@ -65,7 +65,7 @@ jobs:
 
     - name: Provision MEOS (master, every family)
       id: provision
-      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@43b601a8b331bfb63956466cc334aa0fd0f017c8
+      uses: MobilityDB/MEOS-API/.github/actions/provision-meos@cf4d124e6f93e6eba9da7b912f3208dbcd3f4d36
       with:
         mobilitydb-ref: master
         build-libmeos: "true"
@@ -107,7 +107,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: MobilityDB/MEOS-API
-        ref: 43b601a8b331bfb63956466cc334aa0fd0f017c8
+        ref: cf4d124e6f93e6eba9da7b912f3208dbcd3f4d36
         path: _meos_api
 
     - name: Build GDAL without GEOS

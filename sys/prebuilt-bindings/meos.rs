@@ -262,9 +262,19 @@ pub const errorCode_MEOS_ERR_WKB_INPUT: errorCode = 24;
 pub const errorCode_MEOS_ERR_WKB_OUTPUT: errorCode = 25;
 pub const errorCode_MEOS_ERR_GEOJSON_INPUT: errorCode = 26;
 pub const errorCode_MEOS_ERR_GEOJSON_OUTPUT: errorCode = 27;
-pub const errorCode_MEOS_ERR_SQL_JSON_ERROR: errorCode = 28;
 pub const errorCode_MEOS_ERR_INVALID_REGULAR_EXPRESSION: errorCode = 29;
 pub const errorCode_MEOS_ERR_DATETIME_OUT_OF_RANGE: errorCode = 30;
+pub const errorCode_MEOS_ERR_NON_NUMERIC_SQL_JSON_ITEM: errorCode = 31;
+pub const errorCode_MEOS_ERR_INVALID_ARGUMENT_FOR_SQL_JSON_DATETIME_FUNCTION: errorCode = 32;
+pub const errorCode_MEOS_ERR_MORE_THAN_ONE_SQL_JSON_ITEM: errorCode = 33;
+pub const errorCode_MEOS_ERR_SINGLETON_SQL_JSON_ITEM_REQUIRED: errorCode = 34;
+pub const errorCode_MEOS_ERR_SQL_JSON_ARRAY_NOT_FOUND: errorCode = 35;
+pub const errorCode_MEOS_ERR_INVALID_SQL_JSON_SUBSCRIPT: errorCode = 36;
+pub const errorCode_MEOS_ERR_SQL_JSON_OBJECT_NOT_FOUND: errorCode = 37;
+pub const errorCode_MEOS_ERR_SQL_JSON_MEMBER_NOT_FOUND: errorCode = 38;
+pub const errorCode_MEOS_ERR_SQL_JSON_NUMBER_NOT_FOUND: errorCode = 39;
+pub const errorCode_MEOS_ERR_DUPLICATE_JSON_OBJECT_KEY_VALUE: errorCode = 40;
+pub const errorCode_MEOS_ERR_UNDEFINED_OBJECT: errorCode = 41;
 pub type errorCode = ::std::os::raw::c_uint;
 pub const errorLevel_MEOS_INFO: errorLevel = 17;
 pub const errorLevel_MEOS_NOTICE: errorLevel = 18;
@@ -661,6 +671,11 @@ const _: () = {
     ["Offset of field: Match::i"][::std::mem::offset_of!(Match, i) - 0usize];
     ["Offset of field: Match::j"][::std::mem::offset_of!(Match, j) - 4usize];
 };
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ReachabilityState {
+    _unused: [u8; 0],
+}
 unsafe extern "C" {
     #[doc = " Create an expandable array"]
     pub fn meos_array_create(elem_size: ::std::os::raw::c_int) -> *mut MeosArray;
@@ -740,6 +755,14 @@ pub const IndexSearchOp_INDEX_SAME: IndexSearchOp = 19;
 pub const IndexSearchOp_INDEX_ADJACENT: IndexSearchOp = 20;
 #[doc = " @brief Enumeration that defines the search operations of an in-memory index\n @details The RTree and the space-partitioning index answer the same\n operations, so the operations carry the name of neither."]
 pub type IndexSearchOp = ::std::os::raw::c_uint;
+unsafe extern "C" {
+    #[doc = " Global constant array of the names of the search operators of an in-memory index, the names of the SQL functions of the operators the enumeration IndexSearchOp defined in file `meos.h` stands for"]
+    pub fn indexsearchop_name(op: IndexSearchOp) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
+    #[doc = " Return the search operator of an in-memory index corresponding to its name"]
+    pub fn indexsearchop_from_string(str_: *const ::std::os::raw::c_char) -> IndexSearchOp;
+}
 unsafe extern "C" {
     #[doc = " Return an array collecting the ids an in-memory index answers"]
     pub fn index_result_create() -> *mut MeosArray;
@@ -894,6 +917,14 @@ pub const SPTreeKind_SPTREE_QUADTREE: SPTreeKind = 0;
 pub const SPTreeKind_SPTREE_KDTREE: SPTreeKind = 1;
 #[doc = " @brief Enumeration that defines the kind of an in-memory space-partitioning\n index"]
 pub type SPTreeKind = ::std::os::raw::c_uint;
+unsafe extern "C" {
+    #[doc = " Global constant array of the names of the kinds of an in-memory space-partitioning index, corresponding to the enumeration SPTreeKind defined in file `meos.h`"]
+    pub fn sptreekind_name(kind: SPTreeKind) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
+    #[doc = " Return the kind of an in-memory space-partitioning index corresponding to its name"]
+    pub fn sptreekind_from_string(str_: *const ::std::os::raw::c_char) -> SPTreeKind;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct SPTree {
@@ -1095,7 +1126,7 @@ unsafe extern "C" {
     pub fn meos_finalize_relate();
 }
 unsafe extern "C" {
-    #[doc = " Structure to represent a record in the ways CSV file"]
+    #[doc = " Structure to represent the position of a route in the ways CSV file"]
     pub fn meos_finalize_ways();
 }
 unsafe extern "C" {
@@ -1157,10 +1188,6 @@ unsafe extern "C" {
     pub fn bigintset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a big integer set"]
-    pub fn bigintset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a big integer span with its bounds expanded/decreased by a value"]
     pub fn bigintspan_expand(s: *const Span, value: int64) -> *mut Span;
 }
@@ -1169,56 +1196,24 @@ unsafe extern "C" {
     pub fn bigintspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a big integer span"]
-    pub fn bigintspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a big integer span from its Well-Known Text (WKT) representation"]
     pub fn bigintspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a big integer span set"]
-    pub fn bigintspanset_out(
-        ss: *const SpanSet,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a set from its Well-Known Text (WKT) representation"]
     pub fn dateset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a date set"]
-    pub fn dateset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a date span from its Well-Known Text (WKT) representation"]
     pub fn datespan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a date span"]
-    pub fn datespan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a date set from its Well-Known Text (WKT) representation"]
     pub fn datespanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a date span set"]
-    pub fn datespanset_out(ss: *const SpanSet, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a set from its Well-Known Text (WKT) representation"]
     pub fn floatset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of a float set"]
-    pub fn floatset_out(
-        set: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a float span with its bounds expanded/decreased by a value"]
@@ -1229,32 +1224,12 @@ unsafe extern "C" {
     pub fn floatspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a float span"]
-    pub fn floatspan_out(
-        s: *const Span,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a float span from its Well-Known Text (WKT) representation"]
     pub fn floatspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a float span set"]
-    pub fn floatspanset_out(
-        ss: *const SpanSet,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a set from its Well-Known Text (WKT) representation"]
     pub fn intset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of an integer set"]
-    pub fn intset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return an integer span with its bounds expanded/decreased by a value"]
@@ -1265,16 +1240,8 @@ unsafe extern "C" {
     pub fn intspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of an integer span"]
-    pub fn intspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return an integer span from its Well-Known Text (WKT) representation"]
     pub fn intspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of an integer span set"]
-    pub fn intspanset_out(ss: *const SpanSet, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return the ASCII hex-encoded Well-Known Binary (HexWKB) representation of a set"]
@@ -1297,6 +1264,14 @@ unsafe extern "C" {
     pub fn set_from_wkb(wkb: *const u8, size: usize) -> *mut Set;
 }
 unsafe extern "C" {
+    #[doc = " Return the Well-Known Text (WKT) representation of a set, the output of every set type, as #set_as_wkb writes its Well-Known Binary"]
+    pub fn set_out(
+        s: *const Set,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return the ASCII hex-encoded Well-Known Binary (HexWKB) representation of a span"]
     pub fn span_as_hexwkb(
         s: *const Span,
@@ -1315,6 +1290,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a span from its Well-Known Binary (WKB) representation"]
     pub fn span_from_wkb(wkb: *const u8, size: usize) -> *mut Span;
+}
+unsafe extern "C" {
+    #[doc = " Return the Well-Known Text (WKT) representation of a span, the output of every span type, as #span_as_wkb writes its Well-Known Binary"]
+    pub fn span_out(
+        s: *const Span,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return the ASCII hex-encoded Well-Known Binary (HexWKB) representation of a span set"]
@@ -1337,37 +1320,28 @@ unsafe extern "C" {
     pub fn spanset_from_wkb(wkb: *const u8, size: usize) -> *mut SpanSet;
 }
 unsafe extern "C" {
-    #[doc = " Return a set from its Well-Known Text (WKT) representation"]
-    pub fn textset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
+    #[doc = " Return the Well-Known Text (WKT) representation of a span set, the output of every span set type, as #spanset_as_wkb writes its Well-Known Binary"]
+    pub fn spanset_out(
+        ss: *const SpanSet,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a text set"]
-    pub fn textset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
+    #[doc = " Return a set from its Well-Known Text (WKT) representation"]
+    pub fn textset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
     #[doc = " Return a set from its Well-Known Text (WKT) representation"]
     pub fn tstzset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a timestamptz set"]
-    pub fn tstzset_out(set: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a timestamptz span from its Well-Known Text (WKT) representation"]
     pub fn tstzspan_in(str_: *const ::std::os::raw::c_char) -> *mut Span;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a timestamtz span"]
-    pub fn tstzspan_out(s: *const Span, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a timestamptz set from its Well-Known Text (WKT) representation"]
     pub fn tstzspanset_in(str_: *const ::std::os::raw::c_char) -> *mut SpanSet;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a timpespantz span set"]
-    pub fn tstzspanset_out(ss: *const SpanSet, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a big integer set from an array of values"]
@@ -1581,6 +1555,10 @@ unsafe extern "C" {
     pub fn timestamptz_to_spanset(t: TimestampTz) -> *mut SpanSet;
 }
 unsafe extern "C" {
+    #[doc = " Return the microseconds from the Unix epoch of a timestamptz"]
+    pub fn timestamptz_to_unix_us(t: TimestampTz) -> int64;
+}
+unsafe extern "C" {
     #[doc = " Convert a timestamptz set into a date set"]
     pub fn tstzset_to_dateset(s: *const Set) -> *mut Set;
 }
@@ -1591,6 +1569,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Convert a timestamptz span set into a date span set"]
     pub fn tstzspanset_to_datespanset(ss: *const SpanSet) -> *mut SpanSet;
+}
+unsafe extern "C" {
+    #[doc = " Return the timestamptz of a count of microseconds from the Unix epoch"]
+    pub fn unix_us_to_timestamptz(us: int64) -> TimestampTz;
 }
 unsafe extern "C" {
     #[doc = " Return the end value of a big integer set"]
@@ -4600,10 +4582,6 @@ unsafe extern "C" {
     pub fn tbool_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal boolean"]
-    pub fn tbool_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return the ASCII hex-encoded Well-Known Binary (HexWKB) representation of a temporal value"]
     pub fn temporal_as_hexwkb(
         temp: *const Temporal,
@@ -4631,6 +4609,10 @@ unsafe extern "C" {
     pub fn wkb_variant_from_endian(endian: *const ::std::os::raw::c_char) -> u8;
 }
 unsafe extern "C" {
+    #[doc = " Return the name of an interpolation: `None`, `Discrete`, `Step` or `Linear`"]
+    pub fn interptype_name(interp: interpType) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return the interpolation corresponding to its name"]
     pub fn interptype_from_string(str_: *const ::std::os::raw::c_char) -> interpType;
 }
@@ -4643,20 +4625,20 @@ unsafe extern "C" {
     pub fn temporal_from_wkb(wkb: *const u8, size: usize) -> *mut Temporal;
 }
 unsafe extern "C" {
+    #[doc = " Return the Well-Known Text (WKT) representation of a temporal value, the output of every temporal type, as #temporal_as_wkb writes its Well-Known Binary"]
+    pub fn temporal_out(
+        temp: *const Temporal,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return a temporal float from its MF-JSON representation"]
     pub fn tfloat_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal float from its Well-Known Text (WKT) representation"]
     pub fn tfloat_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal float"]
-    pub fn tfloat_out(
-        temp: *const Temporal,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal integer from its MF-JSON representation"]
@@ -4675,24 +4657,12 @@ unsafe extern "C" {
     pub fn tbigint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal integer"]
-    pub fn tint_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal big integer"]
-    pub fn tbigint_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal text from its MF-JSON representation"]
     pub fn ttext_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal text from its Well-Known Text (WKT) representation"]
     pub fn ttext_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal text"]
-    pub fn ttext_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal boolean from a boolean and the time frame of another temporal value"]
@@ -5934,6 +5904,41 @@ unsafe extern "C" {
     pub fn always_ne_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal number always lies in a temporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tbox_tnumber(
+        box_: *const TBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal values always have overlapping bounding boxes at the instants they share, 0 if not, and -1 on error"]
+    pub fn always_overlaps_temporal_temporal(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal value is always defined in a timestamptz span, 0 if not, and -1 on error"]
+    pub fn always_overlaps_temporal_tstzspan(
+        temp: *const Temporal,
+        s: *const Span,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal number always lies in a temporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tnumber_tbox(
+        temp: *const Temporal,
+        box_: *const TBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal value is always defined in a timestamptz span, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tstzspan_temporal(
+        s: *const Span,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a boolean is ever equal to a temporal boolean"]
     pub fn ever_eq_bool_tbool(b: bool, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -6218,6 +6223,41 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return true if a temporal text is ever different from a text"]
     pub fn ever_ne_ttext_text(temp: *const Temporal, txt: *const text) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal number ever lies in a temporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tbox_tnumber(
+        box_: *const TBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal values ever have overlapping bounding boxes at an instant they share, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_temporal_temporal(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal value is ever defined in a timestamptz span, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_temporal_tstzspan(
+        temp: *const Temporal,
+        s: *const Span,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal number ever lies in a temporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tnumber_tbox(
+        temp: *const Temporal,
+        box_: *const TBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal value is ever defined in a timestamptz span, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tstzspan_temporal(
+        s: *const Span,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
     #[doc = " Return the temporal equality of a big integer and a temporal big integer"]
@@ -7079,16 +7119,12 @@ unsafe extern "C" {
     pub fn nad_bigintspan_tbox(s: *const Span, box_: *const TBox) -> int64;
 }
 unsafe extern "C" {
-    #[doc = " Return the nearest approach distance between the float temporal boxes"]
-    pub fn nad_tboxfloat_tboxfloat(box1: *const TBox, box2: *const TBox) -> f64;
+    #[doc = " Return the nearest approach distance between the temporal boxes"]
+    pub fn nad_tbox_tbox(box1: *const TBox, box2: *const TBox) -> f64;
 }
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between a float span and a temporal box, the distance of the box of the span to the box"]
     pub fn nad_floatspan_tbox(s: *const Span, box_: *const TBox) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the nearest approach distance between the int temporal boxes"]
-    pub fn nad_tboxint_tboxint(box1: *const TBox, box2: *const TBox) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between an integer span and a temporal box, the distance of the box of the span to the box"]
@@ -7125,10 +7161,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between two temporal big integers"]
     pub fn nad_tbigint_tbigint(temp1: *const Temporal, temp2: *const Temporal) -> int64;
-}
-unsafe extern "C" {
-    #[doc = " Return the nearest approach distance between the big integer temporal boxes"]
-    pub fn nad_tboxbigint_tboxbigint(box1: *const TBox, box2: *const TBox) -> int64;
 }
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between a temporal number and a number"]
@@ -7509,6 +7541,63 @@ unsafe extern "C" {
         variance: f64,
         to_drop: bool,
     ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal value with the instants a reachability walk keeps"]
+    pub fn temporal_reachability_filter(temp: *const Temporal, maxspeed: f64) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Transition function of the reachability filter: walk a report"]
+    pub fn temporal_reachability_filter_transfn(
+        state: *mut ReachabilityState,
+        inst: *const TInstant,
+        maxspeed: f64,
+    ) -> *mut ReachabilityState;
+}
+unsafe extern "C" {
+    #[doc = " Final function of the reachability filter: close the walk and return the kept reports not yet handed back by #reachabilitystate_instants"]
+    pub fn temporal_reachability_filter_finalfn(state: *mut ReachabilityState) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return the kept reports of a reachability filter not yet handed back, and hand them back"]
+    pub fn reachabilitystate_instants(
+        state: *mut ReachabilityState,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut *mut TInstant;
+}
+unsafe extern "C" {
+    #[doc = " Close the walk of a stream: choose the seed if fewer reports than the head arrived, and hand back the kept reports not yet handed back"]
+    pub fn reachabilitystate_close(
+        state: *mut ReachabilityState,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut *mut TInstant;
+}
+unsafe extern "C" {
+    #[doc = " Release a reachability state and every report it holds"]
+    pub fn reachabilitystate_free(state: *mut ReachabilityState);
+}
+unsafe extern "C" {
+    #[doc = " Return the number of reports a reachability filter has kept"]
+    pub fn reachabilitystate_kept(state: *const ReachabilityState) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the number of reports a reachability filter has read"]
+    pub fn reachabilitystate_reports(state: *const ReachabilityState) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the number of reports of a reachability filter unreachable from the report before"]
+    pub fn reachabilitystate_unreachable(state: *const ReachabilityState) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return a reachability state from its bytes, written by #reachabilitystate_serialize"]
+    pub fn reachabilitystate_deserialize(bytes: *const u8, size: usize) -> *mut ReachabilityState;
+}
+unsafe extern "C" {
+    #[doc = " Return the bytes of a reachability state, read back by #reachabilitystate_deserialize"]
+    pub fn reachabilitystate_serialize(
+        state: *const ReachabilityState,
+        size_out: *mut usize,
+    ) -> *mut u8;
 }
 unsafe extern "C" {
     #[doc = " Return the time bins of a temporal value"]
@@ -8694,37 +8783,9 @@ unsafe extern "C" {
     pub fn geo_typename(type_: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    #[doc = " Return the area of a geography in square meters"]
-    pub fn geog_area(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the centroid of a geometry"]
-    pub fn geog_centroid(gs: *const GSERIALIZED, use_spheroid: bool) -> *mut GSERIALIZED;
-}
-unsafe extern "C" {
-    #[doc = " Return double length in meters"]
-    pub fn geog_length(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the perimeter of a geography in meters"]
-    pub fn geog_perimeter(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
-}
-unsafe extern "C" {
     #[doc = " Return in the last argument the azimuth of a segment defined by two points"]
     pub fn geom_azimuth(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, result: *mut f64)
     -> bool;
-}
-unsafe extern "C" {
-    #[doc = " Return the area of a geometry"]
-    pub fn geom_area(gs: *const GSERIALIZED) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the length of a geometry"]
-    pub fn geom_length(gs: *const GSERIALIZED) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the perimeter of a geometry"]
-    pub fn geom_perimeter(gs: *const GSERIALIZED) -> f64;
 }
 unsafe extern "C" {
     #[doc = " Return the number of points of a line"]
@@ -8913,10 +8974,6 @@ unsafe extern "C" {
     ) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
-    #[doc = " Return the centroid of a geometry"]
-    pub fn geom_centroid(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
-}
-unsafe extern "C" {
     #[doc = " Return the convex hull of a geometry"]
     pub fn geom_convex_hull(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
@@ -8952,10 +9009,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return the oriented envelope (a.k.a. minimum-area rotated rectangle) of a geometry"]
     pub fn geom_oriented_envelope(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
-}
-unsafe extern "C" {
-    #[doc = " Return the shortest line between two geometries"]
-    pub fn geom_shortestline(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Return the shortest 2D line between two geometries"]
@@ -9048,24 +9101,8 @@ unsafe extern "C" {
     pub fn geom_dwithin(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
 }
 unsafe extern "C" {
-    #[doc = " Return true if two geometries are within a distance"]
-    pub fn geom_dwithin2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
-}
-unsafe extern "C" {
-    #[doc = " Return true if two geometries are within a distance"]
-    pub fn geom_dwithin3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
-}
-unsafe extern "C" {
     #[doc = " Return true if two geometries intersect"]
     pub fn geom_intersects(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
-}
-unsafe extern "C" {
-    #[doc = " Return true if two geometries intersects"]
-    pub fn geom_intersects2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
-}
-unsafe extern "C" {
-    #[doc = " Return true if the 3D geometries intersect"]
-    pub fn geom_intersects3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
 }
 unsafe extern "C" {
     #[doc = " Return the DE-9IM intersection matrix of two geometries"]
@@ -9125,14 +9162,6 @@ unsafe extern "C" {
     -> f64;
 }
 unsafe extern "C" {
-    #[doc = " Return the line connecting the closest points of two geographies"]
-    pub fn geog_shortestline(
-        gs1: *const GSERIALIZED,
-        gs2: *const GSERIALIZED,
-        use_spheroid: bool,
-    ) -> *mut GSERIALIZED;
-}
-unsafe extern "C" {
     #[doc = " Return the distance between two geometries"]
     pub fn geom_distance(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
 }
@@ -9143,14 +9172,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return the maximum distance between two geometries"]
     pub fn geom_max_distance(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the maximum distance between two geometries"]
-    pub fn geom_max_distance2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
-}
-unsafe extern "C" {
-    #[doc = " Return the maximum distance between two geometries in 3D"]
-    pub fn geom_max_distance3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
 }
 unsafe extern "C" {
     #[doc = " Return the 3D distance between two geometries"]
@@ -9171,14 +9192,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " General functions for geometry/geography sets"]
     pub fn geomset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of a float set"]
-    pub fn spatialset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return the Well-Known Text (WKT) representation of a spatial set"]
@@ -9219,6 +9232,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Convert a geo set into the collection of its values"]
     pub fn geoset_to_geo(s: *const Set) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a geometry set into a geography set"]
+    pub fn geomset_to_geogset(s: *const Set) -> *mut Set;
+}
+unsafe extern "C" {
+    #[doc = " Convert a geography set into a geometry set"]
+    pub fn geogset_to_geomset(s: *const Set) -> *mut Set;
 }
 unsafe extern "C" {
     #[doc = " Return a copy of the end value of a geo set"]
@@ -9327,6 +9348,14 @@ unsafe extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
+    #[doc = " Return the Well-Known Text (WKT) representation of a spatiotemporal box, its text without its SRID, as #tspatial_as_text writes a spatiotemporal value"]
+    pub fn stbox_as_text(
+        box_: *const STBox,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return the Well-Known Binary (WKB) representation of a spatiotemporal box"]
     pub fn stbox_as_wkb(box_: *const STBox, variant: u8, size_out: *mut usize) -> *mut u8;
 }
@@ -9343,7 +9372,7 @@ unsafe extern "C" {
     pub fn stbox_in(str_: *const ::std::os::raw::c_char) -> *mut STBox;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a spatiotemporal box"]
+    #[doc = " Return the Extended Well-Known Text (EWKT) representation of a spatiotemporal box, its text prefixed with its SRID"]
     pub fn stbox_out(
         box_: *const STBox,
         maxdd: ::std::os::raw::c_int,
@@ -9397,6 +9426,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a spatiotemporal box converted as a geometry/geography"]
     pub fn stbox_to_geo(box_: *const STBox) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a spatiotemporal box, planar or geodetic, into a geometry"]
+    pub fn stbox_to_geom(box_: *const STBox) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a spatiotemporal box, planar or geodetic, into a geography"]
+    pub fn stbox_to_geog(box_: *const STBox) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Convert a spatiotemporal box into a timestamptz span"]
@@ -9684,14 +9721,6 @@ unsafe extern "C" {
     pub fn stbox_sortkey(box_: *const STBox, size: *mut usize) -> *mut u8;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal geo"]
-    pub fn tspatial_out(
-        temp: *const Temporal,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal geography point from its MF-JSON representation"]
     pub fn tgeogpoint_from_mfjson(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
@@ -9875,10 +9904,9 @@ unsafe extern "C" {
         extent: i32,
         buffer: i32,
         clip_geom: bool,
-        gsarr: *mut *mut GSERIALIZED,
         timesarr: *mut *mut int64,
         count: *mut ::std::os::raw::c_int,
-    ) -> bool;
+    ) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Return a geometry/geography with M measure from a temporal point and a temporal float"]
@@ -9906,12 +9934,12 @@ unsafe extern "C" {
     ) -> bool;
 }
 unsafe extern "C" {
+    #[doc = " Return the temporal bearing between a point and a temporal point"]
+    pub fn bearing_point_tpoint(gs: *const GSERIALIZED, temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Return the temporal bearing between a temporal point and a point"]
-    pub fn bearing_tpoint_point(
-        temp: *const Temporal,
-        gs: *const GSERIALIZED,
-        invert: bool,
-    ) -> *mut Temporal;
+    pub fn bearing_tpoint_point(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the temporal bearing between two temporal points"]
@@ -10152,7 +10180,7 @@ unsafe extern "C" {
     ) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return a temporal geo restricted to a geometry/geography"]
+    #[doc = " Spatial restriction functions for temporal points"]
     pub fn tgeo_at_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
 }
 unsafe extern "C" {
@@ -10176,24 +10204,8 @@ unsafe extern "C" {
     pub fn tpoint_at_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return a temporal point restricted to a geometry"]
-    pub fn tpoint_at_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Spatial restriction functions for temporal points"]
-    pub fn tpoint_at_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal point restricted to the complement of an elevation span"]
     pub fn tpoint_minus_elevation(temp: *const Temporal, s: *const Span) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return a temporal point restricted to the complement of a geometry"]
-    pub fn tpoint_minus_geom(temp: *const Temporal, gs: *const GSERIALIZED) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return a temporal point restricted to the complement of a point"]
-    pub fn tpoint_minus_value(temp: *const Temporal, gs: *mut GSERIALIZED) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return true if a geo is always equal to a temporal geo"]
@@ -10238,6 +10250,27 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal geo always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_tgeo(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal geo always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tgeo_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal geos always have overlapping bounding boxes at the instants they share, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tgeo_tgeo(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a geo is ever equal to a temporal geo"]
     pub fn ever_eq_geo_tgeo(gs: *const GSERIALIZED, temp: *const Temporal)
     -> ::std::os::raw::c_int;
@@ -10267,6 +10300,27 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return true if two temporal geos are ever different"]
     pub fn ever_ne_tgeo_tgeo(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal geo ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_tgeo(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal geo ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tgeo_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal geos ever have overlapping bounding boxes at an instant they share, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tgeo_tgeo(
         temp1: *const Temporal,
         temp2: *const Temporal,
     ) -> ::std::os::raw::c_int;
@@ -11034,6 +11088,46 @@ unsafe extern "C" {
     ) -> *mut ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element ever contains the second one"]
+    pub fn econtains_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element always contains the second one"]
+    pub fn acontains_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element ever covers the second one"]
+    pub fn ecovers_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element always covers the second one"]
+    pub fn acovers_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return the index pairs of two arrays of temporal geos that are ever disjoint"]
     pub fn edisjoint_tgeoarr_tgeoarr(
         arr1: *mut *const Temporal,
@@ -11080,6 +11174,28 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return the index pairs of two arrays of temporal geos that ever touch together with the periods during which they do"]
     pub fn ttouches_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+        periods: *mut *mut *mut SpanSet,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element ever contains the second one together with the periods during which it does"]
+    pub fn tcontains_tgeoarr_tgeoarr(
+        arr1: *mut *const Temporal,
+        count1: ::std::os::raw::c_int,
+        arr2: *mut *const Temporal,
+        count2: ::std::os::raw::c_int,
+        count: *mut ::std::os::raw::c_int,
+        periods: *mut *mut *mut SpanSet,
+    ) -> *mut ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return the index pairs of two arrays of temporal geometries such that the first element ever covers the second one together with the periods during which it does"]
+    pub fn tcovers_tgeoarr_tgeoarr(
         arr1: *mut *const Temporal,
         count1: ::std::os::raw::c_int,
         arr2: *mut *const Temporal,
@@ -11606,6 +11722,10 @@ pub const MeosOper_ALWAYSGE_OP: MeosOper = 42;
 pub const MeosOper_TEMPCONTAINS_OP: MeosOper = 43;
 #[doc = "< Contained `<@#` operator for JSON"]
 pub const MeosOper_TEMPCONTAINED_OP: MeosOper = 44;
+#[doc = "< Everoverlaps `?&&` operator"]
+pub const MeosOper_EVEROVERLAPS_OP: MeosOper = 45;
+#[doc = "< Alwaysoverlaps `%&&` operator"]
+pub const MeosOper_ALWAYSOVERLAPS_OP: MeosOper = 46;
 #[doc = " Enumeration that defines the classes of Boolean operators used in\n MobilityDB."]
 pub type MeosOper = ::std::os::raw::c_uint;
 #[doc = " Structure to represent the types related to a type, which the type cache\n array keeps at the entry of the type itself"]
@@ -11679,16 +11799,16 @@ unsafe extern "C" {
     pub fn meosoper_from_string(name: *const ::std::os::raw::c_char) -> MeosOper;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of the subtype of the temporal type corresponding to the enum value"]
-    pub fn interptype_name(interp: interpType) -> *const ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return the MEOS type tag encoded in the header of a hex-encoded Well-Known Binary (WKB) string, without parsing the whole value"]
     pub fn meos_typeof_hexwkb(hexwkb: *const ::std::os::raw::c_char) -> MeosType;
 }
 unsafe extern "C" {
     #[doc = " Create a cache of metadata information about MEOS types in global constant arrays"]
     pub fn meostype_name(type_: MeosType) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
+    #[doc = " Return the CamelCase name of the MEOS type, the name that the bindings give its class, or NULL when the type has none"]
+    pub fn meostype_camel_name(type_: MeosType) -> *const ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return the type whose name is a string, the inverse of #meostype_name"]
@@ -11907,6 +12027,10 @@ unsafe extern "C" {
     pub fn meostype_length(type_: MeosType) -> int16;
 }
 unsafe extern "C" {
+    #[doc = " Return true if the header of the WKB representation of a value of the type carries the type, which #type_header_to_wkb_buf writes, the body of the value not stating it as the body of a set, a span, a span set or a temporal value does"]
+    pub fn wkb_header_states_type(type_: MeosType) -> bool;
+}
+unsafe extern "C" {
     #[doc = " Return true if the type is a temporal alphanumeric type"]
     pub fn talphanum_type(type_: MeosType) -> bool;
 }
@@ -12096,6 +12220,10 @@ unsafe extern "C" {
     pub fn cbuffer_to_geom(cb: *const Cbuffer) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
+    #[doc = " Convert a circular buffer into a geography"]
+    pub fn cbuffer_to_geog(cb: *const Cbuffer) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
     #[doc = " Convert a circular buffer into a spatiotemporal box"]
     pub fn cbuffer_to_stbox(cb: *const Cbuffer) -> *mut STBox;
 }
@@ -12261,14 +12389,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Sets of circular buffer type"]
     pub fn cbufferset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of a circular buffer set"]
-    pub fn cbufferset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a circular buffer set from an array of values"]
@@ -12448,6 +12568,10 @@ unsafe extern "C" {
     pub fn tcbuffer_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
+    #[doc = " Convert a temporal circular buffer into a temporal geography point"]
+    pub fn tcbuffer_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Convert a temporal geometry into a temporal circular buffer"]
     pub fn tgeometry_to_tcbuffer(temp: *const Temporal) -> *mut Temporal;
 }
@@ -12623,6 +12747,20 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal circular buffer always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_tcbuffer(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal circular buffer always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tcbuffer_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a circular buffer is ever equal to a temporal circular buffer"]
     pub fn ever_eq_cbuffer_tcbuffer(
         cb: *const Cbuffer,
@@ -12662,6 +12800,20 @@ unsafe extern "C" {
     pub fn ever_ne_tcbuffer_tcbuffer(
         temp1: *const Temporal,
         temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal circular buffer ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_tcbuffer(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal circular buffer ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tcbuffer_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
@@ -13450,17 +13602,8 @@ unsafe extern "C" {
     pub fn th3indexseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal H3 cell index"]
-    pub fn th3index_out(temp: *const Temporal, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal H3 cell index from its MF-JSON representation"]
     pub fn th3index_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Shorthand constructor: the single-instant temporal H3 cell"]
-    pub fn th3index_make(value: H3Index, t: TimestampTz) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Build a temporal H3 cell instant"]
@@ -13746,10 +13889,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return an H3 cell set from its Well-Known Text (WKT) representation"]
     pub fn h3indexset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of an H3 cell set"]
-    pub fn h3indexset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return an H3 cell set from an array of values"]
@@ -14126,36 +14265,12 @@ unsafe extern "C" {
     pub fn set_in(str_: *const ::std::os::raw::c_char, settype: MeosType) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a set"]
-    pub fn set_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a span from its Well-Known Text (WKT) representation"]
     pub fn span_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut Span;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a span"]
-    pub fn span_out(
-        s: *const Span,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return the n-th span of a span set"]
     pub fn spanset_in(str_: *const ::std::os::raw::c_char, spantype: MeosType) -> *mut SpanSet;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a span set"]
-    pub fn spanset_out(
-        ss: *const SpanSet,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a set from an array of values"]
@@ -15026,14 +15141,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a temporal value from its Well-Known Text (WKT) representation"]
     pub fn temporal_in(str_: *const ::std::os::raw::c_char, temptype: MeosType) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal value"]
-    pub fn temporal_out(
-        temp: *const Temporal,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return the Well-Known Text (WKT) representation of an array of temporal values"]
@@ -16602,7 +16709,7 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between the temporal boxes"]
-    pub fn nad_tbox_tbox(box1: *const TBox, box2: *const TBox) -> Datum;
+    pub fn nad_tbox_tbox_intl(box1: *const TBox, box2: *const TBox) -> Datum;
 }
 unsafe extern "C" {
     #[doc = " Return the nearest approach distance between a temporal number and a number"]
@@ -16613,7 +16720,7 @@ unsafe extern "C" {
     pub fn nad_tnumber_tbox(temp: *const Temporal, box_: *const TBox) -> Datum;
 }
 unsafe extern "C" {
-    #[doc = " Return the nearest approach distance between a number span and a temporal box, the distance of the box of the span to the box, as #nad_tbox_tbox answers for two boxes"]
+    #[doc = " Return the nearest approach distance between a number span and a temporal box, the distance of the box of the span to the box, as #nad_tbox_tbox_intl answers for two boxes"]
     pub fn nad_numspan_tbox(s: *const Span, box_: *const TBox) -> Datum;
 }
 unsafe extern "C" {
@@ -16823,6 +16930,74 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a point with the coordinates set to a number of decimal places"]
     pub fn point_round(gs: *const GSERIALIZED, maxdd: ::std::os::raw::c_int) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Return the centroid of a geometry"]
+    pub fn geog_centroid(gs: *const GSERIALIZED, use_spheroid: bool) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Return the line connecting the closest points of two geographies"]
+    pub fn geog_shortestline(
+        gs1: *const GSERIALIZED,
+        gs2: *const GSERIALIZED,
+        use_spheroid: bool,
+    ) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Return the centroid of a geometry"]
+    pub fn geom_centroid(gs: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Return the shortest line between two geometries"]
+    pub fn geom_shortestline(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Return true if two geometries are within a distance"]
+    pub fn geom_dwithin2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
+}
+unsafe extern "C" {
+    #[doc = " Return true if two geometries are within a distance"]
+    pub fn geom_dwithin3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED, dist: f64) -> bool;
+}
+unsafe extern "C" {
+    #[doc = " Return true if two geometries intersects"]
+    pub fn geom_intersects2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+unsafe extern "C" {
+    #[doc = " Return true if the 3D geometries intersect"]
+    pub fn geom_intersects3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> bool;
+}
+unsafe extern "C" {
+    #[doc = " Return the area of a geography in square meters"]
+    pub fn geog_area(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return double length in meters"]
+    pub fn geog_length(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the perimeter of a geography in meters"]
+    pub fn geog_perimeter(gs: *const GSERIALIZED, use_spheroid: bool) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the area of a geometry"]
+    pub fn geom_area(gs: *const GSERIALIZED) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the length of a geometry"]
+    pub fn geom_length(gs: *const GSERIALIZED) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the maximum distance between two geometries"]
+    pub fn geom_max_distance2d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the maximum distance between two geometries in 3D"]
+    pub fn geom_max_distance3d(gs1: *const GSERIALIZED, gs2: *const GSERIALIZED) -> f64;
+}
+unsafe extern "C" {
+    #[doc = " Return the perimeter of a geometry"]
+    pub fn geom_perimeter(gs: *const GSERIALIZED) -> f64;
 }
 unsafe extern "C" {
     #[doc = " Return a geometry scaled by the factors a point states, about an origin or none"]
@@ -18123,7 +18298,7 @@ unsafe extern "C" {
         vars: *const Jsonb,
         silent: bool,
         tz: bool,
-    ) -> bool;
+    ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
     #[doc = " Execute a JSON path for a JSONB value and return all result items as a C array. If there are no items, return NULL."]
@@ -18184,10 +18359,6 @@ unsafe extern "C" {
     pub fn jsonbset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a JSONB set"]
-    pub fn jsonbset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a JSONB set from an array of values"]
     pub fn jsonbset_make(values: *mut *const Jsonb, count: ::std::os::raw::c_int) -> *mut Set;
 }
@@ -18224,8 +18395,12 @@ unsafe extern "C" {
     pub fn jsonbset_values(s: *const Set, count: *mut ::std::os::raw::c_int) -> *mut *mut Jsonb;
 }
 unsafe extern "C" {
+    #[doc = " Return the concatenation of a JSONB and a JSONB set"]
+    pub fn concat_jsonb_jsonbset(jb: *const Jsonb, s: *const Set) -> *mut Set;
+}
+unsafe extern "C" {
     #[doc = " Return the concatenation of a JSONB set and a JSONB"]
-    pub fn concat_jsonbset_jsonb(s: *const Set, jb: *const Jsonb, invert: bool) -> *mut Set;
+    pub fn concat_jsonbset_jsonb(s: *const Set, jb: *const Jsonb) -> *mut Set;
 }
 unsafe extern "C" {
     #[doc = " Basic functions for JSONB set"]
@@ -18552,10 +18727,6 @@ unsafe extern "C" {
     pub fn tjsonb_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal JSONB"]
-    pub fn tjsonb_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal JSONB instant from its Well-Known Text (WKT) representation"]
     pub fn tjsonbinst_in(str_: *const ::std::os::raw::c_char) -> *mut TInstant;
 }
@@ -18643,24 +18814,37 @@ unsafe extern "C" {
     ) -> *mut *mut SpanSet;
 }
 unsafe extern "C" {
+    #[doc = " Return the concatenation of a JSONB and a temporal JSONB"]
+    pub fn concat_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Return the concatenation of a temporal JSONB and a JSONB"]
-    pub fn concat_tjsonb_jsonb(
-        temp: *const Temporal,
-        jb: *const Jsonb,
-        invert: bool,
-    ) -> *mut Temporal;
+    pub fn concat_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the concatenation of two temporal JSONB"]
     pub fn concat_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the temporal contains of a temporal JSONB and a JSONB"]
-    pub fn contains_tjsonb_jsonb(
-        temp: *const Temporal,
-        jb: *const Jsonb,
-        invert: bool,
-    ) -> *mut Temporal;
+    #[doc = " Return the temporal contained of a JSONB and the values of a temporal JSONB"]
+    pub fn contained_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return the temporal contained of the values of a temporal JSONB and a JSONB"]
+    pub fn contained_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return the temporal contained of two temporal JSONB"]
+    pub fn contained_tjsonb_tjsonb(temp1: *const Temporal, temp2: *const Temporal)
+    -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return the temporal contains of a JSONB and the values of a temporal JSONB"]
+    pub fn contains_jsonb_tjsonb(jb: *const Jsonb, temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return the temporal contains of the values of a temporal JSONB and a JSONB"]
+    pub fn contains_tjsonb_jsonb(temp: *const Temporal, jb: *const Jsonb) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the temporal contains of two temporal JSONB"]
@@ -18668,7 +18852,11 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     #[doc = " Basic functions for temporal JSONB"]
-    pub fn null_handle_type_from_string(str_: *const ::std::os::raw::c_char) -> nullHandleType;
+    pub fn nullhandletype_name(type_: nullHandleType) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
+    #[doc = " Return the handling of a SQL NULL corresponding to its name"]
+    pub fn nullhandletype_from_string(str_: *const ::std::os::raw::c_char) -> nullHandleType;
 }
 unsafe extern "C" {
     #[doc = " Extract an array element from a temporal JSON value"]
@@ -19292,8 +19480,8 @@ unsafe extern "C" {
     pub fn nsegment_make(rid: int64, pos1: f64, pos2: f64) -> *mut Nsegment;
 }
 unsafe extern "C" {
-    #[doc = " Transform a geometry into a network point"]
-    pub fn geompoint_to_npoint(gs: *const GSERIALIZED) -> *mut Npoint;
+    #[doc = " Transform a geometry into a network point located on the route nearest to it within a tolerance"]
+    pub fn geompoint_to_npoint(gs: *const GSERIALIZED, tolerance: f64) -> *mut Npoint;
 }
 unsafe extern "C" {
     #[doc = " Transform a geometry into a network segment"]
@@ -19302,6 +19490,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Transform a network point into a geometry"]
     pub fn npoint_to_geompoint(np: *const Npoint) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a network point into a geography point"]
+    pub fn npoint_to_geog(np: *const Npoint) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Convert a network point into a network segment"]
@@ -19314,6 +19506,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Transform a network segment into a geometry"]
     pub fn nsegment_to_geom(ns: *const Nsegment) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a network segment into a geography"]
+    pub fn nsegment_to_geog(ns: *const Nsegment) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Convert a network segment into a spatiotemporal box"]
@@ -19368,7 +19564,7 @@ unsafe extern "C" {
     pub fn nsegment_round(ns: *const Nsegment, maxdd: ::std::os::raw::c_int) -> *mut Nsegment;
 }
 unsafe extern "C" {
-    #[doc = " Network-based static point and segment types"]
+    #[doc = " Return the SRID of the routes in the ways table"]
     pub fn get_srid_ways() -> i32;
 }
 unsafe extern "C" {
@@ -19446,14 +19642,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Set of network-based static point and segment types"]
     pub fn npointset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the string representation of a network point set"]
-    pub fn npointset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a network point set from an array of values"]
@@ -19536,14 +19724,6 @@ unsafe extern "C" {
     pub fn tnpoint_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal network point"]
-    pub fn tnpoint_out(
-        temp: *const Temporal,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal network point instant from a network point and a timestamptz"]
     pub fn tnpointinst_make(np: *const Npoint, t: TimestampTz) -> *mut TInstant;
 }
@@ -19578,6 +19758,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Convert a temporal network point into a temporal geometry point"]
     pub fn tnpoint_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal network point into a temporal geography point"]
+    pub fn tnpoint_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Cumulative length traversed by a temporal network point"]
@@ -19809,6 +19993,20 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal network point always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_tnpoint(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal network point always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tnpoint_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a network point is ever equal to a temporal network point"]
     pub fn ever_eq_npoint_tnpoint(
         np: *const Npoint,
@@ -19848,6 +20046,20 @@ unsafe extern "C" {
     pub fn ever_ne_tnpoint_tnpoint(
         temp1: *const Temporal,
         temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal network point ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_tnpoint(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal network point ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tnpoint_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
@@ -20236,6 +20448,10 @@ unsafe extern "C" {
     pub fn pcpatch_to_geom(pa: *const Pcpatch) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
+    #[doc = " Convert a point cloud patch into a geography"]
+    pub fn pcpatch_to_geog(pa: *const Pcpatch) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
     #[doc = " Compare two pcpatch values byte-wise"]
     pub fn pcpatch_cmp(pa1: *const Pcpatch, pa2: *const Pcpatch) -> ::std::os::raw::c_int;
 }
@@ -20266,14 +20482,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a pcpoint set from its textual (hex-WKB) representation"]
     pub fn pcpointset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the textual (hex-WKB) representation of a pcpoint set"]
-    pub fn pcpointset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a pcpoint set from an array of pcpoint values"]
@@ -20343,14 +20551,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a pcpatch set from its textual (hex-WKB) representation"]
     pub fn pcpatchset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
-}
-unsafe extern "C" {
-    #[doc = " Return the textual (hex-WKB) representation of a pcpatch set"]
-    pub fn pcpatchset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a pcpatch set from an array of pcpatch values"]
@@ -20450,11 +20650,19 @@ unsafe extern "C" {
     pub fn tpcbox_from_wkb(wkb: *const u8, size: usize) -> *mut TPCBox;
 }
 unsafe extern "C" {
+    #[doc = " Return the Well-Known Text (WKT) representation of a TPCBox, its text without its SRID, as #stbox_as_text writes a spatiotemporal box"]
+    pub fn tpcbox_as_text(
+        box_: *const TPCBox,
+        maxdd: ::std::os::raw::c_int,
+        size_out: *mut usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return a TPCBox from its Well-Known Text (WKT) representation"]
     pub fn tpcbox_in(str_: *const ::std::os::raw::c_char) -> *mut TPCBox;
 }
 unsafe extern "C" {
-    #[doc = " Return the text representation of a TPCBox"]
+    #[doc = " Return the Extended Well-Known Text (EWKT) representation of a TPCBox, its text prefixed with its SRID"]
     pub fn tpcbox_out(
         box_: *const TPCBox,
         maxdd: ::std::os::raw::c_int,
@@ -20706,22 +20914,12 @@ unsafe extern "C" {
     pub fn tpcpoint_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal pgpointcloud point"]
-    pub fn tpcpoint_out(temp: *const Temporal, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal pgpointcloud point from its MF-JSON representation"]
     pub fn tpcpoint_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Temporal pgpointcloud patch type"]
     pub fn tpcpatch_in(str_: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal pgpointcloud patch"]
-    pub fn tpcpatch_out(temp: *const Temporal, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal pgpointcloud patch from its MF-JSON representation"]
@@ -20762,8 +20960,16 @@ unsafe extern "C" {
     pub fn tpcpoint_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
+    #[doc = " Convert a temporal point cloud point into a temporal geography point"]
+    pub fn tpcpoint_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Convert a temporal patch into the temporal geometry of the multipoints its patches occupy"]
     pub fn tpcpatch_to_tgeometry(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal point cloud patch into a temporal geography"]
+    pub fn tpcpatch_to_tgeography(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal pgpointcloud point instant from a pgpointcloud point and a timestamptz"]
@@ -20839,6 +21045,22 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a temporal pgpointcloud point restricted to the complement of a specific pgpointcloud point value"]
     pub fn tpcpoint_minus_value(temp: *const Temporal, pt: *const Pcpoint) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal point cloud point restricted to a point cloud box"]
+    pub fn tpcpoint_at_tpcbox(
+        temp: *const Temporal,
+        box_: *const TPCBox,
+        border_inc: bool,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal point cloud point restricted to the complement of a point cloud box"]
+    pub fn tpcpoint_minus_tpcbox(
+        temp: *const Temporal,
+        box_: *const TPCBox,
+        border_inc: bool,
+    ) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the pgPointCloud schema id (pcid) of a temporal pgpointcloud point"]
@@ -20918,6 +21140,22 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a temporal pgpointcloud patch restricted to the complement of a specific pgpointcloud patch value"]
     pub fn tpcpatch_minus_value(temp: *const Temporal, pa: *const Pcpatch) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal point cloud patch restricted to a point cloud box"]
+    pub fn tpcpatch_at_tpcbox(
+        temp: *const Temporal,
+        box_: *const TPCBox,
+        border_inc: bool,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal point cloud patch restricted to the complement of a point cloud box"]
+    pub fn tpcpatch_minus_tpcbox(
+        temp: *const Temporal,
+        box_: *const TPCBox,
+        border_inc: bool,
+    ) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the pgPointCloud schema id (pcid) of a temporal pgpointcloud patch"]
@@ -21866,14 +22104,6 @@ unsafe extern "C" {
     pub fn poseset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a pose set"]
-    pub fn poseset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a pose set from an array of values"]
     pub fn poseset_make(values: *mut *const Pose, count: ::std::os::raw::c_int) -> *mut Set;
 }
@@ -21981,6 +22211,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a temporal point from a temporal pose"]
     pub fn tpose_to_tpoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal pose, planar or geodetic, into a temporal geometry point"]
+    pub fn tpose_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal pose, planar or geodetic, into a temporal geography point"]
+    pub fn tpose_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a copy of the end value of a temporal pose"]
@@ -22181,6 +22419,27 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal pose always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_tpose(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal pose always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpose_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal poses always have overlapping bounding boxes at the instants they share, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpose_tpose(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a pose is ever equal to a temporal circular buffer"]
     pub fn ever_eq_pose_tpose(pose: *const Pose, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -22206,6 +22465,27 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return true if two temporal poses are ever different"]
     pub fn ever_ne_tpose_tpose(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal pose ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_tpose(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal pose ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpose_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if the values of two temporal poses ever have overlapping bounding boxes at an instant they share, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpose_tpose(
         temp1: *const Temporal,
         temp2: *const Temporal,
     ) -> ::std::os::raw::c_int;
@@ -22318,6 +22598,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Convert a pose chain into the geometry point of its innermost frame"]
     pub fn posechain_to_point(pc: *const PoseChain) -> *mut GSERIALIZED;
+}
+unsafe extern "C" {
+    #[doc = " Convert a pose chain into a geography point"]
+    pub fn posechain_to_geog(pc: *const PoseChain) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
     #[doc = " Convert a pose chain into a spatiotemporal box"]
@@ -22457,14 +22741,6 @@ unsafe extern "C" {
     pub fn posechainset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a pose chain set"]
-    pub fn posechainset_out(
-        s: *const Set,
-        maxdd: ::std::os::raw::c_int,
-        size_out: *mut usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a pose chain set from an array of values"]
     pub fn posechainset_make(
         values: *mut *const PoseChain,
@@ -22577,6 +22853,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a temporal pose from a temporal pose chain"]
     pub fn tposechain_to_tpose(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal pose chain, planar or geodetic, into a temporal geometry point"]
+    pub fn tposechain_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal pose chain, planar or geodetic, into a temporal geography point"]
+    pub fn tposechain_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a copy of the end value of a temporal pose chain"]
@@ -23068,10 +23352,6 @@ unsafe extern "C" {
     pub fn quadbinset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of a QUADBIN cell set"]
-    pub fn quadbinset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a QUADBIN cell set from an array of values"]
     pub fn quadbinset_make(values: *const Quadbin, count: ::std::os::raw::c_int) -> *mut Set;
 }
@@ -23151,17 +23431,8 @@ unsafe extern "C" {
     pub fn tquadbinseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal quadbin cell index"]
-    pub fn tquadbin_out(temp: *const Temporal, size_out: *mut usize)
-    -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal quadbin from its MF-JSON representation"]
     pub fn tquadbin_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Shorthand constructor: the single-instant temporal quadbin cell"]
-    pub fn tquadbin_make(value: Quadbin, t: TimestampTz) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Build a temporal quadbin cell instant"]
@@ -23258,6 +23529,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Convert a `tquadbin` to a `tbigint`"]
     pub fn tquadbin_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal quadbin cell into the temporal geography point of its centre"]
+    pub fn tquadbin_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal QUADBIN cell restricted to a QUADBIN cell"]
@@ -23436,8 +23711,12 @@ unsafe extern "C" {
     pub fn raquet_pixtype_size(pixtype: MeosPixType) -> usize;
 }
 unsafe extern "C" {
+    #[doc = " Return the name the RaQuet specification gives a pixel data type"]
+    pub fn meospixtype_name(pixtype: MeosPixType) -> *const ::std::os::raw::c_char;
+}
+unsafe extern "C" {
     #[doc = " Return the pixel data type corresponding to a name"]
-    pub fn raquet_pixtype_from_string(str_: *const ::std::os::raw::c_char) -> MeosPixType;
+    pub fn meospixtype_from_string(str_: *const ::std::os::raw::c_char) -> MeosPixType;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -24078,7 +24357,7 @@ unsafe extern "C" {
     pub fn geomval_arr_free(gvarr: *mut GeomVal, count: ::std::os::raw::c_int);
 }
 unsafe extern "C" {
-    #[doc = " Free an array of pixels"]
+    #[doc = " Release an array of pixels and the points they carry"]
     pub fn pixel_arr_free(pixarr: *mut Pixel, count: ::std::os::raw::c_int);
 }
 unsafe extern "C" {
@@ -24471,16 +24750,16 @@ unsafe extern "C" {
     pub fn trgeometry_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
+    #[doc = " Convert a temporal rigid geometry into a temporal geography point"]
+    pub fn trgeometry_to_tgeogpoint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Materialise the moving polygon of a temporal rigid geometry as a temporal geometry (one rotated/translated polygon per instant)"]
     pub fn trgeometry_to_tgeometry(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Return a copy of the end instant of a temporal rigid geometry"]
-    pub fn trgeometry_end_instant(temp: *const Temporal) -> *mut TInstant;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the end sequence of a temporal sequence (set)"]
-    pub fn trgeometry_end_sequence(temp: *const Temporal) -> *mut TSequence;
+    #[doc = " Convert a temporal rigid geometry into a temporal geography"]
+    pub fn trgeometry_to_tgeography(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a copy of the end base value of a temporal rigid geometry"]
@@ -24489,17 +24768,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a copy of the reference geometry of a temporal rigid geometry"]
     pub fn trgeometry_geom(temp: *const Temporal) -> *mut GSERIALIZED;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the n-th instant of a temporal rigid geometry"]
-    pub fn trgeometry_instant_n(temp: *const Temporal, n: ::std::os::raw::c_int) -> *mut TInstant;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the distinct instants of a temporal rigid geometry"]
-    pub fn trgeometry_instants(
-        temp: *const Temporal,
-        count: *mut ::std::os::raw::c_int,
-    ) -> *mut *mut TInstant;
 }
 unsafe extern "C" {
     #[doc = " Return the set of distinct points seen along a temporal rigid geometry's antenna trajectory"]
@@ -24516,33 +24784,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return the roll angle of a temporal rigid geometry (radians) as a temporal float, ZYX intrinsic Tait-Bryan convention"]
     pub fn trgeometry_roll(temp: *const Temporal) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the array of inter-instant segments of a temporal rigid geometry — one TSequence per consecutive pair of instants"]
-    pub fn trgeometry_segments(
-        temp: *const Temporal,
-        count: *mut ::std::os::raw::c_int,
-    ) -> *mut *mut TSequence;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the n-th sequence of a temporal sequence (set)"]
-    pub fn trgeometry_sequence_n(temp: *const Temporal, i: ::std::os::raw::c_int)
-    -> *mut TSequence;
-}
-unsafe extern "C" {
-    #[doc = " Return an array of copies of the sequences of a temporal sequence (set)"]
-    pub fn trgeometry_sequences(
-        temp: *const Temporal,
-        count: *mut ::std::os::raw::c_int,
-    ) -> *mut *mut TSequence;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the start instant of a temporal rigid geometry"]
-    pub fn trgeometry_start_instant(temp: *const Temporal) -> *mut TInstant;
-}
-unsafe extern "C" {
-    #[doc = " Return a copy of the start sequence of a temporal sequence (set)"]
-    pub fn trgeometry_start_sequence(temp: *const Temporal) -> *mut TSequence;
 }
 unsafe extern "C" {
     #[doc = " Return a copy of the start value of a temporal rigid geometry"]
@@ -24686,74 +24927,8 @@ unsafe extern "C" {
     pub fn trgeometry_twcentroid(temp: *const Temporal) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
-    #[doc = " Append an instant to a temporal value"]
-    pub fn trgeometry_append_tinstant(
-        temp: *mut Temporal,
-        inst: *const TInstant,
-        interp: interpType,
-        maxdist: f64,
-        maxt: *const Interval,
-        expand: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Append a sequence to a temporal value"]
-    pub fn trgeometry_append_tsequence(
-        temp: *mut Temporal,
-        seq: *const TSequence,
-        expand: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the value of a temporal rigid geometry at a timestamptz"]
-    pub fn trgeometry_delete_timestamptz(
-        temp: *const Temporal,
-        t: TimestampTz,
-        connect: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Delete a timestamp set from a temporal rigid geometry connecting the instants before and after the given timestamp, if any"]
-    pub fn trgeometry_delete_tstzset(
-        temp: *const Temporal,
-        s: *const Set,
-        connect: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Delete a timestamptz span from a temporal rigid geometry"]
-    pub fn trgeometry_delete_tstzspan(
-        temp: *const Temporal,
-        s: *const Span,
-        connect: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Delete a timestamptz span set from a temporal rigid geometry"]
-    pub fn trgeometry_delete_tstzspanset(
-        temp: *const Temporal,
-        ss: *const SpanSet,
-        connect: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry projected to the ground, as #tpose_force2d projects a temporal pose"]
     pub fn trgeometry_force2d(temp: *const Temporal) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return two temporal rigid geometries merged into one"]
-    pub fn trgeometry_merge(temp1: *const Temporal, temp2: *const Temporal) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the temporal rigid geometries of an array merged into one"]
-    pub fn trgeometry_merge_array(
-        temparr: *mut *mut Temporal,
-        count: ::std::os::raw::c_int,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return a temporal rigid geometry rounded to a given number of decimal places"]
-    pub fn trgeometry_round(temp: *const Temporal, maxdd: ::std::os::raw::c_int) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry rotated counter-clockwise about the vertical through a point, as #tpose_rotate rotates a temporal pose"]
@@ -24772,10 +24947,6 @@ unsafe extern "C" {
     pub fn trgeometry_rotate_z(temp: *const Temporal, angle: f64) -> *mut Temporal;
 }
 unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry transformed to an interpolation"]
-    pub fn trgeometry_set_interp(temp: *const Temporal, interp: interpType) -> *mut Temporal;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry translated by offsets, as #tpose_translate translates a temporal pose"]
     pub fn trgeometry_translate(
         temp: *const Temporal,
@@ -24790,73 +24961,14 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry transformed to a temporal sequence"]
-    pub fn trgeometry_as_tsequence(
-        temp: *const Temporal,
-        interp_str: *const ::std::os::raw::c_char,
-    ) -> *mut TSequence;
+    pub fn trgeometry_as_tsequence(temp: *const Temporal, interp: interpType) -> *mut TSequence;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry transformed to a temporal sequence set"]
     pub fn trgeometry_as_tsequenceset(
         temp: *const Temporal,
-        interp_str: *const ::std::os::raw::c_char,
+        interp: interpType,
     ) -> *mut TSequenceSet;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to instants after or equal a timestamptz"]
-    pub fn trgeometry_after_timestamptz(
-        temp: *const Temporal,
-        t: TimestampTz,
-        strict: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to instants before or equal a timestamptz"]
-    pub fn trgeometry_before_timestamptz(
-        temp: *const Temporal,
-        t: TimestampTz,
-        strict: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to (the complement of) a set of poses"]
-    pub fn trgeometry_restrict_values(
-        temp: *const Temporal,
-        s: *const Set,
-        atfunc: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to (the complement of) a timestamptz"]
-    pub fn trgeometry_restrict_timestamptz(
-        temp: *const Temporal,
-        t: TimestampTz,
-        atfunc: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to (the complement of) a timestamptz set"]
-    pub fn trgeometry_restrict_tstzset(
-        temp: *const Temporal,
-        s: *const Set,
-        atfunc: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to (the complement of) a timestamptz span"]
-    pub fn trgeometry_restrict_tstzspan(
-        temp: *const Temporal,
-        s: *const Span,
-        atfunc: bool,
-    ) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to (the complement of) a timestamptz span set"]
-    pub fn trgeometry_restrict_tstzspanset(
-        temp: *const Temporal,
-        ss: *const SpanSet,
-        atfunc: bool,
-    ) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal rigid geometry restricted to a geometry"]
@@ -24889,47 +25001,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Restrict a temporal rigid geometry to the complement of a pose"]
     pub fn trgeometry_minus_value(temp: *const Temporal, pose: *const Pose) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to a set of poses"]
-    pub fn trgeometry_at_values(temp: *const Temporal, s: *const Set) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to the complement of a set of poses"]
-    pub fn trgeometry_minus_values(temp: *const Temporal, s: *const Set) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to a timestamptz"]
-    pub fn trgeometry_at_timestamptz(temp: *const Temporal, t: TimestampTz) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to the complement of a timestamptz"]
-    pub fn trgeometry_minus_timestamptz(temp: *const Temporal, t: TimestampTz) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to a timestamptz set"]
-    pub fn trgeometry_at_tstzset(temp: *const Temporal, s: *const Set) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to the complement of a timestamptz set"]
-    pub fn trgeometry_minus_tstzset(temp: *const Temporal, s: *const Set) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to a timestamptz span"]
-    pub fn trgeometry_at_tstzspan(temp: *const Temporal, s: *const Span) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to the complement of a timestamptz span"]
-    pub fn trgeometry_minus_tstzspan(temp: *const Temporal, s: *const Span) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to a timestamptz span set"]
-    pub fn trgeometry_at_tstzspanset(temp: *const Temporal, ss: *const SpanSet) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Restrict a temporal rigid geometry to the complement of a timestamptz span set"]
-    pub fn trgeometry_minus_tstzspanset(temp: *const Temporal, ss: *const SpanSet)
-    -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the temporal distance between a temporal rigid geometry and a geometry"]
@@ -25007,6 +25078,44 @@ unsafe extern "C" {
     ) -> *mut GSERIALIZED;
 }
 unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether a geometry and a temporal rigid geometry are disjoint"]
+    pub fn tdisjoint_geo_trgeometry(gs: *const GSERIALIZED, temp: *const Temporal)
+    -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether a temporal rigid geometry and a geometry are disjoint"]
+    pub fn tdisjoint_trgeometry_geo(temp: *const Temporal, gs: *const GSERIALIZED)
+    -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether two temporal rigid geometries are disjoint"]
+    pub fn tdisjoint_trgeometry_trgeometry(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether a geometry and a temporal rigid geometry intersect"]
+    pub fn tintersects_geo_trgeometry(
+        gs: *const GSERIALIZED,
+        temp: *const Temporal,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether a temporal rigid geometry and a geometry intersect"]
+    pub fn tintersects_trgeometry_geo(
+        temp: *const Temporal,
+        gs: *const GSERIALIZED,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Return a temporal Boolean that states whether two temporal rigid geometries intersect"]
+    pub fn tintersects_trgeometry_trgeometry(
+        temp1: *const Temporal,
+        temp2: *const Temporal,
+    ) -> *mut Temporal;
+}
+unsafe extern "C" {
     #[doc = " Return a temporal boolean that states whether a geometry and a temporal rigid geometry are within a distance"]
     pub fn tdwithin_geo_trgeometry(
         gs: *const GSERIALIZED,
@@ -25073,6 +25182,20 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
+    #[doc = " Return 1 if a temporal rigid geometry always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_trgeometry(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal rigid geometry always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_trgeometry_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     #[doc = " Return true if a geometry is ever equal to a temporal rigid geometry"]
     pub fn ever_eq_geo_trgeometry(
         gs: *const GSERIALIZED,
@@ -25112,6 +25235,20 @@ unsafe extern "C" {
     pub fn ever_ne_trgeometry_trgeometry(
         temp1: *const Temporal,
         temp2: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal rigid geometry ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_trgeometry(
+        box_: *const STBox,
+        temp: *const Temporal,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = " Return 1 if a temporal rigid geometry ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_trgeometry_stbox(
+        temp: *const Temporal,
+        box_: *const STBox,
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
@@ -25495,10 +25632,6 @@ unsafe extern "C" {
     pub fn s2cellset_in(str_: *const ::std::os::raw::c_char) -> *mut Set;
 }
 unsafe extern "C" {
-    #[doc = " Return the string representation of an S2 cell set"]
-    pub fn s2cellset_out(s: *const Set, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return an S2 cell set from an array of values"]
     pub fn s2cellset_make(values: *const S2CellId, count: ::std::os::raw::c_int) -> *mut Set;
 }
@@ -25576,16 +25709,8 @@ unsafe extern "C" {
     pub fn ts2cellseqset_in(str_: *const ::std::os::raw::c_char) -> *mut TSequenceSet;
 }
 unsafe extern "C" {
-    #[doc = " Return the Well-Known Text (WKT) representation of a temporal S2 cell"]
-    pub fn ts2cell_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
-}
-unsafe extern "C" {
     #[doc = " Return a temporal S2 cell from its MF-JSON representation"]
     pub fn ts2cell_from_mfjson(mfjson: *const ::std::os::raw::c_char) -> *mut Temporal;
-}
-unsafe extern "C" {
-    #[doc = " Return the single-instant temporal S2 cell of a cell and a timestamptz"]
-    pub fn ts2cell_make(value: S2CellId, t: TimestampTz) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return a temporal S2 cell instant from a cell and a timestamptz"]
@@ -25682,6 +25807,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = " Return a `ts2cell` converted to a `tbigint`, owned by the caller"]
     pub fn ts2cell_to_tbigint(temp: *const Temporal) -> *mut Temporal;
+}
+unsafe extern "C" {
+    #[doc = " Convert a temporal S2 cell into the temporal geometry point of its centre"]
+    pub fn ts2cell_to_tgeompoint(temp: *const Temporal) -> *mut Temporal;
 }
 unsafe extern "C" {
     #[doc = " Return the temporal S2 cell of a temporal geodetic point at a level, holding every cell the trajectory crosses"]
@@ -27554,7 +27683,7 @@ unsafe extern "C" {
     pub fn time_ne(time1: TimeADT, time2: TimeADT) -> bool;
 }
 unsafe extern "C" {
-    #[doc = " Return true if two times overalp"]
+    #[doc = " Return true if two times overlap"]
     pub fn time_overlaps(ts1: TimeADT, te1: TimeADT, ts2: TimeADT, te2: TimeADT) -> bool;
 }
 unsafe extern "C" {
@@ -27657,7 +27786,7 @@ unsafe extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 unsafe extern "C" {
-    #[doc = " Return true if two times with time zoneoverlap"]
+    #[doc = " Return true if two times with time zone overlap"]
     pub fn timetz_overlaps(
         ts1: *const TimeTzADT,
         te1: *const TimeTzADT,
