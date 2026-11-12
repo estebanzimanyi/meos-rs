@@ -384,7 +384,7 @@ impl MeosBox for TBox {
     /// assert_eq!(distance, 4.0);
     /// ```
     fn nearest_approach_distance(&self, other: &TBox) -> f64 {
-        unsafe { meos_call!(meos_sys::nad_tboxfloat_tboxfloat(self.inner(), other.inner())) }
+        unsafe { meos_call!(meos_sys::nad_tbox_tbox(self.inner(), other.inner())) }
     }
 
     /// Shifts and scales the T (time) dimension of the `TBox`.
