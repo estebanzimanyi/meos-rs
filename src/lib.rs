@@ -56,6 +56,9 @@ macro_rules! meos_call {
 mod boxes;
 pub use boxes::{Box, STBox, TBox};
 
+mod cells;
+pub use cells::{H3Index, Quadbin, S2Cell};
+
 mod collections;
 pub use collections::base::{Collection, Span, SpanSet};
 pub use collections::datetime::{DateSpan, DateSpanSet, TsTzSpan, TsTzSpanSet};
