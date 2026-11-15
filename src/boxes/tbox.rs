@@ -410,8 +410,8 @@ impl MeosBox for TBox {
     /// let tbox = TBox::from_temporal_span(tspan);
     /// let shifted_scaled_tbox = tbox.shift_scale_time(Some(TimeDelta::days(1)), Some(TimeDelta::days(2)));
     ///
-    /// assert_eq!(shifted_scaled_tbox.tmin().unwrap(), datetime1 + TimeDelta::days(2));
-    /// assert_eq!(shifted_scaled_tbox.tmax().unwrap(), Utc.with_ymd_and_hms(2020, 1, 7, 0, 0, 0).unwrap());
+    /// assert_eq!(shifted_scaled_tbox.tmin().unwrap(), datetime1 + TimeDelta::days(1));
+    /// assert_eq!(shifted_scaled_tbox.tmax().unwrap(), Utc.with_ymd_and_hms(2020, 1, 4, 0, 0, 0).unwrap());
     /// ```
     fn shift_scale_time(&self, delta: Option<TimeDelta>, width: Option<TimeDelta>) -> TBox {
         let d = {

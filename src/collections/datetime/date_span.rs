@@ -8,12 +8,12 @@ use std::{
     ptr,
 };
 
-use chrono::{Datelike, NaiveDate, TimeDelta};
+use chrono::{NaiveDate, TimeDelta};
 
 use crate::{
-    collections::{base::{Collection, Span, impl_collection}, datetime::DAYS_UNTIL_2000},
+    collections::base::{Collection, Span, impl_collection},
     errors::ParseError,
-    utils::from_interval,
+    utils::{from_interval, from_meos_date, to_meos_date},
 };
 
 pub struct DateSpan {
@@ -32,7 +32,7 @@ impl Collection for DateSpan {
     impl_collection!(span, NaiveDate);
 
     fn contains(&self, content: &NaiveDate) -> bool {
-        unsafe { meos_call!(meos_sys::contains_span_date(self.inner(), content.num_days_from_ce())) }
+        unsafe { meos_call!(meos_sys::contains_span_date(self.inner(), to_meos_date(*content))) }
     }
 }
 
@@ -76,10 +76,7 @@ impl Span for DateSpan {
     /// ```
     fn lower(&self) -> Self::Type {
         let num_of_days = unsafe { meos_call!(meos_sys::datespan_lower(self.inner())) };
-        NaiveDate::from_num_days_from_ce_opt(num_of_days)
-            .expect("Wrong date returned from meos")
-            .checked_add_days(DAYS_UNTIL_2000)
-            .unwrap()
+        from_meos_date(num_of_days)
     }
 
     /// Returns the upper bound of the span.
@@ -103,10 +100,7 @@ impl Span for DateSpan {
     /// ```
     fn upper(&self) -> Self::Type {
         let num_of_days = unsafe { meos_call!(meos_sys::datespan_upper(self.inner())) };
-        NaiveDate::from_num_days_from_ce_opt(num_of_days)
-            .expect("Wrong date returned from meos")
-            .checked_add_days(DAYS_UNTIL_2000)
-            .unwrap()
+        from_meos_date(num_of_days)
     }
 
     /// Return a new `DateSpan` with the lower and upper bounds shifted by `delta`.
@@ -239,10 +233,7 @@ impl Span for DateSpan {
             TimeDelta::days(
                 meos_call!(meos_sys::distance_span_date(
                     self.inner(),
-                    other
-                        .checked_sub_days(DAYS_UNTIL_2000)
-                        .unwrap()
-                        .num_days_from_ce(),
+                    to_meos_date(*other),
                 ))
                 .into(),
             )
@@ -369,13 +360,8 @@ impl From<Range<NaiveDate>> for DateSpan {
     fn from(Range { start, end }: Range<NaiveDate>) -> Self {
         let inner = unsafe {
             meos_call!(meos_sys::datespan_make(
-                start
-                    .checked_sub_days(DAYS_UNTIL_2000)
-                    .unwrap()
-                    .num_days_from_ce(),
-                end.checked_sub_days(DAYS_UNTIL_2000)
-                    .unwrap()
-                    .num_days_from_ce(),
+                to_meos_date(start),
+                to_meos_date(end),
                 true,
                 false,
             ))
@@ -388,16 +374,8 @@ impl From<RangeInclusive<NaiveDate>> for DateSpan {
     fn from(range: RangeInclusive<NaiveDate>) -> Self {
         let inner = unsafe {
             meos_call!(meos_sys::datespan_make(
-                range
-                    .start()
-                    .checked_sub_days(DAYS_UNTIL_2000)
-                    .unwrap()
-                    .num_days_from_ce(),
-                range
-                    .end()
-                    .checked_sub_days(DAYS_UNTIL_2000)
-                    .unwrap()
-                    .num_days_from_ce(),
+                to_meos_date(*range.start()),
+                to_meos_date(*range.end()),
                 true,
                 true,
             ))

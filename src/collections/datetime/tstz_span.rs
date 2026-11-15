@@ -8,7 +8,7 @@ use std::{
     ptr,
 };
 
-use chrono::{DateTime, Datelike, TimeDelta, TimeZone, Utc};
+use chrono::{DateTime, TimeDelta, TimeZone, Utc};
 
 use crate::{
     collections::{base::{Collection, Span, impl_collection}},
@@ -33,7 +33,7 @@ impl Collection for TsTzSpan {
     impl_collection!(span, DateTime<Utc>);
 
     fn contains(&self, content: &DateTime<Utc>) -> bool {
-        unsafe { meos_call!(meos_sys::contains_span_date(self.inner(), content.num_days_from_ce())) }
+        unsafe { meos_call!(meos_sys::contains_span_timestamptz(self.inner(), to_meos_timestamp(content))) }
     }
 }
 
@@ -131,7 +131,7 @@ impl Span for TsTzSpan {
     ///
     /// let span: TsTzSpan = (from_ymd_opt(2023, 1, 1)..from_ymd_opt(2023, 1, 15)).into();
     /// let shifted_span = span.shift(TimeDelta::weeks(8));
-    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 4, 23)..from_ymd_opt(2023, 5, 7)).into();
+    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 2, 26)..from_ymd_opt(2023, 3, 12)).into();
     /// assert_eq!(shifted_span, expected_span);
     /// ```
     fn shift(&self, delta: TimeDelta) -> TsTzSpan {
@@ -161,7 +161,7 @@ impl Span for TsTzSpan {
     ///
     /// let span: TsTzSpan = (from_ymd_opt(2023, 1, 1)..from_ymd_opt(2023, 1, 15)).into();
     /// let scaled_span = span.scale(TimeDelta::weeks(4));
-    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 1, 1)..from_ymd_opt(2023, 2, 26)).into();
+    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 1, 1)..from_ymd_opt(2023, 1, 29)).into();
     /// assert_eq!(scaled_span, expected_span);
     /// ```
     fn scale(&self, width: TimeDelta) -> TsTzSpan {
@@ -191,7 +191,7 @@ impl Span for TsTzSpan {
     ///
     /// let span: TsTzSpan = (from_ymd_opt(2023, 1, 1)..from_ymd_opt(2023, 1, 15)).into();
     /// let shifted_scaled_span = span.shift_scale(Some(TimeDelta::weeks(4)), Some(TimeDelta::weeks(4)));
-    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 2, 26)..from_ymd_opt(2023, 4, 23)).into();
+    /// let expected_span: TsTzSpan = (from_ymd_opt(2023, 1, 29)..from_ymd_opt(2023, 2, 26)).into();
     /// assert_eq!(shifted_scaled_span, expected_span);
     /// ```
     fn shift_scale(&self, delta: Option<TimeDelta>, width: Option<TimeDelta>) -> TsTzSpan {
