@@ -3,7 +3,6 @@ use std::ffi::{c_void, CString};
 use std::ptr;
 
 use chrono::DateTime;
-use chrono::Datelike;
 use chrono::TimeDelta;
 use chrono::Utc;
 use std::fmt::Debug;
@@ -33,7 +32,7 @@ impl Drop for TsTzSpanSet {
 impl Collection for TsTzSpanSet {
     impl_collection!(spanset, DateTime<Utc>);
     fn contains(&self, content: &DateTime<Utc>) -> bool {
-        unsafe { meos_call!(meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce())) }
+        unsafe { meos_call!(meos_sys::contains_spanset_timestamptz(self.inner(), to_meos_timestamp(content))) }
     }
 }
 
@@ -74,7 +73,7 @@ impl SpanSet for TsTzSpanSet {
     /// let shifted_span_set = span_set.shift(TimeDelta::days(5));
     ///
     /// let expected_shifted_span_set =
-    ///     TsTzSpanSet::from_str("{[2019-09-18 00:00:00+00, 2019-09-20 00:00:00+00], [2019-09-26 00:00:00+00, 2019-09-30 00:00:00+00]}").unwrap();
+    ///     TsTzSpanSet::from_str("{[2019-09-13 00:00:00+00, 2019-09-15 00:00:00+00], [2019-09-21 00:00:00+00, 2019-09-25 00:00:00+00]}").unwrap();
     /// assert_eq!(shifted_span_set, expected_shifted_span_set);
     /// ```
     fn shift(&self, delta: TimeDelta) -> TsTzSpanSet {
@@ -101,7 +100,7 @@ impl SpanSet for TsTzSpanSet {
     /// let scaled_span_set = span_set.scale(TimeDelta::days(5));
     ///
     /// let expected_scaled_span_set =
-    ///     TsTzSpanSet::from_str("{[2019-09-08 00:00:00+00, 2019-09-10 20:34:17.142857+00], [2019-09-15 03:25:42.857142+00, 2019-09-18 00:00:00+00]}").unwrap();
+    ///     TsTzSpanSet::from_str("{[2019-09-08 00:00:00+00, 2019-09-09 10:17:08.571428+00], [2019-09-11 13:42:51.428571+00, 2019-09-13 00:00:00+00]}").unwrap();
     /// assert_eq!(scaled_span_set, expected_scaled_span_set);
     /// ```
     fn scale(&self, width: TimeDelta) -> TsTzSpanSet {
@@ -129,7 +128,7 @@ impl SpanSet for TsTzSpanSet {
     /// let shifted_scaled_span_set = span_set.shift_scale(Some(TimeDelta::days(5)), Some(TimeDelta::days(10)));
     ///
     /// let expected_shifted_scaled_span_set =
-    ///     TsTzSpanSet::from_str("{[2019-09-18 00:00:00+00, 2019-09-28 00:00:00+00], [2019-10-03 00:00:00+00, 2019-10-08 00:00:00+00]}").unwrap();
+    ///     TsTzSpanSet::from_str("{[2019-09-13 00:00:00+00, 2019-09-18 00:00:00+00], [2019-09-20 12:00:00+00, 2019-09-23 00:00:00+00]}").unwrap();
     /// assert_eq!(shifted_scaled_span_set, expected_shifted_scaled_span_set);
     /// ```
     fn shift_scale(&self, delta: Option<TimeDelta>, width: Option<TimeDelta>) -> TsTzSpanSet {

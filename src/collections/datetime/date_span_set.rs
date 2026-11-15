@@ -2,7 +2,6 @@ use crate::utils::take_meos_string;
 use std::ffi::{c_void, CString};
 use std::ptr;
 
-use chrono::Datelike;
 use chrono::NaiveDate;
 use chrono::TimeDelta;
 use std::fmt::Debug;
@@ -12,10 +11,9 @@ use std::ops::{BitAnd, BitOr};
 use crate::collections::base::SpanSet;
 use crate::collections::base::{Collection, Span, impl_collection, impl_iterator};
 use crate::errors::ParseError;
-use crate::utils::from_interval;
+use crate::utils::{from_interval, to_meos_date};
 
 use super::date_span::DateSpan;
-use super::DAYS_UNTIL_2000;
 
 pub struct DateSpanSet {
     _inner: ptr::NonNull<meos_sys::SpanSet>,
@@ -32,7 +30,7 @@ impl Drop for DateSpanSet {
 impl Collection for DateSpanSet {
     impl_collection!(spanset, NaiveDate);
     fn contains(&self, content: &NaiveDate) -> bool {
-        unsafe { meos_call!(meos_sys::contains_spanset_date(self.inner(), content.num_days_from_ce())) }
+        unsafe { meos_call!(meos_sys::contains_spanset_date(self.inner(), to_meos_date(*content))) }
     }
 }
 
@@ -174,10 +172,7 @@ impl SpanSet for DateSpanSet {
             TimeDelta::days(
                 meos_call!(meos_sys::distance_spanset_date(
                     self.inner(),
-                    other
-                        .checked_sub_days(DAYS_UNTIL_2000)
-                        .unwrap()
-                        .num_days_from_ce(),
+                    to_meos_date(*other),
                 ))
                 .into(),
             )
