@@ -2670,6 +2670,10 @@ extern "C" {
     pub fn date_to_spanset(d: DateADT) -> *mut SpanSet;
 }
 extern "C" {
+    #[doc = " Return the days from the Unix epoch of a date"]
+    pub fn date_to_unix_days(d: DateADT) -> i32;
+}
+extern "C" {
     #[doc = " Convert a date set into a timestamptz set"]
     pub fn dateset_to_tstzset(s: *const Set) -> *mut Set;
 }
@@ -2746,6 +2750,14 @@ extern "C" {
     pub fn intspanset_to_floatspanset(ss: *const SpanSet) -> *mut SpanSet;
 }
 extern "C" {
+    #[doc = " Return the interval of a number of months, days and microseconds"]
+    pub fn interval_from_parts(months: i32, days: i32, us: i64) -> *mut Interval;
+}
+extern "C" {
+    #[doc = " Return in the last three arguments the months, the days and the microseconds of an interval"]
+    pub fn interval_to_parts(interv: *const Interval, months: *mut i32, days: *mut i32, us: *mut i64) -> bool;
+}
+extern "C" {
     #[doc = " Convert a set into a span"]
     pub fn set_to_span(s: *const Set) -> *mut Span;
 }
@@ -2760,6 +2772,10 @@ extern "C" {
 extern "C" {
     #[doc = " Convert a text into a set"]
     pub fn text_to_set(txt: *const text) -> *mut Set;
+}
+extern "C" {
+    #[doc = " Return the microseconds from the Unix epoch of a timestamp"]
+    pub fn timestamp_to_unix_us(ts: Timestamp) -> i64;
 }
 extern "C" {
     #[doc = " Convert a timestamptz into a set"]
@@ -2788,6 +2804,14 @@ extern "C" {
 extern "C" {
     #[doc = " Convert a timestamptz span set into a date span set"]
     pub fn tstzspanset_to_datespanset(ss: *const SpanSet) -> *mut SpanSet;
+}
+extern "C" {
+    #[doc = " Return the date of a count of days from the Unix epoch"]
+    pub fn unix_days_to_date(days: i32) -> DateADT;
+}
+extern "C" {
+    #[doc = " Return the timestamp of a count of microseconds from the Unix epoch"]
+    pub fn unix_us_to_timestamp(us: i64) -> Timestamp;
 }
 extern "C" {
     #[doc = " Return the timestamptz of a count of microseconds from the Unix epoch"]
@@ -11070,6 +11094,10 @@ extern "C" {
     pub fn always_overlaps_tcbuffer_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    #[doc = " Return 1 if the boxes of two temporal circular buffers always overlap at the times they share, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     #[doc = " Return true if a circular buffer is ever equal to a temporal circular buffer"]
     pub fn ever_eq_cbuffer_tcbuffer(cb: *const Cbuffer, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -11100,6 +11128,10 @@ extern "C" {
 extern "C" {
     #[doc = " Return 1 if a temporal circular buffer ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
     pub fn ever_overlaps_tcbuffer_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if the boxes of two temporal circular buffers ever overlap at a time they share, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tcbuffer_tcbuffer(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Return the temporal equality of a circular buffer and a temporal circular buffer"]
@@ -11500,6 +11532,30 @@ extern "C" {
 extern "C" {
     #[doc = " Return the temporal cell area in square meters (tfloat)"]
     pub fn tcellindex_cell_area(temp: *const Temporal) -> *mut Temporal;
+}
+extern "C" {
+    #[doc = " Return a temporal cell restricted to a spatiotemporal box, the times at which its cell shares a point with the box"]
+    pub fn tcellindex_at_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    #[doc = " Return a temporal cell restricted to the complement of a spatiotemporal box, the times at which its cell shares no point with the box"]
+    pub fn tcellindex_minus_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal cell ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tcellindex_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal cell always lies in a spatiotemporal box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tcellindex_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal cell ever lies in a spatiotemporal box, 0 if not, and -1 on error, as #ever_overlaps_stbox_tpose answers it for a temporal pose"]
+    pub fn ever_overlaps_stbox_tcellindex(box_: *const STBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal cell always lies in a spatiotemporal box, 0 if not, and -1 on error, as #always_overlaps_stbox_tpose answers it for a temporal pose"]
+    pub fn always_overlaps_stbox_tcellindex(box_: *const STBox, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Parse a string into an H3Index"]
@@ -12978,6 +13034,10 @@ extern "C" {
     pub fn tinstant_make(value: Datum, temptype: MeosType, t: TimestampTz) -> *mut TInstant;
 }
 extern "C" {
+    #[doc = " Return a temporal instant from the arguments, the value being one the instant can hold"]
+    pub fn tinstant_make_intl(value: Datum, temptype: MeosType, t: TimestampTz) -> *mut TInstant;
+}
+extern "C" {
     #[doc = " Return a temporal instant created from the values and free the base value after the creation"]
     pub fn tinstant_make_free(value: Datum, temptype: MeosType, t: TimestampTz) -> *mut TInstant;
 }
@@ -13530,7 +13590,7 @@ extern "C" {
     pub fn tsequenceset_delete_tstzspanset(ss: *const TSequenceSet, ps: *const SpanSet) -> *mut TSequenceSet;
 }
 extern "C" {
-    #[doc = " Insert the second temporal value into the first one"]
+    #[doc = " Insert the second temporal value into the first one, connecting each composing sequence of one value to the composing sequences of the other value before and after it, if any"]
     pub fn tsequenceset_insert(ss1: *const TSequenceSet, ss2: *const TSequenceSet) -> *mut TSequenceSet;
 }
 extern "C" {
@@ -16302,6 +16362,10 @@ extern "C" {
     pub fn always_overlaps_tnpoint_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    #[doc = " Return 1 if two temporal network points are always at one place of the map at the times they share, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
     #[doc = " Return true if a network point is ever equal to a temporal network point"]
     pub fn ever_eq_npoint_tnpoint(np: *const Npoint, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -16332,6 +16396,10 @@ extern "C" {
 extern "C" {
     #[doc = " Return 1 if a temporal network point ever lies in a spatiotemporal box, 0 if not, and -1 on error"]
     pub fn ever_overlaps_tnpoint_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if two temporal network points are ever at one place of the map at a time they share, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tnpoint_tnpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Return the temporal equality of a temporal network point and a network point"]
@@ -17230,6 +17298,14 @@ extern "C" {
     pub fn tpcpatch_minus_tpcbox(temp: *const Temporal, box_: *const TPCBox, border_inc: bool) -> *mut Temporal;
 }
 extern "C" {
+    #[doc = " Return a temporal point cloud patch restricted to the points in a point cloud box"]
+    pub fn tpcpatch_at_tpcbox_fine(temp: *const Temporal, box_: *const TPCBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
+    #[doc = " Return a temporal point cloud patch restricted to the points outside a point cloud box"]
+    pub fn tpcpatch_minus_tpcbox_fine(temp: *const Temporal, box_: *const TPCBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
     #[doc = " Return the pgPointCloud schema id (pcid) of a temporal pgpointcloud patch"]
     pub fn tpcpatch_pcid(temp: *const Temporal) -> u32;
 }
@@ -17298,6 +17374,22 @@ extern "C" {
     pub fn always_ne_tpcpoint_tpcpoint(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    #[doc = " Return 1 if a temporal point cloud point ever lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpcbox_tpcpoint(box_: *const TPCBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud point ever lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpcpoint_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud point always lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpcbox_tpcpoint(box_: *const TPCBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud point always lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpcpoint_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
     #[doc = " Return true if a pcpatch is ever equal to a temporal pgpointcloud patch"]
     pub fn ever_eq_pcpatch_tpcpatch(pa: *const Pcpatch, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -17344,6 +17436,22 @@ extern "C" {
 extern "C" {
     #[doc = " Return true if two temporal pgpointcloud patches are always different"]
     pub fn always_ne_tpcpatch_tpcpatch(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud patch ever lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpcbox_tpcpatch(box_: *const TPCBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud patch ever lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tpcpatch_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud patch always lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpcbox_tpcpatch(box_: *const TPCBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal point cloud patch always lies in a point cloud box, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tpcpatch_tpcbox(temp: *const Temporal, box_: *const TPCBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Return the temporal equality of a pcpoint and a temporal pgpointcloud point"]
@@ -18650,8 +18758,16 @@ extern "C" {
     pub fn tposechain_translate(temp: *const Temporal, deltax: f64, deltay: f64, deltaz: f64) -> *mut Temporal;
 }
 extern "C" {
+    #[doc = " Return a temporal pose chain restricted to a spatiotemporal box, the times at which one of its joints lies in the box"]
+    pub fn tposechain_at_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
+}
+extern "C" {
     #[doc = " Return a temporal pose chain restricted to a pose chain"]
     pub fn tposechain_at_value(temp: *const Temporal, pc: *const PoseChain) -> *mut Temporal;
+}
+extern "C" {
+    #[doc = " Return a temporal pose chain restricted to the complement of a spatiotemporal box, the times at which none of its joints lies in the box"]
+    pub fn tposechain_minus_stbox(temp: *const Temporal, box_: *const STBox, border_inc: bool) -> *mut Temporal;
 }
 extern "C" {
     #[doc = " Return a temporal pose chain restricted to the complement of a pose chain"]
@@ -18734,6 +18850,14 @@ extern "C" {
     pub fn always_ne_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    #[doc = " Return 1 if a temporal pose chain always lies in a spatiotemporal box, one of its joints lying in it at every time, 0 if not, and -1 on error"]
+    pub fn always_overlaps_stbox_tposechain(box_: *const STBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal pose chain always lies in a spatiotemporal box, one of its joints lying in it at every time, 0 if not, and -1 on error"]
+    pub fn always_overlaps_tposechain_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
+}
+extern "C" {
     #[doc = " Return true if a posechain is ever equal to a temporal pose chain"]
     pub fn ever_eq_posechain_tposechain(posechain: *const PoseChain, temp: *const Temporal) -> ::std::os::raw::c_int;
 }
@@ -18756,6 +18880,14 @@ extern "C" {
 extern "C" {
     #[doc = " Return true if two temporal posechains are ever different"]
     pub fn ever_ne_tposechain_tposechain(temp1: *const Temporal, temp2: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal pose chain ever lies in a spatiotemporal box, one of its joints lying in it, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_stbox_tposechain(box_: *const STBox, temp: *const Temporal) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return 1 if a temporal pose chain ever lies in a spatiotemporal box, one of its joints lying in it, 0 if not, and -1 on error"]
+    pub fn ever_overlaps_tposechain_stbox(temp: *const Temporal, box_: *const STBox) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Return the temporal equality of a posechain and a temporal posechain"]
@@ -19711,7 +19843,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = " Return the Well-Known Text (WKT) representation of a temporal rigid geometry"]
-    pub fn trgeometry_out(temp: *const Temporal, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
+    pub fn trgeometry_out(temp: *const Temporal, maxdd: ::std::os::raw::c_int, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     #[doc = " Return the Well-Known Text (WKT) representation of a temporal rigid geometry"]
@@ -22262,6 +22394,10 @@ extern "C" {
     pub fn time_extract(time: TimeADT, units: *const text) -> *mut NumericData;
 }
 extern "C" {
+    #[doc = " Return the time of a number of microseconds from midnight"]
+    pub fn time_from_parts(us: i64) -> TimeADT;
+}
+extern "C" {
     #[doc = " Return true if a time is greater than or equal to another one"]
     pub fn time_ge(time1: TimeADT, time2: TimeADT) -> bool;
 }
@@ -22316,6 +22452,10 @@ extern "C" {
 extern "C" {
     #[doc = " Convert a time to an interval"]
     pub fn time_to_interval(time: TimeADT) -> *mut Interval;
+}
+extern "C" {
+    #[doc = " Return in the last argument the microseconds from midnight of a time"]
+    pub fn time_to_parts(time: TimeADT, us: *mut i64) -> bool;
 }
 extern "C" {
     #[doc = " Convert a time to a time with time zone"]
@@ -22394,6 +22534,10 @@ extern "C" {
     pub fn timetz_copy(timetz: *const TimeTzADT) -> *mut TimeTzADT;
 }
 extern "C" {
+    #[doc = " Return the time with time zone of a number of microseconds from midnight and an offset from UTC"]
+    pub fn timetz_from_parts(us: i64, offset: i32) -> *mut TimeTzADT;
+}
+extern "C" {
     #[doc = " Return the string representation of a time with time zone"]
     pub fn timetz_out(timetz: *const TimeTzADT, size_out: *mut usize) -> *mut ::std::os::raw::c_char;
 }
@@ -22412,6 +22556,10 @@ extern "C" {
 extern "C" {
     #[doc = " Return the smaller of two times with time zone"]
     pub fn timetz_smaller(timetz1: *const TimeTzADT, timetz2: *const TimeTzADT) -> *mut TimeTzADT;
+}
+extern "C" {
+    #[doc = " Return in the last two arguments the microseconds from midnight and the offset from UTC of a time with time zone"]
+    pub fn timetz_to_parts(timetz: *const TimeTzADT, us: *mut i64, offset: *mut i32) -> bool;
 }
 extern "C" {
     #[doc = " Convert a time with time zone to a time"]
